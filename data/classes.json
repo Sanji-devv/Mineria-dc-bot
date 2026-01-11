@@ -1,0 +1,475 @@
+{
+    "classes": [
+        {
+            "name": "Barbarian",
+            "type": "Core",
+            "primary_stats": [
+                "STR",
+                "CON"
+            ],
+            "secondary_stats": [
+                "DEX"
+            ],
+            "description": "High-health warrior that uses rage to power its attacks."
+        },
+        {
+            "name": "Bard",
+            "type": "Core",
+            "primary_stats": [
+                "CHA",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "INT"
+            ],
+            "description": "Versatile performer who uses magic and music to inspire allies."
+        },
+        {
+            "name": "Cleric",
+            "type": "Core",
+            "primary_stats": [
+                "WIS",
+                "CHA"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Divine spellcaster capable of healing and powerful magic."
+        },
+        {
+            "name": "Druid",
+            "type": "Core",
+            "primary_stats": [
+                "WIS",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Nature-based spellcaster who can shapechange into animals."
+        },
+        {
+            "name": "Fighter",
+            "type": "Core",
+            "primary_stats": [
+                "STR",
+                "CON"
+            ],
+            "secondary_stats": [
+                "DEX"
+            ],
+            "description": "Master of weapons and armor, highly customizable for combat."
+        },
+        {
+            "name": "Monk",
+            "type": "Core",
+            "primary_stats": [
+                "WIS",
+                "DEX",
+                "STR"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "High-mobility unarmed combatant with mystical defenses."
+        },
+        {
+            "name": "Paladin",
+            "type": "Core",
+            "primary_stats": [
+                "CHA",
+                "STR"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Holy warrior who defends the weak and strikes down evil."
+        },
+        {
+            "name": "Ranger",
+            "type": "Core",
+            "primary_stats": [
+                "DEX",
+                "WIS"
+            ],
+            "secondary_stats": [
+                "STR"
+            ],
+            "description": "Skilled outdoorsman and hunter, specializing in specific foes."
+        },
+        {
+            "name": "Rogue",
+            "type": "Core",
+            "primary_stats": [
+                "DEX",
+                "INT"
+            ],
+            "secondary_stats": [
+                "STR"
+            ],
+            "description": "Stealth and trap expert specializing in sneak attacks."
+        },
+        {
+            "name": "Sorcerer",
+            "type": "Core",
+            "primary_stats": [
+                "CHA",
+                "CON"
+            ],
+            "secondary_stats": [
+                "DEX"
+            ],
+            "description": "Innate spellcaster who draws power from their bloodline."
+        },
+        {
+            "name": "Wizard",
+            "type": "Core",
+            "primary_stats": [
+                "INT",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Academic spellcaster who studies ancient tomes of power."
+        },
+        {
+            "name": "Alchemist",
+            "type": "Base",
+            "primary_stats": [
+                "INT",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Expert in potions and bombs, uses mutagens to boost power."
+        },
+        {
+            "name": "Cavalier",
+            "type": "Base",
+            "primary_stats": [
+                "STR",
+                "CHA"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Mounted warrior dedicated to a chivalric order and its tenets."
+        },
+        {
+            "name": "Gunslinger",
+            "type": "Base",
+            "primary_stats": [
+                "DEX",
+                "WIS"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Firearms expert who uses grit to perform deadly deeds."
+        },
+        {
+            "name": "Inquisitor",
+            "type": "Base",
+            "primary_stats": [
+                "WIS",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "STR"
+            ],
+            "description": "Divine agent who uses judgments and banishments to hunt their prey."
+        },
+        {
+            "name": "Magus",
+            "type": "Base",
+            "primary_stats": [
+                "INT",
+                "STR"
+            ],
+            "secondary_stats": [
+                "CON",
+                "DEX"
+            ],
+            "description": "Blends arcane magic and weapon attacks into a single strike."
+        },
+        {
+            "name": "Omdura",
+            "type": "Base",
+            "primary_stats": [
+                "WIS",
+                "CHA"
+            ],
+            "secondary_stats": [
+                "STR"
+            ],
+            "description": "Divine leader who inspires allies through orisons and fervor."
+        },
+        {
+            "name": "Oracle",
+            "type": "Base",
+            "primary_stats": [
+                "CHA",
+                "CON"
+            ],
+            "secondary_stats": [
+                "DEX"
+            ],
+            "description": "Mystery-driven divine caster with a powerful thematic curse."
+        },
+        {
+            "name": "Shifter",
+            "type": "Base",
+            "primary_stats": [
+                "WIS",
+                "STR"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Martial class focused on animalistic aspects and transformations."
+        },
+        {
+            "name": "Summoner",
+            "type": "Base",
+            "primary_stats": [
+                "CHA",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Conjures a powerful, customizable eidolon to fight alongside them."
+        },
+        {
+            "name": "Vampire Hunter",
+            "type": "Base",
+            "primary_stats": [
+                "WIS",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "STR"
+            ],
+            "description": "Specialized combatant trained to hunt and destroy undead."
+        },
+        {
+            "name": "Vigilante",
+            "type": "Base",
+            "primary_stats": [
+                "CHA",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "STR"
+            ],
+            "description": "Lives a double life, alternating between social and hero identities."
+        },
+        {
+            "name": "Witch",
+            "type": "Base",
+            "primary_stats": [
+                "INT",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Wielder of hexes and patron magic, aided by a familiar."
+        },
+        {
+            "name": "Arcanist",
+            "type": "Hybrid",
+            "primary_stats": [
+                "INT",
+                "CHA"
+            ],
+            "secondary_stats": [
+                "DEX"
+            ],
+            "description": "Combines the flexibility of a sorcerer with a wizard's study."
+        },
+        {
+            "name": "Bloodrager",
+            "type": "Hybrid",
+            "primary_stats": [
+                "STR",
+                "CHA"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Merges the barbarian's rage with sorcerous bloodline magic."
+        },
+        {
+            "name": "Brawler",
+            "type": "Hybrid",
+            "primary_stats": [
+                "STR",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Unarmed combatant who adapts their combat style on the fly."
+        },
+        {
+            "name": "Hunter",
+            "type": "Hybrid",
+            "primary_stats": [
+                "WIS",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "STR"
+            ],
+            "description": "Master of coordinated teamwork alongside an animal companion."
+        },
+        {
+            "name": "Investigator",
+            "type": "Hybrid",
+            "primary_stats": [
+                "INT",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "STR"
+            ],
+            "description": "Alchemist + Rogue: Uses 'Inspiration' to solve problems and fight."
+        },
+        {
+            "name": "Shaman",
+            "type": "Hybrid",
+            "primary_stats": [
+                "WIS",
+                "CHA"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Draws power from spirits and wandering hexes for variable utility."
+        },
+        {
+            "name": "Skald",
+            "type": "Hybrid",
+            "primary_stats": [
+                "CHA",
+                "STR"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Versatile warrior-poet who shares supernatural rage with allies."
+        },
+        {
+            "name": "Slayer",
+            "type": "Hybrid",
+            "primary_stats": [
+                "DEX",
+                "STR"
+            ],
+            "secondary_stats": [
+                "INT"
+            ],
+            "description": "Ranger + Rogue: A cold, efficient killer focused on studied targets."
+        },
+        {
+            "name": "Swashbuckler",
+            "type": "Hybrid",
+            "primary_stats": [
+                "DEX",
+                "CHA"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Flamboyant duelist who uses panache to outmaneuver foes."
+        },
+        {
+            "name": "Warpriest",
+            "type": "Hybrid",
+            "primary_stats": [
+                "WIS",
+                "STR"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Cleric + Fighter: Uses fervor to cast spells while fighting."
+        },
+        {
+            "name": "Kineticist",
+            "type": "Occult",
+            "primary_stats": [
+                "CON",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "WIS"
+            ],
+            "description": "Channels raw elemental power through their own physical body."
+        },
+        {
+            "name": "Medium",
+            "type": "Occult",
+            "primary_stats": [
+                "CHA",
+                "STR"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Channels spirits from the legendary past to gain their abilities."
+        },
+        {
+            "name": "Mesmerist",
+            "type": "Occult",
+            "primary_stats": [
+                "CHA",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Master of mental influence, weakening foes with hypnotic stares."
+        },
+        {
+            "name": "Occultist",
+            "type": "Occult",
+            "primary_stats": [
+                "INT",
+                "DEX",
+                "STR"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Uses psychic implements to channel power from historical objects."
+        },
+        {
+            "name": "Psychic",
+            "type": "Occult",
+            "primary_stats": [
+                "INT"
+            ],
+            "secondary_stats": [
+                "DEX",
+                "CON"
+            ],
+            "description": "Uses pure mental prowess to cast thought and emotion-based spells."
+        },
+        {
+            "name": "Spiritualist",
+            "type": "Occult",
+            "primary_stats": [
+                "WIS",
+                "DEX"
+            ],
+            "secondary_stats": [
+                "CON"
+            ],
+            "description": "Bound to a phantom from the Ethereal Plane that protects them."
+        }
+    ]
+}
