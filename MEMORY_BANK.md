@@ -1,36 +1,64 @@
 # Memory Bank - Mineria DC Bot
 
 ## Project Overview
-Mineria DC Bot is a specialized Discord utility for the **Pathfinder Roleplaying Game** system. It focuses on character lifecycle management—from racial selection and attribute rolling to profile persistence.
+Mineria DC Bot is a specialized Discord utility for **Pathfinder 1st Edition** roleplaying games. It automates character creation, dice rolling, and profile management, providing a seamless experience for players directly within Discord.
 
-## Technical Architecture
-- **Language**: Python 3.x
-- **Core Framework**: `discord.py` (Cog-based structure)
-- **Data Layer**: JSON-based flat files in the `data/` directory.
-- **Shared Logic**: `utils.py` for persistence, `recommender.py` for class logic.
-- **Language Policy**: **Strict English**.
+## System Architecture
 
-## Key Modules
-1. **`main.py`**: Entry point. Orchestrates the loading of Cogs.
-2. **`character.py`**: Character management Cog. Contains all data persistence and recommendation logic.
-3. **`dice.py`**: Dice rolling Cog. Parses expressions like `2d20+5`.
-4. **`help.py`**: Custom help system Cog.
+The codebase is refactored into a modular `Cogs` structure:
 
-## Established Workflows
+- **`main.py`**: Application entry point. Handles bot initialization, environment configuration, and extension loading (`dice`, `character`, `help`).
+- **`dice.py`**: Specialized module for dice mechanics. Handles parsing and executing standard RPG dice expressions (e.g., `2d20+5`).
+- **`character.py`**: Core domain logic for character management. Handles:
+  - Character creation workflow (`create`, `distribute`, `save`).
+  - Stat generation (Dice pool allocation system).
+  - Profile management (`info`, `edit`, `delete`, `rename`).
+  - Class recommendations engine.
+- **`help.py`**: Dynamic help system that generates documentation based on loaded commands.
+
+## Key Workflows
 
 ### Character Creation Flow
-1. **Race Selection** (`!char create <race>`): User picks a race, calculating available dice points (40 - Race Points).
-2. **Dice Distribution** (`!char dr <stats>`): User spends points across 6 attributes. The bot rolls the specified number of dice and takes the top 3.
-3. **Racial Adjustments**: Automatic application of fixed racial modifiers.
-4. **Manual Tweaking** (`!char add/remove`): Used for flexible bonuses or manual corrections.
-5. **Class Recommendation**: Automatic rule-based suggestions generated after stat distribution using `data/classes.json`.
-6. **Persistence** (`!char save <name>`): Finalizes and saves the character to `data/characters.json`.
+1. **Race Selection**: User starts with `!char create <race>`.
+   - Bot calculates available "Dice Points" (Base 40 - Race Cost).
+2. **Stat Allocation**: User commands `!char dr <str> <dex> <con> <int> <wis> <cha>`.
+   - Inputs represent the *number of d6 dice* allocated to each attribute.
+   - **Mechanism**: For each stat, the bot rolls `N` d6 and sums the highest 3 dice.
+3. **Modifiers**:
+   - Racial modifiers (from `races.json`) are automatically applied.
+   - User can manually adjust stats with `!char add <stat> <val>` or `!char remove <stat> <val>`.
+4. **Finalization**:
+   - Class recommendations are shown (if enabled).
+   - User saves the character with `!char save <name>`.
 
-## Technical Caveats
-- **Dice Points**: Base 40 minus the Race Points (RP) defined in `data/races.json`.
-- **Attribute Minimum**: Each attribute must be assigned at least 3 dice (mirroring the classic 3d6 approach).
+### Data Persistence
+Data is stored in JSON format within the `data/` directory:
+- `characters.json`: Stores all user characters.
+- `races.json`: Usage definitions for races (modifiers, point costs).
+- `classes.json`: Logic for class recommendations.
+- `user_settings.json`: User-specific preferences (e.g., `show_recommendations`).
 
-## Roadmap
-- [ ] Implement Inventory tracking.
-- [ ] Add Level-up mechanics.
-- [ ] Integrate Skill point allocation.
+## Feature Inventory
+
+| Category | Command | Description |
+|---|---|---|
+| **Dice** | `!roll` | Roll any combination of dice (e.g., `4d6+2`). |
+| **Creation** | `!char create` | Begin creation process. |
+| | `!char dr` | Distribute dice and roll stats. |
+| | `!char add` / `!char remove` | Manually adjust stats during creation. |
+| **Profile** | `!char info` | View character sheet. |
+| | `!char save` | Save current character. |
+| | `!char edit` | Modify saved character data. |
+| | `!char delete` | Permanently remove a character. |
+| **Settings** | `!rec`, `!m r` | Toggle class recommendations (`open`/`close`). |
+
+## Roadmap & Status
+- **Current State**: Fully functional modular bot in English.
+- **Recent Updates**:
+  - Refactored monolith to modules (`dice`, `character`, `help`).
+  - Added toggle for recommendations (`!rec open`/`close`).
+  - Implemented stat manual adjustment (`add`/`remove`).
+- **Future Goals**:
+  - Integration of Generative AI for dynamic character backstories and advanced class suggestions.
+  - Inventory management system.
+  - Skill point calculation and allocation.

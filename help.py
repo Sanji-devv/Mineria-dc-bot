@@ -22,7 +22,8 @@ class HelpCog(commands.Cog, name="Help"):
             "🔍 `!char info <name>`": "View details of a character.",
             "✏️ `!char rename <old> <new>`": "Rename a character.",
             "🗑️ `!char delete <name>`": "Delete a character.",
-            "🛠️ `!char edit <class|stat> ...`": "Edit class or specific stats."
+            "🛠️ `!char edit <class|stat> ...`": "Edit class or specific stats.",
+            "💡 `!rec <open|close>`": "Toggle class recommendations (Alias: `!r`)."
         }
         
         for name, val in cmds.items():

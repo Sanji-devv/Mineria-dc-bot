@@ -92,7 +92,7 @@ class CharacterCog(commands.Cog, name="Character"):
             "`!char dr STR 6 DEX 5 ...` - Distribute dice\n"
             "`!char add/remove <stat> <val>` - Tweak stats\n"
             "`!char save <name>` - Finalize character\n"
-            "`!char info <name>` - View character\n"
+            "`!char info [name]` - View character\n"
             "`!char list` - List your characters\n"
             "`!char delete <name>` - Delete character\n"
             "`!char edit class <name> <class>` - Change class\n"
@@ -142,12 +142,10 @@ class CharacterCog(commands.Cog, name="Character"):
         keys = ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
         stats_to_set = {}
 
-        # Format 1: !char dr 6 5 5 5 4 5
         if len(args) == 6 and all(a.isdigit() for a in args):
             values = [int(a) for a in args]
             stats_to_set = dict(zip(keys, values))
         
-        # Format 2: !char dr STR 6 DEX 5 ...
         elif len(args) == 12:
             for i in range(0, 12, 2):
                 stat_name = args[i].upper()
@@ -184,7 +182,6 @@ class CharacterCog(commands.Cog, name="Character"):
         final_stats = {}
         racial_mods = self.parse_racial_modifiers(creation["race_data"])
         
-        # --- Embed 1: Stat Roll Results ---
         embed_stats = discord.Embed(
             title=f"🎲 Stat Roll Results - {ctx.author.display_name}",
             color=discord.Color.gold()
@@ -203,11 +200,9 @@ class CharacterCog(commands.Cog, name="Character"):
 
         embed_stats.add_field(name="📊 Roll Breakdown", value=rolls_text, inline=False)
 
-        # Final Attributes
         attrs_text = "\n".join([f"**{s}**: {v}" for s, v in final_stats.items()])
         embed_stats.add_field(name="✨ Final Attributes", value=attrs_text, inline=True)
 
-        # Racial Adjustments
         plus = creation["race_data"].get("Ability Score Plus", "None")
         minus = creation["race_data"].get("Ability Score Minus", "None")
         adj_text = f"**Race**: {creation['race_name']}\n**Bonus**: {plus}\n**Penalty**: {minus}"
@@ -217,23 +212,59 @@ class CharacterCog(commands.Cog, name="Character"):
 
         creation["stats"] = final_stats
 
-        # --- Embed 2: Recommended Classes ---
-        embed_recs = None
-        recommendations = get_recommendations(final_stats)
-        if recommendations:
-            embed_recs = discord.Embed(
-                title="🛡️ Recommended Classes",
-                description="Best matching classes:",
-                color=discord.Color.blue()
-            )
-            rec_text = ""
-            for r in recommendations:
-                rec_text += f"• **{r['name']}**\n"
-            embed_recs.description += f"\n\n{rec_text}"
-
         await ctx.send(embed=embed_stats)
-        if embed_recs:
-            await ctx.send(embed=embed_recs)
+
+        settings = load_json("user_settings.json")
+        user_settings = settings.get(str(ctx.author.id), {})
+        show_recs = user_settings.get("show_recommendations", True)
+
+        if show_recs:
+            recommendations = get_recommendations(final_stats)
+            if recommendations:
+                embed_recs = discord.Embed(
+                    title="🛡️ Recommended Classes",
+                    description="Best matching classes:",
+                    color=discord.Color.blue()
+                )
+                rec_text = ""
+                for r in recommendations:
+                    rec_text += f"• **{r['name']}**\n"
+                embed_recs.description += f"\n\n{rec_text}"
+                await ctx.send(embed=embed_recs)
+
+    @commands.group(name="rec", aliases=["r"], invoke_without_command=True)
+    async def rec(self, ctx: commands.Context):
+        """Manage recommendation settings."""
+        settings = load_json("user_settings.json")
+        user_settings = settings.get(str(ctx.author.id), {})
+        status = user_settings.get("show_recommendations", True)
+        
+        status_text = "✅ **Enabled**" if status else "❌ **Disabled**"
+        await ctx.send(f"ℹ️ Class Recommendations are currently: {status_text}\nUse `!m r open` or `!m r close` to change.")
+
+    @rec.command(name="open")
+    async def rec_open(self, ctx: commands.Context):
+        """Enable class recommendations."""
+        settings = load_json("user_settings.json")
+        uid = str(ctx.author.id)
+        
+        if uid not in settings: settings[uid] = {}
+        settings[uid]["show_recommendations"] = True
+        
+        save_json("user_settings.json", settings)
+        await ctx.send("✅ Class recommendations have been **Enabled**.")
+
+    @rec.command(name="close")
+    async def rec_close(self, ctx: commands.Context):
+        """Disable class recommendations."""
+        settings = load_json("user_settings.json")
+        uid = str(ctx.author.id)
+        
+        if uid not in settings: settings[uid] = {}
+        settings[uid]["show_recommendations"] = False
+        
+        save_json("user_settings.json", settings)
+        await ctx.send("❌ Class recommendations have been **Disabled**.")
 
     @char.command(name="add")
     async def add_stat(self, ctx: commands.Context, stat: str, value: int):
@@ -365,26 +396,62 @@ class CharacterCog(commands.Cog, name="Character"):
         await ctx.send(embed=embed)
 
     @char.command(name="info")
-    async def info(self, ctx: commands.Context, *, name: str):
-        """View character info."""
+    async def info(self, ctx: commands.Context, *, name: str = None):
+        """View character info. Defaults to your only character if name is omitted."""
         characters = load_json("characters.json")
         uid = str(ctx.author.id)
-        char_data = next((c for c in characters.get(uid, []) if c["name"].lower() == name.lower()), None)
+        user_chars = characters.get(uid, [])
+        
+        if not user_chars:
+            return await ctx.send("❌ You don't have any saved characters.")
+
+        char_data = None
+        if name is None:
+            if len(user_chars) == 1:
+                char_data = user_chars[0]
+            else:
+                char_list = ", ".join([f"`{c['name']}`" for c in user_chars])
+                embed = discord.Embed(
+                    title="🔢 Multiple Characters Found",
+                    description=f"You have multiple characters. Please specify which one to view:\n\n{char_list}\n\nUsage: `!char info <name>`",
+                    color=discord.Color.orange()
+                )
+                return await ctx.send(embed=embed)
+        else:
+            char_data = next((c for c in user_chars if c["name"].lower() == name.lower()), None)
         
         if not char_data:
             return await ctx.send(f"❌ Character **{name}** not found.")
             
         embed = discord.Embed(
-            title=f"🔍 Character Details - {char_data['name']}",
-            color=discord.Color.blue()
+            title=f"📜 {char_data['name']}",
+            description=f"The details of your adventurer.",
+            color=discord.Color.gold()
         )
+        
         embed.add_field(name="Race", value=char_data['race'], inline=True)
-        embed.add_field(name="Class", value=char_data['class'], inline=True)
+        embed.add_field(name="Class", value=char_data.get('class', 'None'), inline=True)
         
-        stats_text = "\n".join([f"**{s}**: {v}" for s, v in char_data["stats"].items()])
-        embed.add_field(name="📊 Attributes", value=stats_text, inline=False)
+        # Ability Scores with Modifiers
+        stats = char_data.get("stats", {})
+        stats_lines = []
+        for s in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]:
+            val = stats.get(s, 10)
+            mod = (val - 10) // 2
+            sign = "+" if mod >= 0 else ""
+            stats_lines.append(f"**{s}**: {val} ({sign}{mod})")
+            
+        col1 = "\n".join(stats_lines[:3])
+        col2 = "\n".join(stats_lines[3:])
         
-        embed.set_footer(text=f"Created on {char_data['created_at'][:10]}")
+        embed.add_field(name="Physical", value=col1, inline=True)
+        embed.add_field(name="Mental", value=col2, inline=True)
+        
+        created_at = char_data.get("created_at", "")
+        if created_at:
+            created_at = created_at.split(".")[0] # Remove microseconds
+            
+        embed.set_footer(text=f"Created: {created_at}")
         await ctx.send(embed=embed)
 
     @char.command(name="list")
