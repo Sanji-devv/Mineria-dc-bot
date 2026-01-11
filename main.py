@@ -5,7 +5,6 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-# Configure Logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger("MineriaBot")
 

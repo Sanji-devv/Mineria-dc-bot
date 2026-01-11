@@ -235,6 +235,99 @@ class CharacterCog(commands.Cog, name="Character"):
         if embed_recs:
             await ctx.send(embed=embed_recs)
 
+    @char.command(name="add")
+    async def add_stat(self, ctx: commands.Context, stat: str, value: int):
+        """Adds a bonus to a stat during creation."""
+        user_id = ctx.author.id
+        if user_id not in self.active_creations:
+            return await ctx.send("❌ No active character creation. Use `!char create <race>` first.")
+
+        creation = self.active_creations[user_id]
+        if "stats" not in creation or not creation["stats"]:
+            return await ctx.send("❌ Stats not rolled yet. Use `!char dr` first.")
+
+        stat = stat.upper()
+        if stat not in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]:
+            return await ctx.send("❌ Invalid stat. Use STR, DEX, CON, INT, WIS, CHA.")
+
+        creation["stats"][stat] += value
+        await ctx.send(f"✅ **{stat}** increased by {value}. New value: **{creation['stats'][stat]}**")
+
+    @char.command(name="remove")
+    async def remove_stat(self, ctx: commands.Context, stat: str, value: int):
+        """Removes a value from a stat during creation."""
+        user_id = ctx.author.id
+        if user_id not in self.active_creations:
+            return await ctx.send("❌ No active character creation. Use `!char create <race>` first.")
+
+        creation = self.active_creations[user_id]
+        if "stats" not in creation or not creation["stats"]:
+            return await ctx.send("❌ Stats not rolled yet. Use `!char dr` first.")
+
+        stat = stat.upper()
+        if stat not in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]:
+            return await ctx.send("❌ Invalid stat. Use STR, DEX, CON, INT, WIS, CHA.")
+
+        creation["stats"][stat] -= value
+        await ctx.send(f"✅ **{stat}** decreased by {value}. New value: **{creation['stats'][stat]}**")
+
+    @char.group(name="edit", invoke_without_command=True)
+    async def edit(self, ctx: commands.Context):
+        """Edit saved character details."""
+        await ctx.send("❌ Usage: `!char edit class` or `!char edit stat`")
+
+    @edit.command(name="class")
+    async def edit_class(self, ctx: commands.Context, name: str, new_class: str):
+        """Change a character's class."""
+        characters = load_json("characters.json")
+        uid = str(ctx.author.id)
+        
+        if uid not in characters:
+            return await ctx.send("❌ You have no characters.")
+
+        char_data = next((c for c in characters[uid] if c["name"].lower() == name.lower()), None)
+        if not char_data:
+            return await ctx.send(f"❌ Character **{name}** not found.")
+
+        old_class = char_data.get("class", "None")
+        char_data["class"] = new_class
+        save_json("characters.json", characters)
+        
+        embed = discord.Embed(
+            title="✏️ Class Updated",
+            description=f"Character **{char_data['name']}** class changed from **{old_class}** to **{new_class}**.",
+            color=discord.Color.green()
+        )
+        await ctx.send(embed=embed)
+
+    @edit.command(name="stat")
+    async def edit_stat(self, ctx: commands.Context, name: str, stat: str, value: int):
+        """Change a saved character's stat manually."""
+        characters = load_json("characters.json")
+        uid = str(ctx.author.id)
+        
+        if uid not in characters:
+            return await ctx.send("❌ You have no characters.")
+
+        char_data = next((c for c in characters[uid] if c["name"].lower() == name.lower()), None)
+        if not char_data:
+            return await ctx.send(f"❌ Character **{name}** not found.")
+
+        stat = stat.upper()
+        if stat not in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]:
+            return await ctx.send("❌ Invalid stat. Use STR, DEX, CON, INT, WIS, CHA.")
+
+        old_val = char_data["stats"].get(stat, 0)
+        char_data["stats"][stat] = value
+        save_json("characters.json", characters)
+        
+        embed = discord.Embed(
+            title="✏️ Stat Updated",
+            description=f"Character **{char_data['name']}** - **{stat}** changed from {old_val} to **{value}**.",
+            color=discord.Color.green()
+        )
+        await ctx.send(embed=embed)
+
     @char.command(name="save")
     async def save_char(self, ctx: commands.Context, *, name: str = None):
         """Saves the character."""
