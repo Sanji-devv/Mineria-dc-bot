@@ -3,12 +3,27 @@ import asyncio
 import logging
 import discord
 from discord.ext import commands
+from pathlib import Path
 from dotenv import load_dotenv
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-logger = logging.getLogger("MineriaBot")
+# Setup Logging
+log_dir = Path("logs")
+log_dir.mkdir(exist_ok=True)
 
-load_dotenv()
+logger = logging.getLogger("MineriaBot")
+logger.setLevel(logging.INFO)
+
+# File Handler
+file_handler = logging.FileHandler(log_dir / "mineria.log", encoding="utf-8")
+file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S'))
+logger.addHandler(file_handler)
+
+# Console Handler
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+logger.addHandler(console_handler)
+
+load_dotenv(Path(__file__).parent / ".env")
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 class MineriaBot(commands.Bot):
@@ -24,7 +39,7 @@ class MineriaBot(commands.Bot):
 
     async def setup_hook(self):
         """Load extensions on startup."""
-        for ext in ["dice", "character", "help"]:
+        for ext in ["dice", "character", "help", "maintenance"]:
             try:
                 await self.load_extension(ext)
                 logger.info(f"✅ Loaded extension: {ext}")

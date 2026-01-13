@@ -7,7 +7,7 @@ import random
 from pathlib import Path
 
 # Paths
-DATA_DIR = Path("data")
+DATA_DIR = Path(__file__).parent / "data"
 
 def load_json(filename: str) -> dict:
     """Loads data from a JSON file in the 'data' directory."""
