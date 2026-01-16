@@ -2,83 +2,96 @@ import discord
 from discord.ext import commands, tasks
 import shutil
 import os
-from datetime import datetime
+from datetime import datetime, time
 import logging
+from pathlib import Path
 
 logger = logging.getLogger("MineriaBot")
 
 class Maintenance(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.backup_task.start()
+        self.backup_schedule.start()
 
     def cog_unload(self):
-        self.backup_task.cancel()
+        self.backup_schedule.cancel()
 
-    @tasks.loop(hours=24)
-    async def backup_task(self):
-        """Creates a periodic backup of the data directory."""
-        await self.bot.wait_until_ready()
-        await self.perform_backup()
-
-    def prune_backups(self, backup_dir):
-        """Keeps only the last 7 backups."""
-        try:
-            files = [os.path.join(backup_dir, f) for f in os.listdir(backup_dir) if f.endswith('.zip')]
-            files.sort(key=os.path.getmtime)
+    @tasks.loop(minutes=1)
+    async def backup_schedule(self):
+        """Checks every minute to trigger scheduled backups at 08:00."""
+        now = datetime.now()
+        
+        # Schedule: 08:00 AM
+        if now.hour == 8 and now.minute == 0:
+            # Daily Backup
+            await self.perform_backup("daily", retention=7)
             
-            if len(files) > 7:
-                for f in files[:-7]:
-                    os.remove(f)
-                    logger.info(f"🗑️ Removed old backup: {os.path.basename(f)}")
-        except Exception as e:
-            logger.error(f"⚠️ Failed to prune old backups: {e}")
+            # Weekly Backup (Monday = 0)
+            if now.weekday() == 0:
+                await self.perform_backup("weekly", retention=5)
 
-    @backup_task.before_loop
-    async def before_backup(self):
+    @backup_schedule.before_loop
+    async def before_schedule(self):
         await self.bot.wait_until_ready()
+
+    def prune_backups(self, directory: Path, limit: int):
+        """Keeps only the regular 'limit' number of backups."""
+        try:
+            files = sorted(directory.glob("*.zip"), key=lambda f: f.stat().st_mtime)
+            
+            if len(files) > limit:
+                for f in files[:-limit]:
+                    f.unlink()
+                    logger.info(f"🗑️ Pruned old backup: {f.name} from {directory.name}")
+        except Exception as e:
+            logger.error(f"⚠️ Failed to prune {directory.name}: {e}")
 
     @commands.command(name="backup", hidden=True)
     @commands.is_owner()
     async def manual_backup(self, ctx):
-        """Triggers a manual backup (Owner only)."""
+        """Triggers a immediate manual backup to the daily folder."""
         await ctx.send("⏳ Starting manual backup...")
         try:
-            # Re-use logic or just call the function if refactored, 
-            # but for now I'll just copy the core logic or better, refactor.
-            # actually better to refactor backup_task to call a method.
-            filename = await self.perform_backup()
+            filename = await self.perform_backup("daily", retention=7)
             if filename:
-                await ctx.send(f"✅ Backup created: `{filename}`")
+                await ctx.send(f"✅ Backup created in daily: `{filename}`")
             else:
                 await ctx.send("❌ Backup failed. Check logs.")
         except Exception as e:
             await ctx.send(f"❌ Error: {e}")
 
-    async def perform_backup(self):
-        """Core backup logic."""
-        data_dir = "data"
-        backup_dir = "backups"
+    async def perform_backup(self, backup_type: str, retention: int = 7):
+        """
+        Creates a backup in backups/<backup_type>/
+        backup_type: 'daily' or 'weekly'
+        retention: number of files to keep
+        """
+        data_dir = Path("data")
+        backup_root = Path("backups")
+        target_dir = backup_root / backup_type
         
-        if not os.path.exists(data_dir):
+        if not data_dir.exists():
             logger.warning("⚠️ Data directory not found. Skipping backup.")
             return None
 
-        os.makedirs(backup_dir, exist_ok=True)
+        target_dir.mkdir(parents=True, exist_ok=True)
         
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        backup_filename = f"mineria_backup_{timestamp}"
-        backup_path = os.path.join(backup_dir, backup_filename)
+        backup_filename = f"mineria_{backup_type}_{timestamp}"
+        backup_path = target_dir / backup_filename
         
         try:
-            shutil.make_archive(backup_path, 'zip', data_dir)
-            logger.info(f"✅ Backup created successfully: {backup_filename}.zip")
-            self.prune_backups(backup_dir)
-            return f"{backup_filename}.zip"
+            # shutil.make_archive automatically adds .zip extension
+            shutil.make_archive(str(backup_path), 'zip', str(data_dir))
+            
+            final_filename = f"{backup_filename}.zip"
+            logger.info(f"✅ {backup_type.capitalize()} backup created: {final_filename}")
+            
+            self.prune_backups(target_dir, retention)
+            return final_filename
         except Exception as e:
-            logger.error(f"❌ Backup failed: {e}")
+            logger.error(f"❌ {backup_type.capitalize()} backup failed: {e}")
             return None
-
 
 async def setup(bot):
     await bot.add_cog(Maintenance(bot))

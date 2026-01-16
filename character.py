@@ -1,9 +1,10 @@
 import discord
 from discord.ext import commands
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import re
 import json
 import random
+import statistics
 from pathlib import Path
 
 # Paths
@@ -16,7 +17,7 @@ def load_json(filename: str) -> dict:
         try:
             return json.loads(path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, IOError):
-            pass
+            return {}
     return {}
 
 def save_json(filename: str, data: Any) -> None:
@@ -31,7 +32,7 @@ def roll_stat(num_dice: int) -> List[int]:
     return sorted(rolls, reverse=True)[:3]
 
 def get_recommendations(stats: Dict[str, int]) -> List[dict]:
-    """Generates class recommendations based on character stats with normalization."""
+    """Generates class recommendations using statistical analysis of character stats."""
     classes = load_json("classes.json").get("classes", [])
     
     recs = []
@@ -39,20 +40,16 @@ def get_recommendations(stats: Dict[str, int]) -> List[dict]:
         primaries = cls.get("primary_stats", [])
         secondaries = cls.get("secondary_stats", [])
         
-        # Calculate scores normalized by the number of required stats
-        # This prevents classes with 3 primary stats (e.g., Monk) from dominating 
-        # classes with 2 primary stats (e.g., Fighter) simply by having more additive terms.
-        
-        p_val = sum(stats.get(s, 10) for s in primaries)
-        p_score = (p_val / len(primaries)) * 10 if primaries else 0
-        
-        s_val = sum(stats.get(s, 10) for s in secondaries)
-        s_score = (s_val / len(secondaries)) * 5 if secondaries else 0
+        # Helper to get values for a list of stats
+        get_vals = lambda slist: [stats.get(s, 10) for s in slist]
+
+        # Calculate scores using mean (average) for better distribution balance
+        p_score = statistics.mean(get_vals(primaries)) * 1.0 if primaries else 0
+        s_score = statistics.mean(get_vals(secondaries)) * 0.5 if secondaries else 0
         
         total_score = p_score + s_score
-
-        # Add slight randomization to break ties and add variety (±5%)
-        # This solves the "always the exact same order" feeling
+        
+        # Add slight randomization to break ties (±5%)
         variance = random.uniform(0.95, 1.05)
         
         recs.append({
@@ -72,15 +69,34 @@ class CharacterCog(commands.Cog, name="Character"):
         self.active_creations: Dict[int, Dict[str, Any]] = {}
 
     def parse_racial_modifiers(self, race_data: dict) -> Dict[str, int]:
+        """Parses racial modifiers from text string using regex."""
         mods = {s: 0 for s in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]}
-        stat_map = {"Strength": "STR", "Dexterity": "DEX", "Constitution": "CON", "Intelligence": "INT", "Wisdom": "WIS", "Charisma": "CHA"}
+        stat_map = {
+            "Strength": "STR", "Dexterity": "DEX", "Constitution": "CON", 
+            "Intelligence": "INT", "Wisdom": "WIS", "Charisma": "CHA"
+        }
+        
+        # Regex explanation:
+        # ([\+\-]\d+) : capture group 1, matches +2 or -1
+        # \s*         : matches zero or more spaces (handled " +2 Dex" and "+2Dex")
+        # (\w+)       : capture group 2, matches the stat name
+        regex = r"([\+\-]\d+)\s*(\w+)"
         
         for key in ["Ability Score Plus", "Ability Score Minus"]:
             text = race_data.get(key, "")
-            if text and text != "None":
-                for val, name in re.findall(r"([\+\-]\d+)\s+(\w+)", text):
-                    if name in stat_map:
-                        mods[stat_map[name]] += int(val)
+            if text and text not in ["None", ""]:
+                # Check for flexible bonus
+                if "to one ability score" in text.lower():
+                     mods["ANY"] = 2
+
+                for val, name in re.findall(regex, text):
+                    # Normalize race stat name if it matches our map keys
+                    # Check for partial matches or full matches as needed
+                    # ideally we iterate map keys to find the match in the captured name
+                    for full_name, short_code in stat_map.items():
+                        if full_name.lower() in name.lower() or short_code.lower() == name.lower():
+                            mods[short_code] += int(val)
+                            break
         return mods
 
     @commands.group(name="char", invoke_without_command=True)
@@ -206,6 +222,9 @@ class CharacterCog(commands.Cog, name="Character"):
         plus = creation["race_data"].get("Ability Score Plus", "None")
         minus = creation["race_data"].get("Ability Score Minus", "None")
         adj_text = f"**Race**: {creation['race_name']}\n**Bonus**: {plus}\n**Penalty**: {minus}"
+        
+        if racial_mods.get("ANY"):
+            adj_text += f"\n\n✨ **Flexible Bonus Available!**\nUse `!char add <STAT> {racial_mods['ANY']}` to apply your +{racial_mods['ANY']} bonus."
         embed_stats.add_field(name="🛡️ Racial Traits", value=adj_text, inline=True)
         
         embed_stats.set_footer(text="Use !char save <name> to finalize your character.")
