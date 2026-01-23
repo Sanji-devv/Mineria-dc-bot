@@ -1,42 +1,25 @@
-2026-01-15 15:38:37 - INFO - 🧪 Using Test Token (Prefix: /)
-2026-01-15 15:38:38 - INFO - ✅ Loaded extension: dice
-2026-01-15 15:38:38 - INFO - ✅ Loaded extension: character
-2026-01-15 15:38:38 - INFO - ✅ Loaded extension: help
-2026-01-15 15:38:38 - INFO - ✅ Loaded extension: maintenance
-2026-01-15 15:38:38 - INFO - ✅ Loaded extension: log_handler
-2026-01-15 15:38:41 - INFO - ✨ test bots is online! servers: 1
-2026-01-15 15:41:24 - INFO - 🚀 Using Production Token (Prefix: !)
-2026-01-15 15:41:25 - INFO - ✅ Loaded extension: dice
-2026-01-15 15:41:25 - INFO - ✅ Loaded extension: character
-2026-01-15 15:41:25 - INFO - ✅ Loaded extension: help
-2026-01-15 15:41:25 - INFO - ✅ Loaded extension: maintenance
-2026-01-15 15:41:25 - INFO - ✅ Loaded extension: log_handler
-2026-01-15 15:41:28 - INFO - ✨ Mineria is online! servers: 1
-2026-01-15 15:41:32 - INFO - 📥 COMMAND REQUEST | User: sanji1903 (388683129658933259) | Command: !M | Guild: Unknown Lands
-2026-01-15 15:41:33 - INFO - ✅ COMMAND SUCCESS | User: sanji1903 (388683129658933259) | Command: help
-2026-01-15 15:41:39 - INFO - 📥 COMMAND REQUEST | User: sanji1903 (388683129658933259) | Command: !roll d6 | Guild: Unknown Lands
-2026-01-15 15:41:40 - INFO - ✅ COMMAND SUCCESS | User: sanji1903 (388683129658933259) | Command: roll
-2026-01-15 15:41:50 - INFO - 📥 COMMAND REQUEST | User: sanji1903 (388683129658933259) | Command: !char create elf | Guild: Unknown Lands
-2026-01-15 15:41:50 - INFO - ✅ COMMAND SUCCESS | User: sanji1903 (388683129658933259) | Command: create
-2026-01-15 15:41:54 - INFO - 📥 COMMAND REQUEST | User: sanji1903 (388683129658933259) | Command: !char dr STR 6 DEX 5 CON 5 INT 5 WIS 4 CHA 6 | Guild: Unknown Lands
-2026-01-15 15:41:54 - INFO - ✅ COMMAND SUCCESS | User: sanji1903 (388683129658933259) | Command: dr
-2026-01-15 15:41:57 - INFO - 📥 COMMAND REQUEST | User: sanji1903 (388683129658933259) | Command: !char dr STR 6 DEX 5 CON 5 INT 5 WIS 4 CHA 5 | Guild: Unknown Lands
-2026-01-15 15:41:57 - INFO - ✅ COMMAND SUCCESS | User: sanji1903 (388683129658933259) | Command: dr
-2026-01-15 15:44:47 - INFO - 🚀 Using Production Token (Prefix: !)
-2026-01-15 15:44:47 - INFO - ✅ Loaded extension: dice
-2026-01-15 15:44:48 - INFO - ✅ Loaded extension: character
-2026-01-15 15:44:48 - INFO - ✅ Loaded extension: help
-2026-01-15 15:44:48 - INFO - ✅ Loaded extension: maintenance
-2026-01-15 15:44:48 - INFO - ✅ Loaded extension: log_handler
-2026-01-15 15:44:50 - INFO - ✨ Mineria is online! servers: 1
-2026-01-15 15:45:21 - INFO - 🚀 Using Production Token (Prefix: !)
-2026-01-15 15:45:24 - INFO - ✨ Mineria is online! servers: 1
-2026-01-15 23:08:50 - INFO - 🚀 Using Production Token (Prefix: !)
-2026-01-15 23:08:51 - INFO - ✅ Loaded extension: character
-2026-01-15 23:08:51 - INFO - ✅ Loaded extension: dice
-2026-01-15 23:08:51 - INFO - ✅ Loaded extension: help
-2026-01-15 23:08:51 - INFO - ✅ Loaded extension: maintenance
-2026-01-15 23:08:51 - INFO - ✅ Loaded extension: log_handler
-2026-01-15 23:08:55 - INFO - ✨ Mineria is online! servers: 1
-2026-01-15 23:08:56 - INFO - 📥 COMMAND REQUEST | User: sanji1903 (388683129658933259) | Command: !m | Guild: Unknown Lands
-2026-01-15 23:08:57 - INFO - ✅ COMMAND SUCCESS | User: sanji1903 (388683129658933259) | Command: help
+2026-01-23 22:34:54 - CRITICAL - ❌ ERROR: Neither DISCORD_TOKEN nor TEST_TOKEN found in .env file.
+2026-01-23 22:35:43 - INFO - 🚀 Using Production Token (Prefix: !)
+2026-01-23 22:35:44 - INFO - ✅ Loaded extension: character
+2026-01-23 22:35:44 - INFO - ✅ Loaded extension: dice
+2026-01-23 22:35:44 - INFO - ✅ Loaded extension: help
+2026-01-23 22:35:44 - INFO - ✅ Loaded extension: maintenance
+2026-01-23 22:35:44 - INFO - ✅ Loaded extension: log_handler
+2026-01-23 22:35:44 - INFO - ✅ Loaded extension: links
+2026-01-23 22:35:44 - INFO - ✅ Loaded extension: documents
+2026-01-23 22:35:44 - INFO - ✅ Loaded extension: utility
+2026-01-23 22:35:46 - INFO - ✨ Mineria is online! servers: 1
+2026-01-23 22:37:54 - INFO - 🚀 Using Production Token (Prefix: !)
+2026-01-23 22:37:54 - INFO - ✅ Loaded extension: character
+2026-01-23 22:37:54 - INFO - ✅ Loaded extension: dice
+2026-01-23 22:37:54 - INFO - ✅ Loaded extension: help
+2026-01-23 22:37:54 - INFO - ✅ Loaded extension: maintenance
+2026-01-23 22:37:54 - INFO - ✅ Loaded extension: log_handler
+2026-01-23 22:37:54 - INFO - ✅ Loaded extension: links
+2026-01-23 22:37:54 - INFO - ✅ Loaded extension: documents
+2026-01-23 22:37:54 - INFO - ✅ Loaded extension: utility
+2026-01-23 22:37:57 - INFO - ✨ Mineria is online! servers: 1
+2026-01-23 22:38:08 - INFO - 📥 COMMAND REQUEST | User: sanji1903 (388683129658933259) | Command: !m | Guild: Unknown Lands
+2026-01-23 22:38:08 - INFO - ✅ COMMAND SUCCESS | User: sanji1903 (388683129658933259) | Command: help
+2026-01-23 22:38:13 - INFO - 📥 COMMAND REQUEST | User: sanji1903 (388683129658933259) | Command: !d | Guild: Unknown Lands
+2026-01-23 22:38:15 - INFO - ✅ COMMAND SUCCESS | User: sanji1903 (388683129658933259) | Command: d

@@ -67,8 +67,8 @@ class Dice(commands.Cog):
         await ctx.send(embed=discord.Embed(
             title=f"🎲 {ctx.author.display_name} rolled:",
             description="\n".join(results),
-            color=discord.Color.dark_grey()
-        ))
+            color=discord.Color.gold()
+        ).set_footer(text="Mineria RPG • Dice System", icon_url=self.bot.user.avatar.url))
 
 async def setup(bot):
     await bot.add_cog(Dice(bot))

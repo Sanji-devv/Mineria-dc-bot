@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands, tasks
 import shutil
 import os
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 import logging
 from pathlib import Path
 
@@ -66,7 +66,11 @@ class Maintenance(commands.Cog):
         backup_type: 'daily' or 'weekly'
         retention: number of files to keep
         """
-        data_dir = Path("data")
+        # Detect data directory (Root 'datas' or 'data')
+        data_dir = Path("datas")
+        if not data_dir.exists():
+             data_dir = Path("data")
+             
         backup_root = Path("backups")
         target_dir = backup_root / backup_type
         
@@ -76,22 +80,39 @@ class Maintenance(commands.Cog):
 
         target_dir.mkdir(parents=True, exist_ok=True)
         
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        backup_filename = f"mineria_{backup_type}_{timestamp}"
-        backup_path = target_dir / backup_filename
+        now = datetime.now()
+        
+        if backup_type == "daily":
+            # Format: friday_23_01_2026
+            filename = now.strftime("%A_%d_%m_%Y").lower()
+            
+        elif backup_type == "weekly":
+            # Format: 19-25_december (Mon-Sun range)
+            start_date = now - timedelta(days=now.weekday()) # Monday
+            end_date = start_date + timedelta(days=6)        # Sunday
+            
+            # Use end_date's month name? User example 'december'.
+            month_name = end_date.strftime("%B").lower()
+            filename = f"{start_date.day}-{end_date.day}_{month_name}"
+        else:
+            # Fallback
+            timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
+            filename = f"mineria_{backup_type}_{timestamp}"
+
+        backup_path = target_dir / filename
         
         try:
             # shutil.make_archive automatically adds .zip extension
             shutil.make_archive(str(backup_path), 'zip', str(data_dir))
             
-            final_filename = f"{backup_filename}.zip"
+            final_filename = f"{filename}.zip"
             logger.info(f"✅ {backup_type.capitalize()} backup created: {final_filename}")
             
             self.prune_backups(target_dir, retention)
             return final_filename
         except Exception as e:
-            logger.error(f"❌ {backup_type.capitalize()} backup failed: {e}")
-            return None
+             logger.error(f"❌ {backup_type.capitalize()} backup failed: {e}")
+             return None
 
 async def setup(bot):
     await bot.add_cog(Maintenance(bot))

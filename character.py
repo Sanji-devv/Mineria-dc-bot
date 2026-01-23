@@ -1,17 +1,30 @@
 import discord
 from discord.ext import commands
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple, Union
 import re
 import json
 import random
 import statistics
 from pathlib import Path
 
-# Paths
+# =================================================================================================
+# CONSTANTS & PATHS
+# =================================================================================================
+
 DATA_DIR = Path(__file__).parent / "data"
 
-def load_json(filename: str) -> dict:
-    """Loads data from a JSON file in the 'data' directory."""
+# Standard Feat Slots fallback
+DEFAULT_FEAT_SLOTS = [
+    "1. Level", "1. Level Class Bonus Feat", "1. Level Racial Bonus Feat",
+    "3. Level", "5. Level", "7. Level", "9. Level", "11. Level"
+]
+
+# =================================================================================================
+# HELPER FUNCTIONS
+# =================================================================================================
+
+def load_json(filename: str) -> Union[Dict, List, Any]:
+    """Loads JSON data from the data directory safely."""
     path = DATA_DIR / filename
     if path.exists():
         try:
@@ -21,7 +34,7 @@ def load_json(filename: str) -> dict:
     return {}
 
 def save_json(filename: str, data: Any) -> None:
-    """Saves data to a JSON file in the 'data' directory."""
+    """Saves data to a JSON file in the data directory."""
     path = DATA_DIR / filename
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=4), encoding="utf-8")
@@ -32,9 +45,16 @@ def roll_stat(num_dice: int) -> List[int]:
     return sorted(rolls, reverse=True)[:3]
 
 def get_recommendations(stats: Dict[str, int]) -> List[dict]:
-    """Generates class recommendations using statistical analysis of character stats."""
-    classes = load_json("classes.json").get("classes", [])
-    
+    """
+    Generates class recommendations based on stats.
+    Returns: List of dicts with 'name' and 'score'.
+    """
+    classes_data = load_json("classes.json")
+    if isinstance(classes_data, dict):
+        classes = classes_data.get("classes", [])
+    else:
+        classes = []
+
     recs = []
     for cls in classes:
         primaries = cls.get("primary_stats", [])
@@ -43,13 +63,13 @@ def get_recommendations(stats: Dict[str, int]) -> List[dict]:
         # Helper to get values for a list of stats
         get_vals = lambda slist: [stats.get(s, 10) for s in slist]
 
-        # Calculate scores using mean (average) for better distribution balance
+        # Score Calculation
         p_score = statistics.mean(get_vals(primaries)) * 1.0 if primaries else 0
         s_score = statistics.mean(get_vals(secondaries)) * 0.5 if secondaries else 0
         
         total_score = p_score + s_score
         
-        # Add slight randomization to break ties (±5%)
+        # Add slight randomization to break ties
         variance = random.uniform(0.95, 1.05)
         
         recs.append({
@@ -59,66 +79,85 @@ def get_recommendations(stats: Dict[str, int]) -> List[dict]:
         
     return sorted(recs, key=lambda x: x["score"], reverse=True)[:5]
 
-# ==========================================
+# =================================================================================================
 # CHARACTER COG
-# ==========================================
+# =================================================================================================
 
 class CharacterCog(commands.Cog, name="Character"):
-    def __init__(self, bot):
+    """
+    Commands for Character Creation, Management, and Stat Rolling.
+    """
+    
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.active_creations: Dict[int, Dict[str, Any]] = {}
 
     def parse_racial_modifiers(self, race_data: dict) -> Dict[str, int]:
-        """Parses racial modifiers from text string using regex."""
+        """
+        Parses racial attribute modifiers from text descriptions.
+        Example: "+2 Strength, -2 Wisdom" -> {'STR': 2, 'WIS': -2}
+        """
         mods = {s: 0 for s in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]}
+        
         stat_map = {
             "Strength": "STR", "Dexterity": "DEX", "Constitution": "CON", 
             "Intelligence": "INT", "Wisdom": "WIS", "Charisma": "CHA"
         }
         
-        # Regex explanation:
-        # ([\+\-]\d+) : capture group 1, matches +2 or -1
-        # \s*         : matches zero or more spaces (handled " +2 Dex" and "+2Dex")
-        # (\w+)       : capture group 2, matches the stat name
         regex = r"([\+\-]\d+)\s*(\w+)"
         
         for key in ["Ability Score Plus", "Ability Score Minus"]:
             text = race_data.get(key, "")
             if text and text not in ["None", ""]:
-                # Check for flexible bonus
+                
+                # Check for "Any" bonus
                 if "to one ability score" in text.lower():
                      mods["ANY"] = 2
 
                 for val, name in re.findall(regex, text):
-                    # Normalize race stat name if it matches our map keys
-                    # Check for partial matches or full matches as needed
-                    # ideally we iterate map keys to find the match in the captured name
+                    # Match full names or short codes
                     for full_name, short_code in stat_map.items():
                         if full_name.lower() in name.lower() or short_code.lower() == name.lower():
                             mods[short_code] += int(val)
                             break
         return mods
 
+    # ==========================
+    # MAIN COMMAND GROUP
+    # ==========================
+
     @commands.group(name="char", invoke_without_command=True)
     async def char(self, ctx: commands.Context):
-        """Character management commands."""
-        embed = discord.Embed(title="👤 Character Commands", color=discord.Color.blue())
+        """Root command for Character Management."""
+        embed = discord.Embed(title="👤 Character Commands", color=discord.Color.gold())
         embed.description = (
+            "**Creation**\n"
             "`!char create <race>` - Start creation\n"
-            "`!char dr STR 6 DEX 5 ...` - Distribute dice\n"
+            "`!char dr <stats>` - Distribute dice\n"
             "`!char add/remove <stat> <val>` - Tweak stats\n"
-            "`!char save <name>` - Finalize character\n"
+            "`!char save <name>` - Finalize character\n\n"
+            "**Management**\n"
             "`!char info [name]` - View character\n"
             "`!char list` - List your characters\n"
-            "`!char delete <name>` - Delete character\n"
-            "`!char edit class <name> <class>` - Change class\n"
-            "`!char edit stat <name> <stat> <val>` - Change stat"
+            "`!char rename <old> <new>` - Rename\n"
+            "`!char delete <name>` - Delete\n\n"
+            "**Editing**\n"
+            "`!char edit class <name> <class>`\n"
+            "`!char edit stat <name> <stat> <val>`"
         )
+        embed.set_footer(text="Mineria RPG • Character System", icon_url=self.bot.user.avatar.url)
         await ctx.send(embed=embed)
+
+    # ==========================
+    # CREATION FLOW
+    # ==========================
 
     @char.command(name="create")
     async def create(self, ctx: commands.Context, race_name: str = None):
-        """Starts character creation."""
+        """
+        Initiates the character creation process for a given race.
+        Usage: !char create Human
+        """
         if not race_name:
             return await ctx.send("❌ Usage: `!char create <race>` (e.g., `!char create Human`)")
 
@@ -127,6 +166,7 @@ class CharacterCog(commands.Cog, name="Character"):
         if not target_race:
             return await ctx.send(f"❌ Race **{race_name}** not found.")
 
+        # Setup Creation Context
         race_data = races[target_race]
         dice_points = 40 - race_data.get("Race Points", 10)
 
@@ -138,18 +178,23 @@ class CharacterCog(commands.Cog, name="Character"):
         }
 
         embed = discord.Embed(
-            title=f"✅ {target_race} Creation Started!",
-            description=f"**{ctx.author.display_name}**, your journey as a {target_race} begins.",
-            color=discord.Color.blue()
+            title=f"✨ {target_race} Creation Started",
+            description=f"**{ctx.author.display_name}**, your journey begins.",
+            color=discord.Color.gold()
         )
-        embed.add_field(name="🎲 Dice Points", value=f"You have **{dice_points}** points available.", inline=True)
-        embed.add_field(name="👉 Next Step", value=f"Distribute your points using `!char dr`.\nExample: `!char dr STR 6 DEX 5 CON 5 INT 5 WIS 4 CHA 6` (Total: {dice_points} dice)", inline=False)
+        embed.add_field(name="🎲 Dice Points", value=f"**{dice_points}** points available.", inline=True)
+        embed.add_field(name="👉 Next Step", value="Distribute using `!char dr`.\nEx: `!char dr STR 10 DEX 10 ...`", inline=False)
+        embed.set_thumbnail(url=ctx.author.avatar.url if ctx.author.avatar else None)
+        embed.set_footer(text="Mineria RPG • Creation Mode", icon_url=self.bot.user.avatar.url)
         
         await ctx.send(embed=embed)
 
     @char.command(name="dr")
     async def distribute(self, ctx: commands.Context, *args):
-        """Distribute dice points and roll stats."""
+        """
+        Distributes dice points and rolls for stats.
+        Usage: !char dr STR 6 DEX 6 ... (Total dice must match available points)
+        """
         user_id = ctx.author.id
         if user_id not in self.active_creations:
             return await ctx.send("❌ Use `!char create <race>` first.")
@@ -158,48 +203,50 @@ class CharacterCog(commands.Cog, name="Character"):
         keys = ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
         stats_to_set = {}
 
+        # Parse Arguments
+        # Mode 1: Pure numbers "6 6 6 6 6 6" (Assumes order: STR DEX CON INT WIS CHA)
         if len(args) == 6 and all(a.isdigit() for a in args):
             values = [int(a) for a in args]
             stats_to_set = dict(zip(keys, values))
         
+        # Mode 2: Key-Value pairs "STR 6 DEX 6..."
         elif len(args) == 12:
             for i in range(0, 12, 2):
                 stat_name = args[i].upper()
                 if stat_name not in keys:
-                    return await ctx.send(f"❌ Invalid stat name: **{args[i]}**. Use STR, DEX, CON, INT, WIS, CHA.")
+                    return await ctx.send(f"❌ Invalid stat name: **{args[i]}**.")
                 if not args[i+1].isdigit():
-                    return await ctx.send(f"❌ Invalid value for {stat_name}: **{args[i+1]}**. Must be a number.")
+                    return await ctx.send(f"❌ Invalid value for {stat_name}: **{args[i+1]}**.")
                 stats_to_set[stat_name] = int(args[i+1])
             
             if len(stats_to_set) < 6:
-                return await ctx.send("❌ Please provide values for ALL 6 stats: STR, DEX, CON, INT, WIS, CHA.")
+                return await ctx.send("❌ Please provide values for ALL 6 stats.")
         else:
             return await ctx.send(
-                f"❌ **Invalid Format!**\nUse either:\n"
-                f"1️⃣ `!char dr 6 5 5 5 4 5`\n"
-                f"2️⃣ `!char dr STR 6 DEX 5 CON 5 INT 5 WIS 4 CHA 5`\n"
-                f"Total dice points required: **{creation['dice_points']}**"
+                f"❌ **Invalid Format!**\nUse `!char dr STR 6 ...` (Target Total: {creation['dice_points']})"
             )
 
+        # Validation
         current_total = sum(stats_to_set.values())
         if current_total != creation["dice_points"]:
             diff = creation["dice_points"] - current_total
             status = "missing" if diff > 0 else "too many"
             return await ctx.send(
                 f"❌ **Point Mismatch!**\n"
-                f"Target: **{creation['dice_points']}** dice\n"
-                f"Current: **{current_total}** dice\n"
+                f"Target: **{creation['dice_points']}** | Current: **{current_total}**\n"
                 f"You are {status} **{abs(diff)}** dice."
             )
 
         if any(v < 3 for v in stats_to_set.values()):
             return await ctx.send("❌ Each stat must have at least **3** dice.")
 
+        # Roll Logic
         final_stats = {}
         racial_mods = self.parse_racial_modifiers(creation["race_data"])
         
         embed_stats = discord.Embed(
-            title=f"🎲 Stat Roll Results - {ctx.author.display_name}",
+            title="🎲 Stat Roll Results",
+            description=f"Rolled by **{ctx.author.display_name}**",
             color=discord.Color.gold()
         )
 
@@ -214,179 +261,90 @@ class CharacterCog(commands.Cog, name="Character"):
             mod_str = f" {'+' if mod >= 0 else '-'} {abs(mod)} (Race)" if mod != 0 else ""
             rolls_text += f"**{stat}**: ({num}d6) -> {base_total}{mod_str} = **{final_val}**\n"
 
-        embed_stats.add_field(name="📊 Roll Breakdown", value=rolls_text, inline=False)
+        embed_stats.add_field(name="📊 Details", value=rolls_text, inline=False)
 
-        attrs_text = "\n".join([f"**{s}**: {v}" for s, v in final_stats.items()])
-        embed_stats.add_field(name="✨ Final Attributes", value=attrs_text, inline=True)
+        # Display Stats
+        phy = ["STR", "DEX", "CON"]
+        men = ["INT", "WIS", "CHA"]
+        
+        col1 = "\n".join([f"**{s}**: {final_stats[s]}" for s in phy])
+        col2 = "\n".join([f"**{s}**: {final_stats[s]}" for s in men])
+        
+        embed_stats.add_field(name="🛡️ Physical", value=col1, inline=True)
+        embed_stats.add_field(name="🔮 Mental", value=col2, inline=True)
 
+        # Racial info
         plus = creation["race_data"].get("Ability Score Plus", "None")
         minus = creation["race_data"].get("Ability Score Minus", "None")
         adj_text = f"**Race**: {creation['race_name']}\n**Bonus**: {plus}\n**Penalty**: {minus}"
         
         if racial_mods.get("ANY"):
-            adj_text += f"\n\n✨ **Flexible Bonus Available!**\nUse `!char add <STAT> {racial_mods['ANY']}` to apply your +{racial_mods['ANY']} bonus."
-        embed_stats.add_field(name="🛡️ Racial Traits", value=adj_text, inline=True)
+            adj_text += f"\n\n✨ **Flexible Bonus!**\nUse `!char add <STAT> {racial_mods['ANY']}`"
         
-        embed_stats.set_footer(text="Use !char save <name> to finalize your character.")
+        embed_stats.add_field(name="🧬 Traits", value=adj_text, inline=False)
+        embed_stats.set_footer(text="Use !char save <name> to finalize.", icon_url=self.bot.user.avatar.url)
 
         creation["stats"] = final_stats
-
         await ctx.send(embed=embed_stats)
 
+        # Recommendations
         settings = load_json("user_settings.json")
         user_settings = settings.get(str(ctx.author.id), {})
-        show_recs = user_settings.get("show_recommendations", True)
-
-        if show_recs:
+        
+        if user_settings.get("show_recommendations", True):
             recommendations = get_recommendations(final_stats)
             if recommendations:
                 embed_recs = discord.Embed(
-                    title="🛡️ Recommended Classes",
-                    description="Best matching classes:",
+                    title="🛡️ Class Recommendations",
+                    description="\n".join([f"• **{r['name']}**" for r in recommendations]),
                     color=discord.Color.blue()
                 )
-                rec_text = ""
-                for r in recommendations:
-                    rec_text += f"• **{r['name']}**\n"
-                embed_recs.description += f"\n\n{rec_text}"
                 await ctx.send(embed=embed_recs)
-
-    @commands.group(name="rec", aliases=["r"], invoke_without_command=True)
-    async def rec(self, ctx: commands.Context):
-        """Manage recommendation settings."""
-        settings = load_json("user_settings.json")
-        user_settings = settings.get(str(ctx.author.id), {})
-        status = user_settings.get("show_recommendations", True)
-        
-        status_text = "✅ **Enabled**" if status else "❌ **Disabled**"
-        await ctx.send(f"ℹ️ Class Recommendations are currently: {status_text}\nUse `!m r open` or `!m r close` to change.")
-
-    @rec.command(name="open")
-    async def rec_open(self, ctx: commands.Context):
-        """Enable class recommendations."""
-        settings = load_json("user_settings.json")
-        uid = str(ctx.author.id)
-        
-        if uid not in settings: settings[uid] = {}
-        settings[uid]["show_recommendations"] = True
-        
-        save_json("user_settings.json", settings)
-        await ctx.send("✅ Class recommendations have been **Enabled**.")
-
-    @rec.command(name="close")
-    async def rec_close(self, ctx: commands.Context):
-        """Disable class recommendations."""
-        settings = load_json("user_settings.json")
-        uid = str(ctx.author.id)
-        
-        if uid not in settings: settings[uid] = {}
-        settings[uid]["show_recommendations"] = False
-        
-        save_json("user_settings.json", settings)
-        await ctx.send("❌ Class recommendations have been **Disabled**.")
 
     @char.command(name="add")
     async def add_stat(self, ctx: commands.Context, stat: str, value: int):
-        """Adds a bonus to a stat during creation."""
+        """Adds a bonus value to a stat during creation."""
         user_id = ctx.author.id
         if user_id not in self.active_creations:
-            return await ctx.send("❌ No active character creation. Use `!char create <race>` first.")
-
+             return await ctx.send("❌ No active character creation.")
+        
         creation = self.active_creations[user_id]
         if "stats" not in creation or not creation["stats"]:
-            return await ctx.send("❌ Stats not rolled yet. Use `!char dr` first.")
+             return await ctx.send("❌ Roll stats first with `!char dr`.")
 
         stat = stat.upper()
         if stat not in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]:
-            return await ctx.send("❌ Invalid stat. Use STR, DEX, CON, INT, WIS, CHA.")
+            return await ctx.send("❌ Invalid stat.")
 
         creation["stats"][stat] += value
-        await ctx.send(f"✅ **{stat}** increased by {value}. New value: **{creation['stats'][stat]}**")
+        await ctx.send(f"✅ **{stat}** updated to **{creation['stats'][stat]}**")
 
     @char.command(name="remove")
     async def remove_stat(self, ctx: commands.Context, stat: str, value: int):
         """Removes a value from a stat during creation."""
         user_id = ctx.author.id
         if user_id not in self.active_creations:
-            return await ctx.send("❌ No active character creation. Use `!char create <race>` first.")
-
+             return await ctx.send("❌ No active character creation.")
+        
         creation = self.active_creations[user_id]
-        if "stats" not in creation or not creation["stats"]:
-            return await ctx.send("❌ Stats not rolled yet. Use `!char dr` first.")
+        if not creation.get("stats"):
+             return await ctx.send("❌ Roll stats first.")
 
         stat = stat.upper()
         if stat not in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]:
-            return await ctx.send("❌ Invalid stat. Use STR, DEX, CON, INT, WIS, CHA.")
+            return await ctx.send("❌ Invalid stat.")
 
         creation["stats"][stat] -= value
-        await ctx.send(f"✅ **{stat}** decreased by {value}. New value: **{creation['stats'][stat]}**")
-
-    @char.group(name="edit", invoke_without_command=True)
-    async def edit(self, ctx: commands.Context):
-        """Edit saved character details."""
-        await ctx.send("❌ Usage: `!char edit class` or `!char edit stat`")
-
-    @edit.command(name="class")
-    async def edit_class(self, ctx: commands.Context, name: str, new_class: str):
-        """Change a character's class."""
-        characters = load_json("characters.json")
-        uid = str(ctx.author.id)
-        
-        if uid not in characters:
-            return await ctx.send("❌ You have no characters.")
-
-        char_data = next((c for c in characters[uid] if c["name"].lower() == name.lower()), None)
-        if not char_data:
-            return await ctx.send(f"❌ Character **{name}** not found.")
-
-        old_class = char_data.get("class", "None")
-        char_data["class"] = new_class
-        save_json("characters.json", characters)
-        
-        embed = discord.Embed(
-            title="✏️ Class Updated",
-            description=f"Character **{char_data['name']}** class changed from **{old_class}** to **{new_class}**.",
-            color=discord.Color.green()
-        )
-        await ctx.send(embed=embed)
-
-    @edit.command(name="stat")
-    async def edit_stat(self, ctx: commands.Context, name: str, stat: str, value: int):
-        """Change a saved character's stat manually."""
-        characters = load_json("characters.json")
-        uid = str(ctx.author.id)
-        
-        if uid not in characters:
-            return await ctx.send("❌ You have no characters.")
-
-        char_data = next((c for c in characters[uid] if c["name"].lower() == name.lower()), None)
-        if not char_data:
-            return await ctx.send(f"❌ Character **{name}** not found.")
-
-        stat = stat.upper()
-        if stat not in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]:
-            return await ctx.send("❌ Invalid stat. Use STR, DEX, CON, INT, WIS, CHA.")
-
-        old_val = char_data["stats"].get(stat, 0)
-        char_data["stats"][stat] = value
-        save_json("characters.json", characters)
-        
-        embed = discord.Embed(
-            title="✏️ Stat Updated",
-            description=f"Character **{char_data['name']}** - **{stat}** changed from {old_val} to **{value}**.",
-            color=discord.Color.green()
-        )
-        await ctx.send(embed=embed)
+        await ctx.send(f"✅ **{stat}** updated to **{creation['stats'][stat]}**")
 
     @char.command(name="save")
     async def save_char(self, ctx: commands.Context, *, name: str = None):
-        """Saves the character."""
+        """Finalizes and saves the character."""
         user_id = ctx.author.id
         if user_id not in self.active_creations or not self.active_creations[user_id]["stats"]:
-            return await ctx.send("❌ You don't have a rolled character to save.")
+            return await ctx.send("❌ No pending creation to save. Use `!char create`.")
         
-        if not name:
-            return await ctx.send("❌ Usage: `!char save <name>`")
+        if not name: return await ctx.send("❌ Usage: `!char save <name>`")
 
         creation = self.active_creations[user_id]
         characters = load_json("characters.json")
@@ -394,7 +352,7 @@ class CharacterCog(commands.Cog, name="Character"):
         
         if uid not in characters: characters[uid] = []
         if any(c["name"].lower() == name.lower() for c in characters[uid]):
-            return await ctx.send(f"❌ You already have a character named **{name}**.")
+            return await ctx.send(f"❌ Name **{name}** is taken.")
 
         new_char = {
             "name": name,
@@ -407,16 +365,106 @@ class CharacterCog(commands.Cog, name="Character"):
         characters[uid].append(new_char)
         save_json("characters.json", characters)
         del self.active_creations[user_id]
+        
         embed = discord.Embed(
-            title="💾 Character Saved!",
-            description=f"Character **{name}** has been saved to your profile!",
+            title="💾 Character Saved",
+            description=f"**{name}** ({creation['race_name']}) has been created!",
+            color=discord.Color.green()
+        )
+        embed.set_footer(text="Mineria RPG • Saved", icon_url=self.bot.user.avatar.url)
+        await ctx.send(embed=embed)
+
+    # ==========================
+    # REC SETTINGS
+    # ==========================
+    
+    @commands.group(name="rec", invoke_without_command=True)
+    async def rec(self, ctx: commands.Context):
+        """Settings for Class Recommendations."""
+        await ctx.send("Use `!rec open` or `!rec close`.")
+
+    @rec.command(name="open")
+    async def rec_open(self, ctx: commands.Context):
+        """Enables class recommendations."""
+        settings = load_json("user_settings.json")
+        uid = str(ctx.author.id)
+        if uid not in settings: settings[uid] = {}
+        settings[uid]["show_recommendations"] = True
+        save_json("user_settings.json", settings)
+        await ctx.send("✅ Recommendations **Enabled**.")
+
+    @rec.command(name="close")
+    async def rec_close(self, ctx: commands.Context):
+        """Disables class recommendations."""
+        settings = load_json("user_settings.json")
+        uid = str(ctx.author.id)
+        if uid not in settings: settings[uid] = {}
+        settings[uid]["show_recommendations"] = False
+        save_json("user_settings.json", settings)
+        await ctx.send("❌ Recommendations **Disabled**.")
+
+    # ==========================
+    # EDITING COMMANDS
+    # ==========================
+
+    @char.group(name="edit", invoke_without_command=True)
+    async def edit(self, ctx: commands.Context):
+        """Edit saved character details."""
+        await ctx.send("❌ Usage: `!char edit class` or `!char edit stat`")
+
+    @edit.command(name="class")
+    async def edit_class(self, ctx: commands.Context, name: str, new_class: str):
+        """Edits a character's class."""
+        characters = load_json("characters.json")
+        uid = str(ctx.author.id)
+        if uid not in characters: return await ctx.send("❌ No characters.")
+
+        char_data = next((c for c in characters[uid] if c["name"].lower() == name.lower()), None)
+        if not char_data: return await ctx.send(f"❌ Character **{name}** not found.")
+
+        old_class = char_data.get("class", "None")
+        char_data["class"] = new_class
+        save_json("characters.json", characters)
+        
+        embed = discord.Embed(
+            title="✏️ Class Updated",
+            description=f"**{char_data['name']}**: {old_class} ➡️ **{new_class}**",
             color=discord.Color.green()
         )
         await ctx.send(embed=embed)
 
+    @edit.command(name="stat")
+    async def edit_stat(self, ctx: commands.Context, name: str, stat: str, value: int):
+        """Edits a character's specific stat."""
+        characters = load_json("characters.json")
+        uid = str(ctx.author.id)
+        if uid not in characters: return await ctx.send("❌ No characters.")
+
+        char_data = next((c for c in characters[uid] if c["name"].lower() == name.lower()), None)
+        if not char_data: return await ctx.send(f"❌ Character **{name}** not found.")
+
+        stat = stat.upper()
+        if stat not in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]:
+            return await ctx.send("❌ Invalid stat.")
+
+        old_val = char_data["stats"].get(stat, 0)
+        char_data["stats"][stat] = value
+        save_json("characters.json", characters)
+        
+        embed = discord.Embed(
+            title="✏️ Stat Updated",
+            description=f"**{char_data['name']}** {stat}: {old_val} ➡️ **{value}**",
+            color=discord.Color.green()
+        )
+        await ctx.send(embed=embed)
+
+    # ==========================
+    # ROSTER / INFO
+    # ==========================
+
     @char.command(name="info")
     async def info(self, ctx: commands.Context, *, name: str = None):
-        """View character info. Defaults to your only character if name is omitted."""
+        """Detailed view of a character."""
         characters = load_json("characters.json")
         uid = str(ctx.author.id)
         user_chars = characters.get(uid, [])
@@ -432,8 +480,8 @@ class CharacterCog(commands.Cog, name="Character"):
                 char_list = ", ".join([f"`{c['name']}`" for c in user_chars])
                 embed = discord.Embed(
                     title="🔢 Multiple Characters Found",
-                    description=f"You have multiple characters. Please specify which one to view:\n\n{char_list}\n\nUsage: `!char info <name>`",
-                    color=discord.Color.orange()
+                    description=f"Please specify which one:\n\n{char_list}\n\nUsage: `!char info <name>`",
+                    color=discord.Color.gold()
                 )
                 return await ctx.send(embed=embed)
         else:
@@ -442,82 +490,79 @@ class CharacterCog(commands.Cog, name="Character"):
         if not char_data:
             return await ctx.send(f"❌ Character **{name}** not found.")
             
+        char_class = char_data.get('class', 'Adventurer')
+        if char_class == "None": char_class = "Adventurer"
+        
         embed = discord.Embed(
             title=f"📜 {char_data['name']}",
-            description=f"The details of your adventurer.",
+            description=f"✨ **{char_data['race']}** • **{char_class}**",
             color=discord.Color.gold()
         )
-        
-        embed.add_field(name="Race", value=char_data['race'], inline=True)
-        embed.add_field(name="Class", value=char_data.get('class', 'None'), inline=True)
-        
-        # Ability Scores with Modifiers
+
+        # Stats Visualizer
         stats = char_data.get("stats", {})
-        stats_lines = []
-        for s in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]:
-            val = stats.get(s, 10)
+        def fmt_stat(label, key, emoji):
+            val = stats.get(key, 10)
             mod = (val - 10) // 2
             sign = "+" if mod >= 0 else ""
-            stats_lines.append(f"**{s}**: {val} ({sign}{mod})")
-            
-        col1 = "\n".join(stats_lines[:3])
-        col2 = "\n".join(stats_lines[3:])
+            return f"{emoji} **{label}**: {val} (`{sign}{mod}`)"
+
+        col1 = [fmt_stat("STR", "STR", "💪"), fmt_stat("DEX", "DEX", "🏃"), fmt_stat("CON", "CON", "❤️")]
+        col2 = [fmt_stat("INT", "INT", "🧠"), fmt_stat("WIS", "WIS", "🦉"), fmt_stat("CHA", "CHA", "🎭")]
+
+        embed.add_field(name="🛡️ Physical", value="\n".join(col1), inline=True)
+        embed.add_field(name="🔮 Mental", value="\n".join(col2), inline=True)
         
-        embed.add_field(name="Physical", value=col1, inline=True)
-        embed.add_field(name="Mental", value=col2, inline=True)
-        
-        created_at = char_data.get("created_at", "")
-        if created_at:
-            created_at = created_at.split(".")[0] # Remove microseconds
+        # Feat Display
+        feats = char_data.get("feats", {})
+        if feats:
+            feat_lines = []
+            for slot, feat in feats.items():
+                short_slot = slot.replace("Level", "Lvl").replace("Bonus Feat", "Bonus")
+                feat_lines.append(f"• **{short_slot}**: {feat}")
             
-        embed.set_footer(text=f"Created: {created_at}")
+            feats_text = "\n".join(feat_lines)
+            if len(feats_text) > 1000: feats_text = feats_text[:990] + "..."
+            embed.add_field(name="⚔️ Known Feats", value=feats_text, inline=False)
+        else:
+            embed.add_field(name="⚔️ Known Feats", value=" ", inline=False)
+
+        created_at = char_data.get("created_at", "").split(" ")[0]
+        footer_text = f"Mineria RPG • Created: {created_at}"
+        embed.set_footer(text=footer_text, icon_url=ctx.bot.user.avatar.url if ctx.bot.user.avatar else None)
+        if ctx.author.avatar: embed.set_thumbnail(url=ctx.author.avatar.url)
+            
         await ctx.send(embed=embed)
 
     @char.command(name="list")
     async def list_chars(self, ctx: commands.Context):
-        """List all your characters."""
+        """Lists all characters owned by the user."""
         characters = load_json("characters.json")
         user_chars = characters.get(str(ctx.author.id), [])
         
         if not user_chars:
             return await ctx.send("❌ You don't have any saved characters.")
             
-        embed = discord.Embed(title="👥 Your Characters", color=discord.Color.purple())
+        embed = discord.Embed(
+            title="👥 Your Characters", 
+            color=discord.Color.gold()
+        )
         names = "\n".join([f"• **{c['name']}** ({c['race']} {c['class']})" for c in user_chars])
         embed.description = names
+        embed.set_footer(text="Mineria RPG • Roster", icon_url=self.bot.user.avatar.url)
+        if ctx.author.avatar: embed.set_thumbnail(url=ctx.author.avatar.url)
         await ctx.send(embed=embed)
-
-    @char.command(name="delete")
-    async def delete(self, ctx: commands.Context, *, name: str):
-        """Delete a character."""
-        characters = load_json("characters.json")
-        uid = str(ctx.author.id)
-        if uid not in characters: return await ctx.send("❌ No characters found.")
-        
-        initial = len(characters[uid])
-        characters[uid] = [c for c in characters[uid] if c["name"].lower() != name.lower()]
-        
-        if len(characters[uid]) < initial:
-            save_json("characters.json", characters)
-            embed = discord.Embed(
-                title="🗑️ Character Deleted",
-                description=f"Character **{name}** has been permanently deleted.",
-                color=discord.Color.red()
-            )
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send(f"❌ Character **{name}** not found.")
 
     @char.command(name="rename")
     async def rename(self, ctx: commands.Context, old_name: str, new_name: str):
-        """Renames an existing character."""
+        """Renames a character."""
         characters = load_json("characters.json")
         uid = str(ctx.author.id)
         if uid not in characters: return await ctx.send("❌ No characters found.")
 
         for char_data in characters[uid]:
             if char_data["name"].lower() == old_name.lower():
-                # Check if new name already exists
+                # Check duplication
                 if any(c["name"].lower() == new_name.lower() for c in characters[uid]):
                     return await ctx.send(f"❌ You already have a character named **{new_name}**.")
                 

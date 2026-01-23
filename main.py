@@ -33,7 +33,7 @@ class MineriaBot(commands.Bot):
         )
 
     async def setup_hook(self):
-        extensions = ["character", "dice", "help", "maintenance", "log_handler"]
+        extensions = ["character", "dice", "help", "maintenance", "log_handler", "links", "documents", "utility"]
         for ext in extensions:
             try:
                 await self.load_extension(ext)

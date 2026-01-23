@@ -1,88 +1,59 @@
 # 🎲 Mineria Discord Bot
 
-A specialized Discord bot for **Pathfinder Roleplaying Game (1e)** character management. Create characters, roll dice, and manage character profiles directly from Discord.
+A specialized Discord bot for **Pathfinder Roleplaying Game (1e)** character management. 
+
+## ⚡ Quick Commands
+
+Prefixes: `!`, `!mineria`, `!m`
+
+| Command | Usage | Description |
+|---------|-------|-------------|
+| `!help` | `!m` | Display the interactive command manual. |
+| `!roll` | `!roll 2d20+5` | Roll dice with modifiers (e.g. `!roll d20`, `!roll 4d6k3`). |
+| `!link` | `!link` | Show commonly used Wiki links. |
+
+## 🛠️ Registry & Tools (Google Sheets)
+
+| Command | Usage | Description |
+|---------|-------|-------------|
+| `!d` | `!d` | **Duplicate Check**: Scans the XP Sheet to find players violating the "1 Ranked + 1 Clerk" limit. |
+| `!feat check` | `!feat check <name>` | **Feat Registry**: Checks if a specific Feat/Trait is available in the Global Registry. |
+| `!loot generate` | `!loot gen 5 3` | Generates random loot based on CR (Challenge Rating). |
+| `!item listdown` | `!item listdown 1000` | Lists top expensive items under a specific gold price. |
+| `!doc` | `!doc [name]` | List or download PDF/Word documents from the `files/` directory. |
+
+## 👤 Character Management
+
+| Command | Usage | Description |
+|---------|-------|-------------|
+| `!char create` | `!char create Human` | Start a new character creation process. |
+| `!char dr` | `!char dr STR 10 ...` | Distribute dice points and roll stats. |
+| `!char add` | `!char add STR 2` | Add a bonus to a stat (e.g. for Racial flexible traits). |
+| `!char save` | `!char save Aragon` | Save the created character to your profile. |
+| `!char info` | `!char info [name]` | View your character sheet. |
+| `!char list` | `!char list` | List all your saved characters. |
+| `!char edit class` | `!char edit class <name> <class>` | Update character class. |
+| `!char edit stat` | `!char edit stat <name> val>` | Manually edit a stat. |
+| `!char rename` | `!char rename <old> <new>` | Rename a character. |
+| `!char delete` | `!char delete <name>` | Delete a character. |
+| `!rec` | `!rec open/close` | Toggle AI class recommendations. |
 
 ## Features
 
-- **Character Creation**: Create Pathfinder-compatible characters with race and class selection.
-- **Dice Rolling**: Parse and roll standard RPG dice expressions (e.g., `2d20+5`, `1d10`).
-- **Attribute Rolling**: Distribute points and roll character attributes using detailed dice mechanics (4d6 drop lowest).
-- **Character Persistence**: Save, load, edit, and delete character profiles.
-- **Class Recommendations**: Get automatic class suggestions based on rolled attributes.
-- **Interactive Help System**: Built-in command manual with usage examples.
+- **Duplicate Player Detection**: Automatically identifies players holding more characters than allowed (Max 1 Ranked + 1 Clerk).
+- **Google Sheet Sync**: Fetches live data for Feat availability and Player XP tracking.
+- **Automated Backups**: Daily and weekly backups of the `data/` directory.
+- **Robust Logging**: Detailed logs in `logs/mineria.log`.
 
-## Quick Start
+## Installation
 
-### Prerequisites
-- Python 3.8+
-- Discord bot token in `.env` file
+1. Clone the repository.
+2. Install dependencies: `pip install -r requirements.txt`.
+3. Create a `.env` file with `DISCORD_TOKEN`.
+4. Run: `python main.py`.
 
-## Commands
+## Data Structure
 
-**Prefixes**: `!`, `!mineria`, `!m`
-
-### 🎲 Dice Rolling
-
-| Command | Usage | Description |
-|---------|-------|-------------|
-| `!roll` | `!roll 2d20+5` | Roll dice with modifiers. Supports multiple rolls (e.g., `!roll 1d20 2d6`). |
-
-### 👤 Character Management
-
-| Command | Usage | Description |
-|---------|-------|-------------|
-| `!char create` | `!char create <race>` | Start a new character creation process (e.g., `!char create Human`). |
-| `!char dr` | `!char dr <stats>` | Distribute dice points and roll stats (e.g., `!char dr STR 6 DEX 5...`). |
-| `!char add` | `!char add <stat> <val>` | Add a bonus to a stat during creation (e.g., `!char add STR 2`). |
-| `!char remove` | `!char remove <stat> <val>` | Remove a bonus/value from a stat during creation. |
-| `!char save` | `!char save <name>` | Save the currently created character to your profile. |
-| `!char info` | `!char info [name]` | View details of a saved character. Defaults to your only character if name is omitted. |
-| `!char list` | `!char list` | List all characters currently saved to your profile. |
-| `!char delete` | `!char delete <name>` | Permanently delete a character. |
-| `!char rename` | `!char rename <old> <new>` | Rename an existing character. |
-| `!char edit class` | `!char edit class <name> <class>` | Update a character's class. |
-| `!char edit stat` | `!char edit stat <name> <stat> <val>` | Manually edit a specific stat value for a character. |
-
-### 💡 Recommendations
-*Evaluates your rolled stats and suggests suitable Pathfinder classes.*
-
-| Command | Usage | Description |
-|---------|-------|-------------|
-| `!rec` | `!rec` | Check if class recommendations are currently enabled or disabled. (Alias: `!r`) |
-| `!rec open` | `!rec open` | Enable automatic class recommendations after rolling stats. |
-| `!rec close` | `!rec close` | Disable automatic class recommendations. |
-
-### ℹ️ General & Admin
-
-| Command | Usage | Description |
-|---------|-------|-------------|
-| `!help` | `!help` | Display current command manual. |
-| `!backup` | `!backup` | **(Owner Only)** Trigger a manual data backup. |
-
-## Features & Robustness
-
-- **Comprehensive Logging**: Every interaction is logged to `logs/mineria.log` for debugging and auditing.
-- **Automated Backups**: 
-  - **Daily**: 08:00 AM (Retains last 7 days)
-  - **Weekly**: Mondays at 08:00 AM (Retains last 5 weeks)
-
-## Architecture
-
-**Cog-based Design**: Each major feature is implemented as a Discord Cog for modularity:
-- `log_handler.py`: Centralized event logging system.
-- `dice.py`: Dice parsing and rolling.
-- `character.py`: Character creation and management logic.
-- `help.py`: Dynamic help system.
-- `maintenance.py`: Automated and manual backups.
-
-**Data Layer**: JSON-based persistence in `data/` directory:
-- `races.json`: Race stats and modifiers.
-- `classes.json`: Class requirements.
-- `characters.json`: User character profiles.
-- `user_settings.json`: User preferences.
-
-## Development
-
-Language: **English only** in code and comments.
-
-All game mechanics follow standard **Pathfinder 1st Edition** rules.
+- **data/characters.json**: User profiles.
+- **data/items.json**: Item database for Loot/Market.
+- **data/races.json` & `classes.json**: Game rules data.
