@@ -5,7 +5,7 @@ class HelpSelect(discord.ui.Select):
     def __init__(self):
         options = [
             discord.SelectOption(label="Home", emoji="🏠", description="Return to main menu"),
-            discord.SelectOption(label="Quick Commands", emoji="⚡", description="Quick actions: Roll, Loot, Link, Item"),
+            discord.SelectOption(label="Quick Commands", emoji="⚡", description="Quick actions: Roll, Loot, Wiki, Item"),
             discord.SelectOption(label="Registry & Tools", emoji="🛠️", description="Feat Check, Duplicate Check, Documents"),
             discord.SelectOption(label="Character Management", emoji="👤", description="Create and manage your characters"),
         ]
@@ -18,7 +18,7 @@ class HelpSelect(discord.ui.Select):
             embed.title = "📜 Mineria Bot - All Commands"
             embed.description = (
                 "**⚡ Quick Commands**\n"
-                "`!roll`, `!loot`, `!item`, `!link`, `!help`\n\n"
+                "`!roll`, `!loot`, `!item`, `!wiki`, `!help`\n\n"
                 "**🛠️ Registry & Tools**\n"
                 "`!feat check`, `!d` (Duplicate Check), `!doc`\n\n"
                 "**👤 Character Management**\n"
@@ -30,7 +30,7 @@ class HelpSelect(discord.ui.Select):
             embed.title = "⚡ Quick Commands"
             embed.description = (
                 "`!roll <expr>` - Roll dice (e.g., `!roll 2d20+5`).\n"
-                "`!link` - Show official Wiki links.\n"
+                "`!wiki` - Show official Wiki links.\n"
                 "`!loot generate <CR> [count]` - Generate random loot.\n"
                 "`!item listdown <gold>` - Find affordable items.\n"
                 "`!help` - Shows this manual."
@@ -76,14 +76,14 @@ class HelpCog(commands.Cog, name="Help"):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="help", aliases=["m", "mineria"])
+    @commands.command(name="help", aliases=["m", "mineria", "h"])
     async def help_command(self, ctx: commands.Context):
         """Displays all available commands."""
         embed = discord.Embed(
             title="📜 Mineria Bot - All Commands",
             description=(
                 "**⚡ Quick Commands**\n"
-                "`!roll`, `!loot`, `!item`, `!link`, `!help`\n\n"
+                "`!roll`, `!loot`, `!item`, `!wiki`, `!help`\n\n"
                 "**🛠️ Registry & Tools**\n"
                 "`!feat check`, `!d` (Duplicate Check), `!doc`\n\n"
                 "**👤 Character Management**\n"

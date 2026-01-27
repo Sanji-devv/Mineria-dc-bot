@@ -11,7 +11,7 @@ from pathlib import Path
 # CONSTANTS & PATHS
 # =================================================================================================
 
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).parent / "datas"
 
 # Standard Feat Slots fallback
 DEFAULT_FEAT_SLOTS = [
@@ -39,10 +39,11 @@ def save_json(filename: str, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=4), encoding="utf-8")
 
-def roll_stat(num_dice: int) -> List[int]:
-    """Rolls N d6 and returns the top 3 results."""
+def roll_stat_detailed(num_dice: int) -> Tuple[List[int], List[int]]:
+    """Rolls N d6 and returns (all_rolls, top_3)."""
     rolls = [random.randint(1, 6) for _ in range(num_dice)]
-    return sorted(rolls, reverse=True)[:3]
+    top_rolls = sorted(rolls, reverse=True)[:3]
+    return rolls, top_rolls
 
 def get_recommendations(stats: Dict[str, int]) -> List[dict]:
     """
@@ -252,14 +253,20 @@ class CharacterCog(commands.Cog, name="Character"):
 
         rolls_text = ""
         for stat, num in stats_to_set.items():
-            top_rolls = roll_stat(num)
+            all_rolls, top_rolls = roll_stat_detailed(num)
             base_total = sum(top_rolls)
             mod = racial_mods.get(stat, 0)
             final_val = base_total + mod
             final_stats[stat] = final_val
             
+            # Format: [6, 5, 2, 1] -> (6+5+2) = 13
+            all_rolls_str = str(all_rolls)
+            top_rolls_str = f"({'+'.join(map(str, top_rolls))})"
+            
             mod_str = f" {'+' if mod >= 0 else '-'} {abs(mod)} (Race)" if mod != 0 else ""
-            rolls_text += f"**{stat}**: ({num}d6) -> {base_total}{mod_str} = **{final_val}**\n"
+            
+            # Detailed Line: STR: [6, 5, 4, 1] -> (15) + 2 = 17
+            rolls_text += f"**{stat}**: {all_rolls_str} -> **{base_total}**{mod_str} = **{final_val}**\n"
 
         embed_stats.add_field(name="📊 Details", value=rolls_text, inline=False)
 

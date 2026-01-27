@@ -8,9 +8,9 @@ Prefixes: `!`, `!mineria`, `!m`
 
 | Command | Usage | Description |
 |---------|-------|-------------|
-| `!help` | `!m` | Display the interactive command manual. |
-| `!roll` | `!roll 2d20+5` | Roll dice with modifiers (e.g. `!roll d20`, `!roll 4d6k3`). |
-| `!link` | `!link` | Show commonly used Wiki links. |
+| `!help` | `!m`, `!h` | Display the interactive command manual. |
+| `!roll` | `!roll 4d6k3+2` | Roll dice. Supports modifiers and 'keep high' (`k`). |
+| `!wiki` | `!wiki` | Show commonly used Wiki links. |
 
 ## 🛠️ Registry & Tools (Google Sheets)
 
@@ -20,6 +20,7 @@ Prefixes: `!`, `!mineria`, `!m`
 | `!feat check` | `!feat check <name>` | **Feat Registry**: Checks if a specific Feat/Trait is available in the Global Registry. |
 | `!loot generate` | `!loot gen 5 3` | Generates random loot based on CR (Challenge Rating). |
 | `!item listdown` | `!item listdown 1000` | Lists top expensive items under a specific gold price. |
+| `!envanter` | `!inv <name>` | Checks the Inventory Sheet for item stock and prices. |
 | `!doc` | `!doc [name]` | List or download PDF/Word documents from the `files/` directory. |
 
 ## 👤 Character Management
@@ -41,8 +42,8 @@ Prefixes: `!`, `!mineria`, `!m`
 ## Features
 
 - **Duplicate Player Detection**: Automatically identifies players holding more characters than allowed (Max 1 Ranked + 1 Clerk).
-- **Google Sheet Sync**: Fetches live data for Feat availability and Player XP tracking.
-- **Automated Backups**: Daily and weekly backups of the `data/` directory.
+- **Google Sheet Sync**: Fetches live data for Feat availability, Inventory, and Player XP tracking.
+- **Automated Backups**: Daily and weekly backups of the `datas/` directory.
 - **Robust Logging**: Detailed logs in `logs/mineria.log`.
 
 ## Installation
@@ -54,6 +55,6 @@ Prefixes: `!`, `!mineria`, `!m`
 
 ## Data Structure
 
-- **data/characters.json**: User profiles.
-- **data/items.json**: Item database for Loot/Market.
-- **data/races.json` & `classes.json**: Game rules data.
+- **datas/characters.json**: User profiles.
+- **datas/items.json**: Item database for Loot/Market.
+- **datas/races.json` & `classes.json**: Game rules data.

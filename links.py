@@ -5,7 +5,7 @@ class Links(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="link", aliases=["wiki"])
+    @commands.command(name="wiki", aliases=["link"])
     async def links(self, ctx):
         """Displays important Mineria Wiki links."""
         embed = discord.Embed(

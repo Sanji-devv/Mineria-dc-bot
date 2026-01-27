@@ -13,13 +13,16 @@ from typing import Optional, Tuple, List, Dict, Any
 # CONSTANTS & PATHS
 # =================================================================================================
 
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).parent / "datas"
 
 # Legacy Sheet (Feat Registry)
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1qKwtaT_9FOnwiCk5BtCKFJSslYUFdspL0R03AMM34vI/export?format=csv&gid=1512160994"
 
 # XP & Player Tracking Sheet
 XP_SHEET_URL = "https://docs.google.com/spreadsheets/d/1qKwtaT_9FOnwiCk5BtCKFJSslYUFdspL0R03AMM34vI/export?format=csv&gid=1293793215"
+
+# Inventory & Market Sheet
+INVENTORY_SHEET_URL = "https://docs.google.com/spreadsheets/d/1qKwtaT_9FOnwiCk5BtCKFJSslYUFdspL0R03AMM34vI/export?format=csv&gid=903498896"
 
 # =================================================================================================
 # UTILITY COG
@@ -44,7 +47,7 @@ class OneTimeCommands(commands.Cog):
         Loads item data from 'data/items.json'.
         Returns a list of item dictionaries or an empty list if failed.
         """
-        path = Path("data/items.json")
+        path = DATA_DIR / "items.json"
         if not path.exists():
             return []
         try:
@@ -496,6 +499,114 @@ class OneTimeCommands(commands.Cog):
                 embed.add_field(name=f"🚫 {player}", value="\n".join(char_lines), inline=False)
                 
         embed.set_footer(text="Mineria RPG • Rule Enforcement", icon_url=self.bot.user.avatar.url)
+        await ctx.send(embed=embed)
+
+    # ==========================
+    # INVENTORY COMMANDS
+    # ==========================
+
+    async def fetch_inventory_data(self) -> List[Dict[str, Any]]:
+        """
+        Fetches and parses the Inventory and Quality Google Sheet data.
+        Updates datas/inventory.json with fresh data.
+        """
+        async with aiohttp.ClientSession() as session:
+            async with session.get(INVENTORY_SHEET_URL) as resp:
+                if resp.status != 200:
+                    return []
+                content = await resp.text()
+                
+        reader = csv.reader(io.StringIO(content))
+        rows = list(reader)
+        if not rows:
+            return []
+
+        # Headers provided by user: Envanter, Quality, Tip, Adet, Birim Fiyatı, Tutarı, Ederi
+        # We assume strict column order (0-6)
+        
+        parsed = []
+        for row in rows[1:]: # Skip header
+            if len(row) < 7:
+                 continue
+            
+            # Map columns to keys
+            item = {
+                "Envanter": row[0].strip(),
+                "Quality": row[1].strip(),
+                "Tip": row[2].strip(),
+                "Adet": row[3].strip(),
+                "Birim Fiyatı": row[4].strip(),
+                "Tutarı": row[5].strip(),
+                "Ederi": row[6].strip()
+            }
+            
+            # Skip empty entries if Envanter name is missing
+            if not item["Envanter"]:
+                continue
+                
+            parsed.append(item)
+            
+        # Save to inventory.json
+        path = DATA_DIR / "inventory.json"
+        try:
+             with open(path, "w", encoding="utf-8") as f:
+                 json.dump(parsed, f, indent=4, ensure_ascii=False)
+        except IOError as e:
+             print(f"Failed to save inventory.json: {e}")
+             
+        return parsed
+
+    @commands.command(name="envanter", aliases=["inv", "inventory"])
+    async def inventory_check(self, ctx: commands.Context, *, query: str = None):
+        """
+        Envanter sorgular. Veriler her sorguda anlık olarak Google Sheets'ten güncellenir.
+        Kullanım: !envanter [eşya adı]
+        """
+        msg = await ctx.send("🔄 Envanter verileri güncelleniyor...")
+        data = await self.fetch_inventory_data()
+        
+        if not data:
+            await msg.edit(content="⚠️ Veri çekilemedi veya sayfa boş.")
+            return
+
+        if not query:
+            await msg.edit(content=f"✅ Veriler güncellendi. Toplam **{len(data)}** kayıt mevcut.\nArama yapmak için: `!envanter <isim>`")
+            return
+            
+        # Filter (Case-insensitive search in Name and Type)
+        results = [
+            i for i in data 
+            if query.lower() in i["Envanter"].lower() or query.lower() in i["Tip"].lower()
+        ]
+        
+        await msg.delete()
+        
+        if not results:
+            await ctx.send(f"❌ **{query}** ile eşleşen kayıt bulunamadı.")
+            return
+            
+        embed = discord.Embed(
+            title=f"📦 Envanter Sonuçları: {query}",
+            color=discord.Color.blue()
+        )
+        
+        # Display up to 10 results
+        for item in results[:10]:
+            info = (
+                f"**Kalite:** {item.get('Quality', '-')}\n"
+                f"**Tip:** {item.get('Tip', '-')}\n"
+                f"**Adet:** {item.get('Adet', '-')}\n"
+                f"**Birim Fiyat:** {item.get('Birim Fiyatı', '-')}\n"
+                f"**Toplam:** {item.get('Tutarı', '-')}\n"
+                f"**Değer:** {item.get('Ederi', '-')}"
+            )
+            embed.add_field(name=f"🔹 {item.get('Envanter', '???')}", value=info, inline=True)
+            
+        if len(results) > 10:
+            embed.set_footer(text=f"ve {len(results)-10} kayıt daha...", icon_url=self.bot.user.avatar.url)
+        else:
+            embed.set_footer(text="Mineria RPG • Envanter Sistemi", icon_url=self.bot.user.avatar.url)
+            
         await ctx.send(embed=embed)
 
 async def setup(bot):

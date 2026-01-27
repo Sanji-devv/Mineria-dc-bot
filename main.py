@@ -9,17 +9,13 @@ from log_handler import logger
 load_dotenv(Path(__file__).parent / ".env")
 
 # Token and Prefix Logic
-if os.getenv("DISCORD_TOKEN"):
-    TOKEN = os.getenv("DISCORD_TOKEN")
-    PREFIXES = ["!mineria ", "!m ", "!"]
-    logger.info("🚀 Using Production Token (Prefix: !)")
-elif os.getenv("TEST_TOKEN"):
-    TOKEN = os.getenv("TEST_TOKEN")
-    PREFIXES = ["/"]
-    logger.info("🧪 Using Test Token (Prefix: /)")
+TOKEN = os.getenv("DISCORD_TOKEN")
+PREFIXES = ["!mineria ", "!m ", "!"]
+
+if TOKEN:
+    logger.info("🚀 Using Production Token")
 else:
-    TOKEN = None
-    PREFIXES = ["!"]
+    logger.warning("⚠️ No DISCORD_TOKEN found in environment variables")
 
 class MineriaBot(commands.Bot):
     def __init__(self, command_prefix):
@@ -46,7 +42,7 @@ class MineriaBot(commands.Bot):
 
 if __name__ == "__main__":
     if not TOKEN:
-        logger.critical("❌ ERROR: Neither DISCORD_TOKEN nor TEST_TOKEN found in .env file.")
+        logger.critical("❌ ERROR: DISCORD_TOKEN not found in .env file.")
     else:
         bot = MineriaBot(PREFIXES)
         bot.run(TOKEN)
