@@ -32,7 +32,12 @@ class HelpSelect(discord.ui.Select):
                 "`!roll <expr>` - Roll dice (e.g., `!roll 2d20+5`).\n"
                 "`!wiki` - Show official Wiki links.\n"
                 "`!loot generate <CR> [count]` - Generate random loot.\n"
-                "`!item listdown <gold>` - Find affordable items.\n"
+                "`!loot generate <CR> [count]` - Generate random loot.\n"
+                "`!item listdown/listup <gold|name|AC>` - Search items.\n"
+                "`!item filter <type>` - Filter by rarity (e.g. common, rare).\n"
+                "`!item info <name>` - View detailed item info.\n"
+                "`!spell <name>` - Search spell on d20pfsrd.\n"
+                "• `listdown`: Expensive first. `listup`: Cheap first.\n"
                 "`!help` - Shows this manual."
             )
 

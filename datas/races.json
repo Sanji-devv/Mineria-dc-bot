@@ -13,7 +13,9 @@
         "Skill Bonuses": "1 extra skill rank at 1st level and every level thereafter",
         "Bonus Feats": "1 extra feat at 1st level",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 9
+        "Race Points": 9,
+        "modifiers": {},
+        "flexible_stat": 2
     },
     "Dwarf": {
         "Category": "Core",
@@ -29,7 +31,13 @@
         "Skill Bonuses": "Greed, Stonecunning",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 11
+        "Race Points": 11,
+        "modifiers": {
+            "CON": 2,
+            "WIS": 2,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     },
     "Elf": {
         "Category": "Core",
@@ -45,7 +53,13 @@
         "Skill Bonuses": "Keen Senses (+2 Perception)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Elven Magic",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {
+            "DEX": 2,
+            "CON": -2,
+            "INT": 2
+        },
+        "flexible_stat": 0
     },
     "Gnome": {
         "Category": "Core",
@@ -61,7 +75,13 @@
         "Skill Bonuses": "Keen Senses (+2 Perception), Obsessive (+2 Craft/Profession)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Gnome Magic",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {
+            "STR": -2,
+            "CON": 2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Half-Elf": {
         "Category": "Core",
@@ -77,7 +97,9 @@
         "Skill Bonuses": "Keen Senses (+2 Perception), Multitalented",
         "Bonus Feats": "Adaptability (Skill Focus)",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {},
+        "flexible_stat": 2
     },
     "Half-Orc": {
         "Category": "Core",
@@ -93,7 +115,9 @@
         "Skill Bonuses": "Intimidating (+2 Intimidate)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 8
+        "Race Points": 8,
+        "modifiers": {},
+        "flexible_stat": 2
     },
     "Halfling": {
         "Category": "Core",
@@ -109,7 +133,13 @@
         "Skill Bonuses": "Keen Senses (+2 Perception), Sure-Footed (+2 Acrobatics/Climb)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 9
+        "Race Points": 9,
+        "modifiers": {
+            "STR": -2,
+            "DEX": 2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Aasimar": {
         "Category": "Featured",
@@ -125,7 +155,12 @@
         "Skill Bonuses": "Skilled (+2 Diplomacy and Perception)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Daylight (1/day)",
-        "Race Points": 15
+        "Race Points": 15,
+        "modifiers": {
+            "WIS": 2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Catfolk": {
         "Category": "Featured",
@@ -141,7 +176,13 @@
         "Skill Bonuses": "Natural Hunter (+2 Perception, Stealth, Survival)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Sprinter",
-        "Race Points": 9
+        "Race Points": 9,
+        "modifiers": {
+            "DEX": 2,
+            "WIS": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Dhampir": {
         "Category": "Featured",
@@ -157,7 +198,13 @@
         "Skill Bonuses": "Manipulative (+2 Bluff, Perception)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Detect Undead (3/day)",
-        "Race Points": 11
+        "Race Points": 11,
+        "modifiers": {
+            "DEX": 2,
+            "CON": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Drow": {
         "Category": "Featured",
@@ -173,7 +220,13 @@
         "Skill Bonuses": "Keen Senses (+2 Perception)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Dancing Lights, Darkness, Faerie Fire (1/day)",
-        "Race Points": 14
+        "Race Points": 14,
+        "modifiers": {
+            "DEX": 2,
+            "CON": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Fetchling": {
         "Category": "Featured",
@@ -189,7 +242,13 @@
         "Skill Bonuses": "Skilled (+2 Knowledge planes, Stealth)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Disguise Self (1/day)",
-        "Race Points": 17
+        "Race Points": 17,
+        "modifiers": {
+            "DEX": 2,
+            "WIS": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Goblin": {
         "Category": "Featured",
@@ -205,7 +264,13 @@
         "Skill Bonuses": "Skilled (+4 Ride, Stealth)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {
+            "STR": -2,
+            "DEX": 4,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     },
     "Hobgoblin": {
         "Category": "Featured",
@@ -221,7 +286,12 @@
         "Skill Bonuses": "Sneaky (+4 Stealth)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 9
+        "Race Points": 9,
+        "modifiers": {
+            "DEX": 2,
+            "CON": 2
+        },
+        "flexible_stat": 0
     },
     "Ifrit": {
         "Category": "Featured",
@@ -237,7 +307,13 @@
         "Skill Bonuses": "Fire Affinity",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Burning Hands (1/day)",
-        "Race Points": 6
+        "Race Points": 6,
+        "modifiers": {
+            "DEX": 2,
+            "WIS": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Kobold": {
         "Category": "Featured",
@@ -253,7 +329,13 @@
         "Skill Bonuses": "Crafty (+2 Craft trapmaking, Perception, Profession miner)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 5
+        "Race Points": 5,
+        "modifiers": {
+            "STR": -4,
+            "DEX": 2,
+            "CON": -2
+        },
+        "flexible_stat": 0
     },
     "Orc": {
         "Category": "Featured",
@@ -269,7 +351,14 @@
         "Skill Bonuses": "None",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 8
+        "Race Points": 8,
+        "modifiers": {
+            "STR": 4,
+            "INT": -2,
+            "WIS": -2,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     },
     "Oread": {
         "Category": "Featured",
@@ -285,7 +374,13 @@
         "Skill Bonuses": "Earth Affinity",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Magic Stone (1/day)",
-        "Race Points": 8
+        "Race Points": 8,
+        "modifiers": {
+            "STR": 2,
+            "WIS": 2,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     },
     "Ratfolk": {
         "Category": "Featured",
@@ -301,7 +396,13 @@
         "Skill Bonuses": "Tinker (+2 Craft alchemy, Perception, UMD), Rodent Empathy (+4 Handle Animal rodents)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 9
+        "Race Points": 9,
+        "modifiers": {
+            "STR": -2,
+            "DEX": 2,
+            "INT": 2
+        },
+        "flexible_stat": 0
     },
     "Sylph": {
         "Category": "Featured",
@@ -317,7 +418,13 @@
         "Skill Bonuses": "Air Affinity",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Feather Fall (1/day)",
-        "Race Points": 6
+        "Race Points": 6,
+        "modifiers": {
+            "DEX": 2,
+            "CON": -2,
+            "INT": 2
+        },
+        "flexible_stat": 0
     },
     "Tengu": {
         "Category": "Featured",
@@ -333,7 +440,13 @@
         "Skill Bonuses": "Sneaky (+2 Perception, Stealth), Gifted Linguist (+4 Linguistics)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 13
+        "Race Points": 13,
+        "modifiers": {
+            "DEX": 2,
+            "CON": -2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Tiefling": {
         "Category": "Featured",
@@ -349,7 +462,13 @@
         "Skill Bonuses": "Skilled (+2 Bluff, Stealth), Fiendish Sorcery",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Darkness (1/day)",
-        "Race Points": 13
+        "Race Points": 13,
+        "modifiers": {
+            "DEX": 2,
+            "INT": 2,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     },
     "Undine": {
         "Category": "Featured",
@@ -365,7 +484,13 @@
         "Skill Bonuses": "Water Affinity",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Hydraulic Push (1/day)",
-        "Race Points": 7
+        "Race Points": 7,
+        "modifiers": {
+            "STR": -2,
+            "DEX": 2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Changeling": {
         "Category": "Uncommon",
@@ -381,7 +506,13 @@
         "Skill Bonuses": "H hag trait (varies)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {
+            "CON": -2,
+            "WIS": 2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Duergar": {
         "Category": "Uncommon",
@@ -397,7 +528,13 @@
         "Skill Bonuses": "None",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Enlarge Person (1/day), Invisibility (1/day)",
-        "Race Points": 8
+        "Race Points": 8,
+        "modifiers": {
+            "CON": 2,
+            "WIS": 2,
+            "CHA": -4
+        },
+        "flexible_stat": 0
     },
     "Gillmen": {
         "Category": "Uncommon",
@@ -413,7 +550,13 @@
         "Skill Bonuses": "Amphibious",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None (Water Dependent)",
-        "Race Points": 7
+        "Race Points": 7,
+        "modifiers": {
+            "CON": 2,
+            "WIS": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Grippli": {
         "Category": "Uncommon",
@@ -429,7 +572,13 @@
         "Skill Bonuses": "Camouflage (+4 Stealth in marshes/forests), Swamp Stride",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 6
+        "Race Points": 6,
+        "modifiers": {
+            "STR": -2,
+            "DEX": 2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Kitsune": {
         "Category": "Uncommon",
@@ -445,7 +594,13 @@
         "Skill Bonuses": "Change Shape",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Dancing Lights (3/day)",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {
+            "STR": -2,
+            "DEX": 2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Merfolk": {
         "Category": "Uncommon",
@@ -461,7 +616,13 @@
         "Skill Bonuses": "Amphibious",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 14
+        "Race Points": 14,
+        "modifiers": {
+            "DEX": 2,
+            "CON": 2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Nagaji": {
         "Category": "Uncommon",
@@ -477,7 +638,13 @@
         "Skill Bonuses": "Serpent's Sense (+2 Handle Animal reptiles, Perception)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 11
+        "Race Points": 11,
+        "modifiers": {
+            "STR": 2,
+            "INT": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Samsaran": {
         "Category": "Uncommon",
@@ -493,7 +660,13 @@
         "Skill Bonuses": "Shards of the Past (+2 to two skills)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Comprehend Languages, Deathwatch, Stabilize (1/day)",
-        "Race Points": 11
+        "Race Points": 11,
+        "modifiers": {
+            "CON": -2,
+            "INT": 2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Strix": {
         "Category": "Uncommon",
@@ -509,7 +682,12 @@
         "Skill Bonuses": "Nocturnal (+2 Perception, Stealth in dim light)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 9
+        "Race Points": 9,
+        "modifiers": {
+            "DEX": 2,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     },
     "Suli": {
         "Category": "Uncommon",
@@ -525,7 +703,13 @@
         "Skill Bonuses": "Negotiator (+2 Diplomacy, Sense Motive)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 16
+        "Race Points": 16,
+        "modifiers": {
+            "STR": 2,
+            "INT": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Svirfneblin": {
         "Category": "Uncommon",
@@ -541,7 +725,14 @@
         "Skill Bonuses": "Skilled (+2 Stealth, Craft alchemy, Perception), Stonecunning",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 24
+        "Race Points": 24,
+        "modifiers": {
+            "STR": -2,
+            "DEX": 2,
+            "WIS": 2,
+            "CHA": -4
+        },
+        "flexible_stat": 0
     },
     "Vanara": {
         "Category": "Uncommon",
@@ -557,7 +748,13 @@
         "Skill Bonuses": "Nimble (+2 Acrobatics, Stealth), Prehensile Tail",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 8
+        "Race Points": 8,
+        "modifiers": {
+            "DEX": 2,
+            "WIS": 2,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     },
     "Vishkanya": {
         "Category": "Uncommon",
@@ -573,7 +770,13 @@
         "Skill Bonuses": "Keen Senses (+2 Perception), Limber (+2 Escape Artist, Stealth)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 12
+        "Race Points": 12,
+        "modifiers": {
+            "DEX": 2,
+            "WIS": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Wayang": {
         "Category": "Uncommon",
@@ -589,7 +792,13 @@
         "Skill Bonuses": "Lurker (+2 Perception, Stealth)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {
+            "DEX": 2,
+            "INT": 2,
+            "WIS": -2
+        },
+        "flexible_stat": 0
     },
     "Aquatic Elf": {
         "Category": "Rare",
@@ -605,7 +814,13 @@
         "Skill Bonuses": "Keen Senses (+2 Perception)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 11
+        "Race Points": 11,
+        "modifiers": {
+            "DEX": 2,
+            "CON": -2,
+            "INT": 2
+        },
+        "flexible_stat": 0
     },
     "Astomoi": {
         "Category": "Rare",
@@ -621,7 +836,13 @@
         "Skill Bonuses": "Scent",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 11
+        "Race Points": 11,
+        "modifiers": {
+            "CON": -2,
+            "INT": 2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Caligni": {
         "Category": "Rare",
@@ -637,7 +858,13 @@
         "Skill Bonuses": "None",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 9
+        "Race Points": 9,
+        "modifiers": {
+            "DEX": 2,
+            "CON": 2,
+            "INT": -2
+        },
+        "flexible_stat": 0
     },
     "Deep One Hybrid": {
         "Category": "Rare",
@@ -653,7 +880,13 @@
         "Skill Bonuses": "Sea Longing (Wisdom drain away from sea), Final Change",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {
+            "DEX": -2,
+            "CON": 2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Ganzi": {
         "Category": "Rare",
@@ -669,7 +902,13 @@
         "Skill Bonuses": "Skilled (+2 Sense Motive, Survival)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 14
+        "Race Points": 14,
+        "modifiers": {
+            "CON": 2,
+            "INT": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Kuru": {
         "Category": "Rare",
@@ -685,7 +924,13 @@
         "Skill Bonuses": "None",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 11
+        "Race Points": 11,
+        "modifiers": {
+            "DEX": 2,
+            "CON": 2,
+            "INT": -2
+        },
+        "flexible_stat": 0
     },
     "Munavri": {
         "Category": "Rare",
@@ -701,7 +946,12 @@
         "Skill Bonuses": "Advanced Object Reading",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Object Reading (at will)",
-        "Race Points": 20
+        "Race Points": 20,
+        "modifiers": {
+            "STR": -2,
+            "DEX": 4
+        },
+        "flexible_stat": 0
     },
     "Naiad": {
         "Category": "Rare",
@@ -717,7 +967,13 @@
         "Skill Bonuses": "Fey Nature (+2 Handle Animal, Knowledge nature)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 7
+        "Race Points": 7,
+        "modifiers": {
+            "STR": -2,
+            "DEX": 2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Orang-Pendak": {
         "Category": "Rare",
@@ -733,7 +989,13 @@
         "Skill Bonuses": "Forest Walker (+4 Climb, Stealth in forests), Simian Empathy (+4 Manage Animal monkeys/apes)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 7
+        "Race Points": 7,
+        "modifiers": {
+            "STR": 2,
+            "INT": -2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Reptoid": {
         "Category": "Rare",
@@ -749,7 +1011,13 @@
         "Skill Bonuses": "Change Shape (Disguise +10)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 15
+        "Race Points": 15,
+        "modifiers": {
+            "STR": 2,
+            "DEX": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Gnoll": {
         "Category": "Standard",
@@ -765,7 +1033,13 @@
         "Skill Bonuses": "None",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 6
+        "Race Points": 6,
+        "modifiers": {
+            "STR": 2,
+            "CON": 2,
+            "INT": -2
+        },
+        "flexible_stat": 0
     },
     "Lizardfolk": {
         "Category": "Standard",
@@ -781,7 +1055,13 @@
         "Skill Bonuses": "+4 racial bonus on Acrobatics checks (jumping)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 8
+        "Race Points": 8,
+        "modifiers": {
+            "CON": 2,
+            "INT": -2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Monkey Goblin": {
         "Category": "Standard",
@@ -797,7 +1077,13 @@
         "Skill Bonuses": "+8 racial bonus on Climb checks, +4 racial bonus on Acrobatics and Stealth checks",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {
+            "DEX": 2,
+            "INT": -2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Skinwalker": {
         "Category": "Standard",
@@ -813,7 +1099,12 @@
         "Skill Bonuses": "+2 racial bonus on Handle Animal and Spellcraft checks",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {
+            "CON": 2,
+            "INT": -2
+        },
+        "flexible_stat": 0
     },
     "Triaxian": {
         "Category": "Standard",
@@ -829,7 +1120,13 @@
         "Skill Bonuses": "None",
         "Bonus Feats": "Bonus Feat (at 1st level)",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 10
+        "Race Points": 10,
+        "modifiers": {
+            "CON": 2,
+            "INT": -2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Android": {
         "Category": "Advanced",
@@ -845,7 +1142,13 @@
         "Skill Bonuses": "Empathy (-4 on Sense Motive checks)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 16
+        "Race Points": 16,
+        "modifiers": {
+            "DEX": 2,
+            "INT": 2,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     },
     "Gathlain": {
         "Category": "Advanced",
@@ -861,7 +1164,13 @@
         "Skill Bonuses": "None",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 12
+        "Race Points": 12,
+        "modifiers": {
+            "DEX": 2,
+            "CON": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Ghoran": {
         "Category": "Advanced",
@@ -877,7 +1186,13 @@
         "Skill Bonuses": "Past-Life Knowledge (all Knowledge as class skills)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Natural Magic (Detect Poison, Goodberry, Purify Food and Drink 1/day), Seed (reincarnation)",
-        "Race Points": 19
+        "Race Points": 19,
+        "modifiers": {
+            "CON": 2,
+            "INT": -2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Kasatha": {
         "Category": "Advanced",
@@ -893,7 +1208,12 @@
         "Skill Bonuses": "+2 racial bonus on Acrobatics and Stealth checks",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 20
+        "Race Points": 20,
+        "modifiers": {
+            "DEX": 2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Lashunta": {
         "Category": "Advanced",
@@ -909,7 +1229,9 @@
         "Skill Bonuses": "+2 racial bonus on any one skill",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Lashunta Magic (Daze, Mage Hand, Psychogenic Trap at will; Detect Thoughts 1/day)",
-        "Race Points": 11
+        "Race Points": 11,
+        "modifiers": {},
+        "flexible_stat": 0
     },
     "Shabti": {
         "Category": "Advanced",
@@ -925,7 +1247,12 @@
         "Skill Bonuses": "Past Life Knowledge (all Knowledge as class skills)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Suggestion 1/day",
-        "Race Points": 13
+        "Race Points": 13,
+        "modifiers": {
+            "CON": 2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Syrinx": {
         "Category": "Advanced",
@@ -941,7 +1268,12 @@
         "Skill Bonuses": "Nocturnal (+2 Perception/Stealth at night)",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "Speak with Avians",
-        "Race Points": 16
+        "Race Points": 16,
+        "modifiers": {
+            "DEX": -2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Wyrwood": {
         "Category": "Advanced",
@@ -957,7 +1289,13 @@
         "Skill Bonuses": "None",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 20
+        "Race Points": 20,
+        "modifiers": {
+            "DEX": 2,
+            "INT": 2,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     },
     "Wyvaran": {
         "Category": "Advanced",
@@ -973,7 +1311,13 @@
         "Skill Bonuses": "None",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 17
+        "Race Points": 17,
+        "modifiers": {
+            "DEX": 2,
+            "INT": -2,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Trox": {
         "Category": "Monstrous",
@@ -989,7 +1333,15 @@
         "Skill Bonuses": "None",
         "Bonus Feats": "Improved Grapple",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 28
+        "Race Points": 28,
+        "modifiers": {
+            "STR": 8,
+            "DEX": -2,
+            "INT": -2,
+            "WIS": -2,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     },
     "Drow (Noble)": {
         "Category": "Powerful",
@@ -1004,8 +1356,16 @@
         "Offensive Traits": "Weapon Familiarity, Poison Use",
         "Skill Bonuses": "Keen Senses (+2 Perception)",
         "Bonus Feats": "None",
-        "Spell-Like (Sp) or Supernatural (Su) Abilities": "At will—dancing lights, deeper darkness, faerie fire, feather fall, levitate; 1/day—divine favor, dispel magic, suggestion",
-        "Race Points": 41
+        "Spell-Like (Sp) or Supernatural (Su) Abilities": "At will\u2014dancing lights, deeper darkness, faerie fire, feather fall, levitate; 1/day\u2014divine favor, dispel magic, suggestion",
+        "Race Points": 41,
+        "modifiers": {
+            "DEX": 4,
+            "CON": -2,
+            "INT": 2,
+            "WIS": 2,
+            "CHA": 2
+        },
+        "flexible_stat": 0
     },
     "Drider": {
         "Category": "Powerful",
@@ -1021,7 +1381,14 @@
         "Skill Bonuses": "+8 on Climb checks",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 35
+        "Race Points": 35,
+        "modifiers": {
+            "STR": 2,
+            "DEX": 2,
+            "CON": 4,
+            "WIS": 2
+        },
+        "flexible_stat": 0
     },
     "Gargoyle": {
         "Category": "Powerful",
@@ -1037,6 +1404,14 @@
         "Skill Bonuses": "+2 Stealth",
         "Bonus Feats": "None",
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
-        "Race Points": 36
+        "Race Points": 36,
+        "modifiers": {
+            "STR": 2,
+            "CON": 4,
+            "INT": -2,
+            "WIS": -2,
+            "CHA": -2
+        },
+        "flexible_stat": 0
     }
 }

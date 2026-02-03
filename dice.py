@@ -3,6 +3,21 @@ import re
 import discord
 from discord.ext import commands
 
+def roll_dice(num: int, sides: int, keep: int, mod: int):
+    """Simulates rolling specified dice with optional keep."""
+    rolls = [random.randint(1, sides) for _ in range(num)]
+    
+    if keep:
+        # Sort descending, take top K
+        sorted_rolls = sorted(rolls, reverse=True)
+        kept_rolls = sorted_rolls[:keep]
+        dropped_rolls = sorted_rolls[keep:]
+        total = sum(kept_rolls) + mod
+        return rolls, kept_rolls, total
+    else:
+        total = sum(rolls) + mod
+        return rolls, rolls, total
+
 class Dice(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -41,27 +56,22 @@ class Dice(commands.Cog):
             return num, sides, keep, mod, clean_expr
         return None
 
-    def roll_dice(self, num: int, sides: int, keep: int, mod: int):
-        """Simulates rolling specified dice with optional keep."""
-        rolls = [random.randint(1, sides) for _ in range(num)]
-        
-        if keep:
-            # Sort descending, take top K
-            sorted_rolls = sorted(rolls, reverse=True)
-            kept_rolls = sorted_rolls[:keep]
-            dropped_rolls = sorted_rolls[keep:]
-            total = sum(kept_rolls) + mod
-            return rolls, kept_rolls, total
-        else:
-            total = sum(rolls) + mod
-            return rolls, rolls, total
 
-    @commands.command(name="roll", help="Roll dice. Examples: !roll d6, !roll 4d6k3, !roll 2d20+5")
-    async def roll(self, ctx: commands.Context, *expressions: str):
-        # Join all parts to handle spaces (e.g., "1d20 + 5")
-        # Then split by comma to allow multiple rolls (e.g., "d20, d6")
-        full_arg = " ".join(expressions)
-        raw_exprs = [e.strip() for e in full_arg.split(",")]
+
+    @commands.hybrid_command(name="roll", description="Roll dice (e.g. 1d20+5).")
+    async def roll(self, ctx: commands.Context, *, expression: str = None):
+        if expression is None:
+            embed = discord.Embed(title="🎲 Dice Roll Help", color=discord.Color.blue())
+            embed.description = "Here are some examples of how to use the roll command:"
+            embed.add_field(name="Basic Roll", value="`!roll d20`\n`!roll 1d10`", inline=True)
+            embed.add_field(name="With Modifier", value="`!roll 1d20+5`\n`!roll 2d6-1`", inline=True)
+            embed.add_field(name="Keep Highest", value="`!roll 4d6k3` (Roll 4, keep top 3)", inline=False)
+            embed.add_field(name="Multiple Rolls", value="`!roll d20, d6`", inline=False)
+            await ctx.send(embed=embed)
+            return
+
+        # Allow multiple rolls separated by comma (e.g., "d20, d6")
+        raw_exprs = [e.strip() for e in expression.split(",")]
 
         results = []
         for expr in raw_exprs:
@@ -72,21 +82,21 @@ class Dice(commands.Cog):
                 continue
             
             num, sides, keep, mod, clean_exp = parsed
-            all_rolls, kept_rolls, total = self.roll_dice(num, sides, keep, mod)
+            all_rolls, kept_rolls, total = roll_dice(num, sides, keep, mod)
             
             mod_str = f" {'+' if mod >= 0 else '-'} {abs(mod)}" if mod != 0 else ""
             
             if keep:
-                # Format: 4d6k3 -> ([6, 5, 5], 1) -> (16) + 0 = 16
-                # Show kept in bold, others strike? Or just show list.
-                # Let's show: [**6**, **5**, **5**, ~~1~~]
+                # Format: 4d6k3 -> [**6**, **5**, **5**, ~~1~~]
+                sorted_rolls = sorted(all_rolls, reverse=True)
+                kept_part = sorted_rolls[:keep]
+                dropped_part = sorted_rolls[keep:]
+
+                kept_formatted = [f"**{r}**" for r in kept_part]
+                dropped_formatted = [f"~~{r}~~" for r in dropped_part]
                 
-                # We need to map original rolls to status without shuffling order?
-                # Actually typically standard is to just list them.
-                # Let's simple format: Kept: [6, 5, 5] Dropped: [1]
-                
-                kept_str = f"[{', '.join(map(str, kept_rolls))}]"
-                results.append(f"🎲 `{clean_exp}` -> {kept_str}{mod_str} = **{total}** (Top {keep})")
+                full_list_str = ", ".join(kept_formatted + dropped_formatted)
+                results.append(f"🎲 `{clean_exp}` -> [{full_list_str}]{mod_str} = **{total}** (Top {keep})")
             else:
                 rolls_str = f"({ ' + '.join(map(str, all_rolls)) })" if num > 1 else str(all_rolls[0])
                 results.append(f"🎲 `{clean_exp}` -> {rolls_str}{mod_str} = **{total}**")

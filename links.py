@@ -25,6 +25,12 @@ class Links(commands.Cog):
             value="[Character Sheet Template](https://mineria.fandom.com/tr/wiki/TaslakKarakterKagidi?so=search)",
             inline=False
         )
+
+        embed.add_field(
+            name="🛠️ Karakter Yaratma",
+            value="[Rehber: Karakter Yaratmak](https://mineria.fandom.com/tr/wiki/Karakter_yaratmak)",
+            inline=False
+        )
         
         embed.set_footer(text="Mineria RPG • Wiki", icon_url=self.bot.user.avatar.url)
         embed.set_thumbnail(url="https://static.wikia.nocookie.net/mineria/images/e/e6/Site-logo.png/revision/latest?cb=20230101000000")
