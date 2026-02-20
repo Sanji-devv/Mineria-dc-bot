@@ -753,7 +753,39 @@ class CharacterCog(commands.Cog, name="Character"):
                 await ctx.send(embed=embed)
                 return
         
+        
         await ctx.send(f"❌ Character **{old_name}** not found.")
+
+    @char.command(name="delete")
+    async def delete_char(self, ctx: commands.Context, *, name: str = None):
+        """Deletes a character."""
+        if not name:
+             embed = discord.Embed(title="🗑️ Delete Character", color=discord.Color.red())
+             embed.description = "Permanently delete a character."
+             embed.add_field(name="Usage", value="`!char delete <Name>`")
+             return await ctx.send(embed=embed)
+
+        characters = load_json("characters.json")
+        uid = str(ctx.author.id)
+        
+        if uid not in characters or not characters[uid]:
+            return await ctx.send("❌ You don't have any characters to delete.")
+
+        # Filter out the character to delete
+        original_count = len(characters[uid])
+        characters[uid] = [c for c in characters[uid] if c["name"].lower() != name.lower()]
+        
+        if len(characters[uid]) == original_count:
+             return await ctx.send(f"❌ Character **{name}** not found.")
+
+        save_json("characters.json", characters)
+        
+        embed = discord.Embed(
+            title="🗑️ Character Deleted",
+            description=f"Character **{name}** has been deleted.",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(CharacterCog(bot))
