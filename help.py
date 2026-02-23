@@ -1,81 +1,17 @@
 import discord
 from discord.ext import commands
+from datetime import datetime, timezone
 
-class HelpSelect(discord.ui.Select):
-    def __init__(self):
-        options = [
-            discord.SelectOption(label="Home", emoji="🏠", description="Return to main menu"),
-            discord.SelectOption(label="Quick Commands", emoji="⚡", description="Quick actions: Roll, Loot, Wiki, Item"),
-            discord.SelectOption(label="Registry & Tools", emoji="🛠️", description="Feat Check, Duplicate Check, Documents"),
-            discord.SelectOption(label="Character Management", emoji="👤", description="Create and manage your characters"),
-        ]
-        super().__init__(placeholder="Select a category...", min_values=1, max_values=1, options=options)
 
-    async def callback(self, interaction: discord.Interaction):
-        embed = discord.Embed(color=discord.Color.from_rgb(46, 204, 113))
-        
-        if self.values[0] == "Home":
-            embed.title = "📜 Mineria Bot - All Commands"
-            embed.description = (
-                "**⚡ Quick Commands**\n"
-                "`!roll`, `!loot`, `!item`, `!wiki`, `!help`\n\n"
-                "**🛠️ Registry & Tools**\n"
-                "`!feat check`, `!d` (Duplicate Check), `!doc`\n\n"
-                "**👤 Character Management**\n"
-                "`!char create`, `!char dr`, `!char add/remove`, `!char save`\n"
-                "`!char info`, `!char list`, `!char edit`, `!char rename`, `!char delete`"
-            )
-            
-        elif self.values[0] == "Quick Commands":
-            embed.title = "⚡ Quick Commands"
-            embed.description = (
-                "`!roll <expr>` - Roll dice (e.g., `!roll 2d20+5`).\n"
-                "`!wiki` - Show official Wiki links.\n"
-                "`!loot generate <CR> [count]` - Generate random loot.\n"
-                "`!loot generate <CR> [count]` - Generate random loot.\n"
-                "`!item listdown/listup <gold|name|AC>` - Search items.\n"
-                "`!item filter <type>` - Filter by rarity (e.g. common, rare).\n"
-                "`!item info <name>` - View detailed item info.\n"
-                "`!spell <name>` - Search spell on d20pfsrd.\n"
-                "• `listdown`: Expensive first. `listup`: Cheap first.\n"
-                "`!help` - Shows this manual."
-            )
+# ══════════════════════════════════════════════════════════════
+#  HELP COG  —  Single rich embed, all commands visible at once
+# ══════════════════════════════════════════════════════════════
 
-        elif self.values[0] == "Registry & Tools":
-            embed.title = "🛠️ Registry & Tools"
-            embed.description = (
-                "**Registry Checks** (Google Sheet Integration)\n"
-                "`!feat check <name>` - Check if a feat/trait is available globally.\n"
-                "`!d` (or `!dup`) - Check for illegal player duplicates (1 Ranked + 1 Clerk rule).\n\n"
-                "**Documents**\n"
-                "`!doc [name]` - List or download available files."
-            )
+ACCENT = discord.Color.from_rgb(88, 101, 242)   # Discord blurple
 
-        elif self.values[0] == "Character Management":
-            embed.title = "👤 Character Management"
-            embed.description = (
-                "**Creation & Stats**\n"
-                "`!char create <race>` - Start creating a character.\n"
-                "`!char dr <stats>` - Distribute points & roll stats.\n"
-                "`!char add <stat> <val>` - Add bonus to stat.\n"
-                "`!char remove <stat> <val>` - Remove bonus from stat.\n"
-                "`!rec [open|close]` - Toggle class recommendations.\n"
-                "`!char save <name>` - Save created character.\n\n"
-                "**Profile Management**\n"
-                "`!char info [name]` - View character sheet.\n"
-                "`!char list` - List all your characters.\n"
-                "`!char edit <class|stat>` - Modify character details.\n"
-                "`!char rename <old> <new>` - Rename a character.\n"
-                "`!char delete <name>` - Delete a character."
-            )
+# Thin visual separator that fits inside a Discord field
+DIV = "┄" * 28
 
-        embed.set_footer(text="Prefixes: !mineria or !m | Built for Pathfinder 1e")
-        await interaction.response.edit_message(embed=embed)
-
-class HelpView(discord.ui.View):
-    def __init__(self):
-        super().__init__(timeout=180)
-        self.add_item(HelpSelect())
 
 class HelpCog(commands.Cog, name="Help"):
     def __init__(self, bot):
@@ -83,24 +19,82 @@ class HelpCog(commands.Cog, name="Help"):
 
     @commands.command(name="help", aliases=["m", "mineria", "h"])
     async def help_command(self, ctx: commands.Context):
-        """Displays all available commands."""
+        """Shows the full command manual."""
+
+        bot_avatar = ctx.bot.user.avatar.url if ctx.bot.user.avatar else None
+
         embed = discord.Embed(
-            title="📜 Mineria Bot - All Commands",
             description=(
-                "**⚡ Quick Commands**\n"
-                "`!roll`, `!loot`, `!item`, `!wiki`, `!help`\n\n"
-                "**🛠️ Registry & Tools**\n"
-                "`!feat check`, `!d` (Duplicate Check), `!doc`\n\n"
-                "**👤 Character Management**\n"
-                "`!char create`, `!char dr`, `!char add/remove`, `!char save`\n"
-                "`!char info`, `!char list`, `!char edit`, `!char rename`, `!char delete`"
+                "### 🏰  Mineria Campaign Bot\n"
+                "> *Pathfinder 1e tabletop assistant*\n"
+                f"> Prefix **`!`**  •  shortcuts `!m` `!h` `!mineria`"
             ),
-            color=discord.Color.from_rgb(46, 204, 113)
+            color=ACCENT,
+            timestamp=datetime.now(timezone.utc),
         )
-        embed.set_footer(text="Use the dropdown menu below to navigate.")
-        
-        view = HelpView()
-        await ctx.send(embed=embed, view=view)
+        embed.set_author(name="📖  Command Manual", icon_url=bot_avatar)
+        if ctx.author.avatar:
+            embed.set_thumbnail(url=ctx.author.avatar.url)
+
+        # ── 🎲 Dice & Loot ────────────────────────────────────
+        embed.add_field(
+            name="🎲  Dice & Loot",
+            value=(
+                f"`!roll <expr>` — dice roller\n"
+                f"  ↳ `4d6k3`  `2d20+5`  `d6, d8`\n"
+                f"`!loot generate <CR> [n]` — loot drop\n"
+                f"  ↳ coin reward + bonus consumable\n"
+                f"`!wiki` — Pathfinder reference links\n"
+                f"{DIV}"
+            ),
+            inline=False,
+        )
+
+        # ── 🛒 Item Market ─────────────────────────────────────
+        embed.add_field(
+            name="🛒  Item Market",
+            value=(
+                f"`!item listdown <price|AC|name>` — exp → cheap\n"
+                f"`!item listup  <price|AC|name>` — cheap → exp\n"
+                f"`!item info <name>` — full stats + wiki link\n"
+                f"`!item filter <rarity> [stat]` — combined filter\n"
+                f"  ↳ `common` `uncommon` `rare` `epic` `legendary`\n"
+                f"  ↳ `STR` `DEX` `CON` `INT` `WIS` `CHA`\n"
+                f"`!spell <name>` — SRD spell search\n"
+                f"{DIV}"
+            ),
+            inline=False,
+        )
+
+        # ── 🛠️ Tools (left) + ✨ Char (right) ──────────────
+        embed.add_field(
+            name="🛠️  Registry & Tools",
+            value=(
+                f"`!d` — duplicate player scan\n"
+                f"  ↳ *(1 Ranked + 1 Clerk rule)*\n"
+                f"`!doc [name]` — session files\n"
+            ),
+            inline=True,
+        )
+
+        embed.add_field(
+            name="✨  Character",
+            value=(
+                f"`!char help` — full character command list\n"
+                f"`!rec [open|close]` — class recommendations\n"
+            ),
+            inline=True,
+        )
+
+        embed.add_field(name="\u200b", value="\u200b", inline=True)  # spacer
+
+        embed.set_footer(
+            text=f"Requested by {ctx.author.display_name}  •  Mineria RPG",
+            icon_url=ctx.author.avatar.url if ctx.author.avatar else bot_avatar,
+        )
+
+        await ctx.send(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(HelpCog(bot))

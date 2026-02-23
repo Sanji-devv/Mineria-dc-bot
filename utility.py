@@ -6,9 +6,8 @@ from pathlib import Path
 import aiohttp
 import csv
 import io
-import difflib
 import urllib.parse
-from typing import Optional, Tuple, List, Dict, Any
+from typing import Tuple, List, Dict, Any
 
 # =================================================================================================
 # CONSTANTS & PATHS
@@ -16,18 +15,61 @@ from typing import Optional, Tuple, List, Dict, Any
 
 DATA_DIR = Path(__file__).parent / "datas"
 
-# Legacy Sheet (Feat Registry)
-SHEET_URL = "https://docs.google.com/spreadsheets/d/1qKwtaT_9FOnwiCk5BtCKFJSslYUFdspL0R03AMM34vI/export?format=csv&gid=1512160994"
-
 # XP & Player Tracking Sheet
 XP_SHEET_URL = "https://docs.google.com/spreadsheets/d/1qKwtaT_9FOnwiCk5BtCKFJSslYUFdspL0R03AMM34vI/export?format=csv&gid=1293793215"
 
-# Inventory & Market Sheet
-INVENTORY_SHEET_URL = "https://docs.google.com/spreadsheets/d/1qKwtaT_9FOnwiCk5BtCKFJSslYUFdspL0R03AMM34vI/export?format=csv&gid=903498896"
+
+# Rarity color map
+RARITY_COLORS = {
+    "common":    discord.Color.from_rgb(150, 150, 150),  # grey
+    "uncommon":  discord.Color.from_rgb(0, 180, 100),    # green
+    "rare":      discord.Color.from_rgb(0, 112, 221),    # blue
+    "epic":      discord.Color.from_rgb(163, 53, 238),   # purple
+    "legendary": discord.Color.from_rgb(255, 128, 0),   # orange
+}
+
+RARITY_BADGES = {
+    "common":    "⬜ Common",
+    "uncommon":  "🟢 Uncommon",
+    "rare":      "🔵 Rare",
+    "epic":      "🟣 Epic",
+    "legendary": "🟠 Legendary",
+}
+
+def get_rarity_color(category: str) -> discord.Color:
+    return RARITY_COLORS.get(category.lower().strip(), discord.Color.blurple())
 
 # =================================================================================================
 # UTILITY COG
 # =================================================================================================
+
+class JumpToPageModal(discord.ui.Modal, title="Go to Page"):
+    page_input = discord.ui.TextInput(
+        label="Page Number",
+        placeholder="Enter a page number...",
+        min_length=1,
+        max_length=4,
+    )
+
+    def __init__(self, view: "ItemPaginationView"):
+        super().__init__()
+        self.pagination_view = view
+
+    async def on_submit(self, interaction: discord.Interaction):
+        try:
+            page = int(self.page_input.value) - 1
+            if 0 <= page < self.pagination_view.total_pages:
+                self.pagination_view.current_page = page
+                self.pagination_view.update_buttons()
+                await interaction.response.edit_message(embed=self.pagination_view.get_embed(), view=self.pagination_view)
+            else:
+                await interaction.response.send_message(
+                    f"⚠️ Page must be between 1 and {self.pagination_view.total_pages}.",
+                    ephemeral=True
+                )
+        except ValueError:
+            await interaction.response.send_message("⚠️ Please enter a valid number.", ephemeral=True)
+
 
 class ItemPaginationView(discord.ui.View):
     def __init__(self, items: List[str], title: str, per_page: int = 15):
@@ -43,6 +85,8 @@ class ItemPaginationView(discord.ui.View):
         self.prev_button.disabled = (self.current_page == 0)
         self.next_button.disabled = (self.current_page == self.total_pages - 1)
         self.page_counter.label = f"{self.current_page + 1}/{self.total_pages}"
+        # Hide jump button if only 1 page
+        self.jump_button.disabled = (self.total_pages <= 1)
 
     def get_embed(self) -> discord.Embed:
         start = self.current_page * self.per_page
@@ -57,7 +101,6 @@ class ItemPaginationView(discord.ui.View):
         
         content = "\n".join(page_items)
         embed.add_field(name="Items", value=content or "No items on this page.", inline=False)
-        
         embed.set_footer(text="Mineria RPG • Market")
         return embed
 
@@ -77,10 +120,14 @@ class ItemPaginationView(discord.ui.View):
         self.update_buttons()
         await interaction.response.edit_message(embed=self.get_embed(), view=self)
 
+    @discord.ui.button(label="🔢 Jump", style=discord.ButtonStyle.primary)
+    async def jump_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(JumpToPageModal(self))
+
 class OneTimeCommands(commands.Cog):
     """
-    A collection of utility commands including Loot generation, Market lookup, 
-    Feat registry checks, and Duplicate player detection via Google Sheets.
+    A collection of utility commands including Loot generation, Market lookup,
+    and Duplicate player detection via Google Sheets.
     """
 
     def __init__(self, bot: commands.Bot):
@@ -123,90 +170,6 @@ class OneTimeCommands(commands.Cog):
                 return {}
         return {}
 
-    async def fetch_sheet_data(self) -> List[Dict[str, Any]]:
-        """
-        Fetches and parses the main Feat Registry Google Sheet data.
-        
-        Returns:
-            List[Dict]: A list of objects containing 'name' (Character Name) and 'feats' (List of feats).
-        """
-        async with aiohttp.ClientSession() as session:
-            async with session.get(SHEET_URL) as resp:
-                if resp.status != 200:
-                    return []
-                content = await resp.text()
-                
-        reader = csv.reader(io.StringIO(content))
-        rows = list(reader)
-        if not rows: 
-            return []
-        
-        parsed = []
-        # Parsing Logic:
-        # Assumes Row 0 is header.
-        # Column 1 (Index 1) is Character Name.
-        # Columns 6+ contain Feats/Traits.
-        for row in rows[1:]:
-            if len(row) < 3: 
-                continue
-            
-            char_name = row[2].strip()
-            if not char_name: 
-                continue
-            
-            # Collect all feats/traits from col 7 onwards (Index 7 is 1. Level Feat)
-            feats = []
-            if len(row) > 7:
-                for cell in row[7:]:
-                    cleaned = cell.strip()
-                    if cleaned and cleaned != "-":
-                        feats.append(cleaned)
-            
-            parsed.append({"name": char_name, "feats": feats})
-        
-        return parsed
-
-    async def check_global_feat_legacy(self, feat_name: str, my_char_name: str) -> List[Dict[str, Any]]:
-        """
-        Checks if a feat is globally unique and already taken by another player in the Sheet.
-        Returns a list of matches found in the registry.
-        
-        Args:
-            feat_name (str): The name of the feat to check.
-            my_char_name (str): The name of the user's current character (to avoid flagging self).
-            
-        Returns:
-            List[Dict]: List of {"owner": str, "feat": str, "is_mine": bool}
-        """
-        data = await self.fetch_sheet_data()
-        query = " ".join(feat_name.lower().strip().split()) # Normalize spaces
-        matches = []
-        
-        for entry in data:
-            for f in entry["feats"]:
-                val = f.lower().strip()
-                val_norm = " ".join(val.split()) # Normalize spaces
-                
-                # Check for substring match (e.g. "Weapon Focus" inside "Weapon Focus (Rapier)")
-                # or fuzzy match for typos
-                is_match = False
-                
-                if query in val_norm:
-                    is_match = True
-                else:
-                    ratio = difflib.SequenceMatcher(None, query, val_norm).ratio()
-                    if ratio > 0.85: 
-                        is_match = True
-                
-                if is_match:
-                    is_mine = (entry["name"].lower() == my_char_name.lower())
-                    matches.append({
-                        "owner": entry["name"],
-                        "feat": f, # Return original casing
-                        "is_mine": is_mine
-                    })
-                    
-        return matches
 
     # ==========================
     # LOOT GENERATOR LOGIC
@@ -237,47 +200,87 @@ class OneTimeCommands(commands.Cog):
     @loot_command.command(name="generate", aliases=["gen", "g"])
     async def generate_loot(self, ctx: commands.Context, cr: int = 1, count: int = 1):
         """
-        Generates random items based on Challenge Rating (CR).
-        
+        Generates random items + coin reward based on Challenge Rating (CR).
+
         Args:
-            cr (int): Challenge Rating (determines rarity).
+            cr (int): Challenge Rating (determines rarity and coin amount).
             count (int): Number of items to generate (Max 20).
         """
-        # Ensure item data is loaded
+        # CR-based coin reward tables (min gp, max gp, silver multiplier)
+        COIN_TABLE = {
+            (1, 5):   (10, 150),
+            (6, 10):  (100, 800),
+            (11, 15): (500, 3000),
+            (16, 20): (2000, 10000),
+            (21, 99): (8000, 50000),
+        }
+        # CR-based guaranteed consumable item keywords
+        CONSUMABLE_KEYWORDS = {
+            (1, 5):   ["Potion of Cure Light", "Potion of Healing", "Alchemist's Fire"],
+            (6, 10):  ["Potion of Cure Moderate", "Scroll", "Potion of"],
+            (11, 15): ["Potion of Cure Serious", "Wand of", "Scroll of"],
+            (16, 99): ["Potion of Cure Critical", "Wand of", "Elixir"],
+        }
+
         if not self.items_data:
             self.items_data = self.load_items_data()
             if not self.items_data:
                 await ctx.send("❌ Item data not found! Please check `data/items.json`.")
                 return
 
-        # Cap item count to prevent spam
-        if count > 20: 
+        if count > 20:
             await ctx.send("⚠️ Max loot count is 20.")
             count = 20
 
         target_cats = self.get_target_categories(cr)
-        
-        # Filter items by allowable categories
+
+        # Determine coin reward
+        coin_min, coin_max = 10, 100
+        for (lo, hi), (cmin, cmax) in COIN_TABLE.items():
+            if lo <= cr <= hi:
+                coin_min, coin_max = cmin, cmax
+                break
+        coins = random.randint(coin_min, coin_max)
+
+        # Determine consumable keywords for this CR tier
+        consumable_kws = ["Potion"]
+        for (lo, hi), kws in CONSUMABLE_KEYWORDS.items():
+            if lo <= cr <= hi:
+                consumable_kws = kws
+                break
+
+        # Filter items by allowable rarity categories
         possible_items = [
-            item for item in self.items_data 
+            item for item in self.items_data
             if item.get("category", "common").lower() in target_cats
         ]
-        
-        # Create Embed
-        embed = discord.Embed(
-            title=f"💎 Loot Generation (CR {cr})",
-            description=f"Generating **{count}** item(s)\nRarity: **{', '.join([c.capitalize() for c in target_cats])}**",
-            color=discord.Color.gold()
-        )
 
-        # Fallback Logic: If no items found for high tier, fallback to lower tiers
+        # Fallback Logic
         if not possible_items:
-            if "epic" in target_cats: 
-                 possible_items = [i for i in self.items_data if i.get("category", "").lower() in ["rare", "uncommon"]]
-            
+            if "epic" in target_cats:
+                possible_items = [i for i in self.items_data if i.get("category", "").lower() in ["rare", "uncommon"]]
             if not possible_items:
                 await ctx.send(f"❌ No items found for Rarity: {target_cats}")
                 return
+
+        # Filter consumables from the full item pool (any rarity)
+        consumable_pool = [
+            i for i in self.items_data
+            if any(kw.lower() in i.get("name", "").lower() for kw in consumable_kws)
+        ]
+
+        # Pick embed color from highest rarity
+        top_rarity = target_cats[-1] if target_cats else "common"
+        embed_color = get_rarity_color(top_rarity)
+
+        embed = discord.Embed(
+            title=f"💎 Loot Generation (CR {cr})",
+            description=(
+                f"Rarity tier: **{', '.join(RARITY_BADGES.get(c, c.capitalize()) for c in target_cats)}**\n"
+                f"Generating **{count}** item(s)"
+            ),
+            color=embed_color
+        )
 
         # Generate Items
         generated_items = []
@@ -285,274 +288,38 @@ class OneTimeCommands(commands.Cog):
             item_obj = random.choice(possible_items)
             name = item_obj.get("name", "Unknown Item")
             price = item_obj.get("price", 0)
-            
-            # Icon selection based on keywords
+            cat = item_obj.get("category", "").lower()
+            badge = RARITY_BADGES.get(cat, "")
+
             icon = "⚔️"
-            if "Potion" in name: icon = "🧪"
-            elif "Scroll" in name: icon = "📜"
-            elif "Wand" in name: icon = "🪄"
-            elif "Ring" in name: icon = "💍"
-            
-            generated_items.append(f"{icon} **{name}** ({price} gp)")
+            if "potion" in name.lower(): icon = "🧪"
+            elif "scroll" in name.lower(): icon = "📜"
+            elif "wand" in name.lower(): icon = "🪄"
+            elif "ring" in name.lower(): icon = "💍"
+            elif "armor" in name.lower() or "shield" in name.lower(): icon = "🛡️"
 
-        # Format and Send
-        content = "\n".join([f"`{idx+1}.` {itm}" for idx, itm in enumerate(generated_items)])
-        embed.add_field(name="📦 Items Found", value=content, inline=False)
+            generated_items.append(f"{icon} **{name}** ({price} gp) {badge}")
+
+        # Bonus consumable (guaranteed)
+        bonus_line = ""
+        if consumable_pool:
+            bonus_item = random.choice(consumable_pool)
+            bonus_name = bonus_item.get("name", "Unknown")
+            bonus_price = bonus_item.get("price", 0)
+            bonus_line = f"🧪 **{bonus_name}** ({bonus_price} gp) *(bonus consumable)*"
+
+        # Coin reward
+        coin_line = f"🪙 **{coins:,} gp** in coins"
+
+        # Format embed
+        items_content = "\n".join([f"`{idx+1}.` {itm}" for idx, itm in enumerate(generated_items)])
+        embed.add_field(name="📦 Items Found", value=items_content, inline=False)
+        if bonus_line:
+            embed.add_field(name="🎁 Bonus", value=bonus_line, inline=False)
+        embed.add_field(name="💰 Coin Reward", value=coin_line, inline=False)
         embed.set_footer(text="Mineria RPG • Loot System", icon_url=self.bot.user.avatar.url)
         await ctx.send(embed=embed)
 
-    # ==========================
-    # MARKET / ITEM COMMANDS
-    # ==========================
-
-    @commands.group(name="item", invoke_without_command=True)
-    async def item_command(self, ctx: commands.Context):
-        """Displays help for Item commands."""
-        embed = discord.Embed(
-            title="🔍 Item Lookup",
-            description="Use `!item listdown <gold>` to find affordable items.",
-            color=discord.Color.gold()
-        )
-        embed.set_footer(text="Mineria RPG • Market", icon_url=self.bot.user.avatar.url)
-        await ctx.send(embed=embed)
-
-    @item_command.command(name="listdown")
-    async def item_listdown(self, ctx: commands.Context, max_price: int):
-        """
-        Lists all items that cost less than or equal to the specified price.
-        Shows up to 15 most expensive items fitting the criteria.
-        """
-        if not self.items_data:
-             self.items_data = self.load_items_data()
-
-        filtered_items = [i for i in self.items_data if i.get("price") is not None and i["price"] <= max_price]
-        
-        if not filtered_items:
-            await ctx.send(f"⚠️ No items found for {max_price} gp or less.")
-            return
-
-        # Sort by price descending
-        filtered_items.sort(key=lambda x: x["price"], reverse=True)
-        
-        total_count = len(filtered_items)
-        display_count = min(total_count, 15)
-        
-        embed = discord.Embed(
-            title=f"📉 Market Search (< {max_price} gp)",
-            description=f"Found **{total_count}** items. Top {display_count} expensive:",
-            color=discord.Color.gold()
-        )
-        
-        lines = []
-        for i, item in enumerate(filtered_items[:display_count]):
-            price = item["price"]
-            name = item["name"]
-            cat = item.get("category", "Unknown").capitalize()
-            lines.append(f"`{i+1}.` **{name}** ({price} gp) *[{cat}]*")
-            
-        embed.add_field(name="Items", value="\n".join(lines), inline=False)
-            
-        if total_count > display_count:
-            embed.set_footer(text=f"...and {total_count - display_count} more • Mineria RPG", icon_url=self.bot.user.avatar.url)
-        else:
-            embed.set_footer(text="Mineria RPG • Market", icon_url=self.bot.user.avatar.url)
-            
-        await ctx.send(embed=embed)
-
-    # ==========================
-    # FEAT REGISTRY COMMANDS
-    # ==========================
-
-    VARIABLE_FEATS = {
-        "Weapon Focus",
-        "Greater Weapon Focus",
-        "Weapon Specialization",
-        "Greater Weapon Specialization",
-        "Improved Critical",
-        "Skill Focus",
-        "Spell Focus",
-        "Greater Spell Focus",
-        "Elemental Focus",
-        "Greater Elemental Focus",
-        "Exotic Weapon Proficiency",
-        "Martial Weapon Proficiency",
-        "Armor Focus", 
-        "Shield Focus"
-    }
-
-    def is_common_feat(self, query: str) -> Tuple[bool, str]:
-        """
-        Determines if a feat is common/unlimited.
-        Returns: (IsCommon, WarningMessage)
-        """
-        q = query.lower().strip()
-        
-        # 1. Check Exact/Set Matches
-        for cf in self.COMMON_FEATS:
-            if cf.lower() == q:
-                msg = ""
-                if cf.lower() == "combat casting":
-                     msg = "Condition: Spell Casting Ability Modifier < 3"
-                if cf.lower() == "weapon finesse":
-                     msg = "⚠️ Specify a weapon (e.g., 'Weapon Finesse (Rapier)').\nRule: Cannot be taken for repeating weapons."
-                return True, msg
-
-        # 2. Check "Extra " prefix (Class Abilities)
-        if q.startswith("extra "):
-             return True, "Class Ability Extra Feat - Unlimited."
-
-        # 3. Weapon/Armor Proficiency
-        if "proficiency" in q and ("weapon" in q or "armor" in q or "shield" in q):
-             # Exception: Exotic Weapon Proficiency is usually variable/limited
-             if "exotic" not in q:
-                return True, "Proficiency Feat - Unlimited."
-
-        # 4. Teamwork Feats
-        if "teamwork" in q:
-             return True, "Teamwork Feat - Unlimited."
-
-        # 5. Weapon Finesse checks (variations)
-        if q.startswith("weapon finesse"):
-             return True, "⚠️ Rule: Cannot be taken for repeating weapons."
-
-        return False, ""
-
-    async def check_global_feat_legacy(self, feat_name: str, my_char_name: str, strict: bool = False) -> List[Dict[str, Any]]:
-        """
-        Checks if a feat is globally unique and already taken by another player in the Sheet.
-        Returns a list of matches found in the registry.
-        
-        Args:
-            feat_name (str): The name of the feat to check.
-            my_char_name (str): The name of the user's current character (to avoid flagging self).
-            strict (bool): If True, disables fuzzy matching (used for Variable Feats).
-            
-        Returns:
-            List[Dict]: List of {"owner": str, "feat": str, "is_mine": bool}
-        """
-        data = await self.fetch_sheet_data()
-        query = " ".join(feat_name.lower().strip().split()) # Normalize spaces
-        matches = []
-        
-        for entry in data:
-            for f in entry["feats"]:
-                val = f.lower().strip()
-                val_norm = " ".join(val.split()) # Normalize spaces
-                
-                # Check for substring match (e.g. "Weapon Focus" inside "Weapon Focus (Rapier)")
-                # or fuzzy match for typos
-                is_match = False
-                
-                if query in val_norm:
-                    is_match = True
-                elif not strict:
-                    # Only use fuzzy matching if NOT in strict mode
-                    ratio = difflib.SequenceMatcher(None, query, val_norm).ratio()
-                    if ratio > 0.85: 
-                        is_match = True
-                
-                if is_match:
-                    is_mine = (entry["name"].lower() == my_char_name.lower())
-                    matches.append({
-                        "owner": entry["name"],
-                        "feat": f, # Return original casing
-                        "is_mine": is_mine
-                    })
-                    
-        return matches
-
-    # ==========================
-    # LOOT GENERATOR LOGIC
-    # ==========================
-    
-    def get_target_categories(self, cr: int) -> List[str]:
-        """Determines loot rarity categories based on Challenge Rating (CR)."""
-        if cr <= 5:
-            return ["common"]
-        elif cr <= 10:
-            return ["uncommon"]
-        elif cr <= 15:
-            return ["rare"]
-        else:
-            return ["epic", "legendary"]
-
-    @commands.group(name="loot", invoke_without_command=True)
-    async def loot_command(self, ctx: commands.Context):
-        """Displays help for Loot commands."""
-        embed = discord.Embed(
-            title="💰 Loot Generator",
-            description="Use `!loot generate <CR> [count]` to generate random loot.\nExample: `!loot generate 5 3`",
-            color=discord.Color.gold()
-        )
-        embed.set_footer(text="Mineria RPG • Loot System", icon_url=self.bot.user.avatar.url)
-        await ctx.send(embed=embed)
-
-    @loot_command.command(name="generate", aliases=["gen", "g"])
-    async def generate_loot(self, ctx: commands.Context, cr: int = 1, count: int = 1):
-        """
-        Generates random items based on Challenge Rating (CR).
-        
-        Args:
-            cr (int): Challenge Rating (determines rarity).
-            count (int): Number of items to generate (Max 20).
-        """
-        # Ensure item data is loaded
-        if not self.items_data:
-            self.items_data = self.load_items_data()
-            if not self.items_data:
-                await ctx.send("❌ Item data not found! Please check `data/items.json`.")
-                return
-
-        # Cap item count to prevent spam
-        if count > 20: 
-            await ctx.send("⚠️ Max loot count is 20.")
-            count = 20
-
-        target_cats = self.get_target_categories(cr)
-        
-        # Filter items by allowable categories
-        possible_items = [
-            item for item in self.items_data 
-            if item.get("category", "common").lower() in target_cats
-        ]
-        
-        # Create Embed
-        embed = discord.Embed(
-            title=f"💎 Loot Generation (CR {cr})",
-            description=f"Generating **{count}** item(s)\nRarity: **{', '.join([c.capitalize() for c in target_cats])}**",
-            color=discord.Color.gold()
-        )
-
-        # Fallback Logic: If no items found for high tier, fallback to lower tiers
-        if not possible_items:
-            if "epic" in target_cats: 
-                 possible_items = [i for i in self.items_data if i.get("category", "").lower() in ["rare", "uncommon"]]
-            
-            if not possible_items:
-                await ctx.send(f"❌ No items found for Rarity: {target_cats}")
-                return
-
-        # Generate Items
-        generated_items = []
-        for i in range(count):
-            item_obj = random.choice(possible_items)
-            name = item_obj.get("name", "Unknown Item")
-            price = item_obj.get("price", 0)
-            
-            # Icon selection based on keywords
-            icon = "⚔️"
-            if "Potion" in name: icon = "🧪"
-            elif "Scroll" in name: icon = "📜"
-            elif "Wand" in name: icon = "🪄"
-            elif "Ring" in name: icon = "💍"
-            
-            generated_items.append(f"{icon} **{name}** ({price} gp)")
-
-        # Format and Send
-        content = "\n".join([f"`{idx+1}.` {itm}" for idx, itm in enumerate(generated_items)])
-        embed.add_field(name="📦 Items Found", value=content, inline=False)
-        embed.set_footer(text="Mineria RPG • Loot System", icon_url=self.bot.user.avatar.url)
-        await ctx.send(embed=embed)
 
     # ==========================
     # MARKET / ITEM COMMANDS
@@ -621,8 +388,9 @@ class OneTimeCommands(commands.Cog):
         for i, item in enumerate(filtered_items):
             price = item.get("price", 0)
             name = item.get("name", "Unknown")
-            cat = item.get("category", "Unknown").capitalize()
-            lines.append(f"`{i+1}.` **{name}** ({price} gp) *[{cat}]*")
+            cat = item.get("category", "").lower()
+            badge = RARITY_BADGES.get(cat, "⬛ Unknown")
+            lines.append(f"`{i+1}.` **{name}** ({price} gp) {badge}")
             
         view = ItemPaginationView(lines, title)
         await ctx.send(embed=view.get_embed(), view=view)
@@ -698,13 +466,15 @@ class OneTimeCommands(commands.Cog):
             await ctx.send(f"❌ Item not found: **{query}**")
             return
 
-        # Display Item Info
+        # Display Item Info with rarity color
+        category = match.get('category', 'unknown').lower()
         embed = discord.Embed(
             title=f"📜 {match['name']}",
-            color=discord.Color.blue()
+            color=get_rarity_color(category)
         )
+        badge = RARITY_BADGES.get(category, "⬛ Unknown")
         embed.add_field(name="💰 Price", value=f"{match.get('price', 'N/A')} gp", inline=True)
-        embed.add_field(name="🏷️ Category", value=match.get('category', 'Unknown').capitalize(), inline=True)
+        embed.add_field(name="🏷️ Rarity", value=badge, inline=True)
         embed.add_field(name="📚 Source", value=match.get('source', 'Unknown'), inline=True)
         
         # Add d20pfsrd Link (Google CSE)
@@ -716,38 +486,88 @@ class OneTimeCommands(commands.Cog):
         await ctx.send(embed=embed)
 
     @item_command.command(name="filter")
-    async def item_filter(self, ctx: commands.Context, category: str = None):
+    async def item_filter(self, ctx: commands.Context, *args):
         """
-        Filters items by category (e.g. Common, Uncommon, Rare, Epic).
-        Usage: !item filter <category>
+        Filters items by rarity and/or stat. Multiple filters can be combined.
+        Usage: !item filter <rarity> [stat] or !item filter <stat> [rarity]
+        Example: !item filter wis rare
         """
-        if category is None:
-            embed = discord.Embed(title="🏷️ Filter Items by Rarity", color=discord.Color.blue())
-            embed.description = "Lists all items belonging to a specific rarity category."
-            embed.add_field(name="Usage", value="`!item filter <Category>`")
-            embed.add_field(name="Categories", value="`Common`, `Uncommon`, `Rare`, `Epic`, `Legendary`")
+        STATS = {"str", "dex", "con", "int", "wis", "cha"}
+        RARITY = {"common", "uncommon", "rare", "epic", "legendary"}
+
+        if not args:
+            embed = discord.Embed(title="🏷️ Filter Items", color=discord.Color.blue())
+            embed.description = "Filter by rarity and/or stat — sorted cheapest to most expensive. Combine filters!"
+            embed.add_field(name="Usage", value="`!item filter <Category> [Stat]`")
+            embed.add_field(name="Rarity", value="`Common`, `Uncommon`, `Rare`, `Epic`, `Legendary`")
+            embed.add_field(name="Stats", value="`STR`, `DEX`, `CON`, `INT`, `WIS`, `CHA`")
+            embed.add_field(name="Examples", value="`!item filter rare`\n`!item filter wis`\n`!item filter wis rare`", inline=False)
             return await ctx.send(embed=embed)
 
         if not self.items_data:
-             self.items_data = self.load_items_data()
+            self.items_data = self.load_items_data()
 
-        cat_norm = category.lower().strip()
-        filtered = [i for i in self.items_data if i.get("category", "").lower() == cat_norm]
-        
+        # Parse args: collect rarity and stat tokens
+        rarity_filter = None
+        stat_filters = []
+        unknown_tokens = []
+
+        for arg in args:
+            norm = arg.lower().strip()
+            if norm in RARITY:
+                rarity_filter = norm
+            elif norm in STATS:
+                stat_filters.append(norm)
+            else:
+                unknown_tokens.append(arg)
+
+        if unknown_tokens:
+            await ctx.send(
+                f"⚠️ Unknown filter(s): **{', '.join(unknown_tokens)}**\n"
+                f"**Rarity:** `common` `uncommon` `rare` `epic` `legendary`\n"
+                f"**Stats:** `STR` `DEX` `CON` `INT` `WIS` `CHA`"
+            )
+            return
+
+        # Build title parts
+        title_parts = []
+        if rarity_filter:
+            title_parts.append(RARITY_BADGES.get(rarity_filter, rarity_filter.capitalize()))
+        if stat_filters:
+            title_parts.append("+".join(s.upper() for s in stat_filters))
+        title = f"🏷️ {' & '.join(title_parts)} Items (Cheap → Expensive)"
+
+        filtered = list(self.items_data)  # start with all items
+
+        # Apply rarity filter
+        if rarity_filter:
+            filtered = [i for i in filtered if i.get("category", "").lower() == rarity_filter]
+
+        # Apply stat filter(s) — item name or description must contain ALL stat keywords
+        if stat_filters:
+            def matches_stats(item):
+                name = item.get("name", "")
+                desc = str(item.get("description", "") or item.get("bonus", "") or "")
+                combined = (name + " " + desc).lower()
+                return all(s in combined for s in stat_filters)
+            filtered = [i for i in filtered if matches_stats(i)]
+
+        # Sort cheapest → most expensive
+        filtered.sort(key=lambda x: x.get("price", 0))
+
         if not filtered:
-             await ctx.send(f"⚠️ No items found for category: **{category}**\nValid likely categories: *common, uncommon, rare, epic, legendary*")
-             return
+            await ctx.send(f"⚠️ No items found for: **{' + '.join(args)}**")
+            return
 
-        # Sort by price descending
-        filtered.sort(key=lambda x: x.get("price", 0), reverse=True)
-        
         lines = []
         for i, item in enumerate(filtered):
             price = item.get("price", 0)
             name = item.get("name", "Unknown")
-            lines.append(f"`{i+1}.` **{name}** ({price} gp)")
-            
-        view = ItemPaginationView(lines, f"🏷️ Filter: {category.capitalize()}")
+            cat = item.get("category", "").lower()
+            badge = RARITY_BADGES.get(cat, "")
+            lines.append(f"`{i+1}.` **{name}** ({price} gp) {badge}")
+
+        view = ItemPaginationView(lines, title)
         await ctx.send(embed=view.get_embed(), view=view)
 
     @commands.command(name="spell")
@@ -774,180 +594,6 @@ class OneTimeCommands(commands.Cog):
         embed.add_field(name="🔗 Link", value=f"[{name} on d20pfsrd]({link})", inline=False)
         embed.set_footer(text="Mineria RPG • Spellbook", icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
         
-        await ctx.send(embed=embed)
-
-
-    # ==========================
-    # FEAT REGISTRY COMMANDS
-    # ==========================
-
-    COMMON_FEATS = {
-        "Cosmopolitan",
-        "Improved Unarmed Strike",
-        "Precise Shot",
-        "Arcane Armor Training",
-        "Endurance",
-        "Throw Anything",
-        "Point Blank Shot",
-        "Toughness", 
-        "Thoughness", # User spelling
-        "Combat Casting",
-        "Weapon Finesse"
-    }
-
-    # is_common_feat is already defined above
-
-    @commands.group(name="feat", invoke_without_command=True)
-    async def feat(self, ctx: commands.Context):
-        """Feat management hub."""
-        embed = discord.Embed(
-            title="⚔️ Feat Registry",
-            description="Use `!feat check <name>` to check global availability.",
-            color=discord.Color.gold()
-        )
-        embed.set_footer(text="Mineria RPG • Registry", icon_url=self.bot.user.avatar.url)
-        await ctx.send(embed=embed)
-
-    @feat.command(name="check")
-    async def feat_check(self, ctx: commands.Context, *, query: str = None):
-        """
-        Checks if a specified feat is available in the global Google Sheet registry.
-        Uses fuzzy or prefix matching to detect taken feats.
-        """
-        if query is None:
-            embed = discord.Embed(title="⚔️ Check Feat Availability", color=discord.Color.green())
-            embed.description = "Checks if a feat is already taken by another player or if it is common/unlimited."
-            embed.add_field(name="Usage", value="`!feat check <Feat Name>`")
-            return await ctx.send(embed=embed)
-
-        query_norm = query.strip()
-        
-        # 1. Check for Common/Unlimited Feats FIRST
-        is_common, note = self.is_common_feat(query_norm)
-        if is_common:
-            embed = discord.Embed(
-                title=f"✅ Common Feat: {query_norm}",
-                description="This feat is **Unlimited** and can be taken by anyone.",
-                color=discord.Color.green()
-            )
-            if note:
-                embed.add_field(name="Note / Condition", value=note)
-            
-            embed.set_footer(text="Mineria RPG • Common List", icon_url=self.bot.user.avatar.url)
-            await ctx.send(embed=embed)
-            return
-
-        # 2. Check for Variable Feats (Needs Specification)
-        is_variable = False
-        matching_var_base = ""
-        
-        for vf in self.VARIABLE_FEATS:
-             if query_norm.lower().startswith(vf.lower()):
-                 is_variable = True
-                 matching_var_base = vf
-                 break
-        
-        # User Feedback
-        msg = await ctx.send(f"🔍 Checking Registry for **{query_norm}**...")
-        
-        # Determine "My Character Name" for self-identification
-        characters = self.load_json("characters.json")
-        uid = str(ctx.author.id)
-        my_name = "Unknown"
-        if uid in characters and characters[uid]:
-            my_name = characters[uid][0]["name"]
-
-        if is_variable:
-            # Check if user provided parens/specification
-            # e.g. "Weapon Focus" -> No spec
-            # e.g. "Weapon Focus (Longsword)" -> Spec
-            if "(" not in query_norm or ")" not in query_norm:
-                # User did NOT specify a target.
-                # Instead of erroring immediately, let's list what IS taken.
-                
-                # Run a NON-STRICT search for the base name to find all variations
-                matches = await self.check_global_feat_legacy(matching_var_base, my_name, strict=False)
-                
-                await msg.delete()
-
-                embed = discord.Embed(
-                    title=f"⚠️ Specification Required for {matching_var_base}",
-                    description=f"**{matching_var_base}** is a variable feat. You must specify a target (e.g., `(Longsword)`).",
-                    color=discord.Color.orange()
-                )
-                
-                if matches:
-                    lines = []
-                    seen = set()
-                    matches.sort(key=lambda x: x["owner"])
-                    
-                    for m in matches:
-                        # Only show matches that actually start with the variable base (sanity check)
-                        if matching_var_base.lower() not in m['feat'].lower():
-                            continue
-                             
-                        unique_key = f"{m['owner']}|{m['feat']}"
-                        if unique_key in seen: continue
-                        seen.add(unique_key)
-                        
-                        owner_fmt = f"**{m['owner']}**"
-                        if m['is_mine']: owner_fmt += " (You)"
-                        lines.append(f"• {owner_fmt}: {m['feat']}")
-                    
-                    if lines:
-                        desc = "\n".join(lines)
-                        if len(desc) > 1000: desc = desc[:950] + "..."
-                        embed.add_field(name=f"🚫 Already Taken Variations", value=desc, inline=False)
-                    else:
-                         embed.add_field(name="Status", value="No variations of this feat are currently taken.", inline=False)
-                else:
-                    embed.add_field(name="Status", value="No variations of this feat are currently taken.", inline=False)
-
-                embed.add_field(name="Check Specific Target", value=f"To check availability, try:\n`!feat check {matching_var_base} (YourChoice)`")
-                await ctx.send(embed=embed)
-                return
-
-        # Perform Check (Strict mode only if variable AND specified)
-        matches = await self.check_global_feat_legacy(query_norm, my_name, strict=is_variable)
-        
-        await msg.delete()
-        
-        # Build Result Embed
-        embed = discord.Embed(title=f"Feat Status: {query_norm}", color=discord.Color.blue())
-        
-        if not matches:
-             embed.title = f"✅ Available: {query_norm}"
-             embed.description = "This feat is **not taken** by anyone."
-             embed.color = discord.Color.green()
-        else:
-             embed.title = f"FOUND: {len(matches)} matches for '{query_norm}'"
-             embed.color = discord.Color.red()
-             
-             lines = []
-             seen = set()
-             
-             # Sort matches by owner name for cleaner output
-             matches.sort(key=lambda x: x["owner"])
-
-             for m in matches:
-                 unique_key = f"{m['owner']}|{m['feat']}"
-                 if unique_key in seen:
-                     continue
-                 seen.add(unique_key)
-                 
-                 owner_fmt = f"**{m['owner']}**"
-                 if m['is_mine']:
-                     owner_fmt += " (You)"
-                 
-                 lines.append(f"• {owner_fmt}: {m['feat']}")
-                 
-             desc = "\n".join(lines)
-             if len(desc) > 4000:
-                 desc = desc[:3900] + "\n... (truncated)"
-                 
-             embed.description = desc
-             
-        embed.set_footer(text="Mineria RPG • Registry Check", icon_url=self.bot.user.avatar.url)
         await ctx.send(embed=embed)
 
     # ==========================
@@ -1066,141 +712,76 @@ class OneTimeCommands(commands.Cog):
 
         await msg.delete()
 
-        # Step 4: Report Results
+        # ── Step 4: Build Rich Embed ─────────────────────────────────────────
+        has_violations = bool(violations)
+
         embed = discord.Embed(
-            title="⚠️ Illegal Duplicate Detection",
-            description=(
-                f"Scanned **{len(data)}** total entries.\n"
-                f"Found **{len(violations)}** players violating character limits.\n"
-                f"💤 **{inactive_count}** characters marked as inactive.\n"
-                f"⚠️ **{skipped}** rows skipped (missing data)."
-            ),
-            color=discord.Color.red() if violations else discord.Color.green()
+            title="🔍 Duplicate Player Check",
+            color=discord.Color.red() if has_violations else discord.Color.green()
         )
-        
-        if not violations:
-            embed.description += "\n\n✅ All active players are compliant!\n(Allowed: 1 Ranked OR 1 Ranked + 1 Clerk)"
+
+        # ── Summary row ──
+        embed.add_field(
+            name="📊 Scan Summary",
+            value=(
+                f"📋 Scanned: **{len(data)}** entries\n"
+                f"🟢 Active:   **{len(active_chars)}** characters\n"
+                f"🛌 Inactive: **{inactive_count}** (ignored)\n"
+                f"⚠️  Skipped:  **{skipped}** rows (missing data)"
+            ),
+            inline=True
+        )
+
+        # ── Status field ──
+        if has_violations:
+            embed.add_field(
+                name="🚨 Status",
+                value=f"**{len(violations)}** player(s) in violation",
+                inline=True
+            )
         else:
+            embed.add_field(
+                name="✅ Status",
+                value="All active players are **compliant**!",
+                inline=True
+            )
+
+        # ── Rule reminder ──
+        embed.add_field(
+            name="📜 Allowed Rule",
+            value="Max **1 Ranked** + **1 Clerk (Kâtip)** per player",
+            inline=False
+        )
+
+        # ── Per-violation fields ──
+        if has_violations:
+            embed.add_field(
+                name="\u200b",
+                value="─" * 30,
+                inline=False
+            )
             for player, chars in violations.items():
                 char_lines = []
                 for c in chars:
                     r_lower = c['rank'].lower()
                     is_clerk = "clerk" in r_lower or "kâtip" in r_lower or "katip" in r_lower
-                    tag = "[CLERK]" if is_clerk else "[RANK]"
-                    char_lines.append(f"• **{c['char_name']}** ({c['rank']}) {tag}")
-                
-                embed.add_field(name=f"🚫 {player}", value="\n".join(char_lines), inline=False)
-                
+                    role_tag = "🟡 Clerk" if is_clerk else "🔴 Ranked"
+                    char_lines.append(f"{role_tag} **{c['char_name']}** — *{c['rank']}*")
+                embed.add_field(
+                    name=f"🚧 {player} ({len(chars)} characters)",
+                    value="\n".join(char_lines),
+                    inline=False
+                )
+        else:
+            embed.add_field(
+                name="✅ Result",
+                value="No violations found. The server is clean! 🎉",
+                inline=False
+            )
+
         embed.set_footer(text="Mineria RPG • Rule Enforcement", icon_url=self.bot.user.avatar.url)
         await ctx.send(embed=embed)
 
-    # ==========================
-    # INVENTORY COMMANDS
-    # ==========================
-
-    async def fetch_inventory_data(self) -> List[Dict[str, Any]]:
-        """
-        Fetches and parses the Inventory and Quality Google Sheet data.
-        Updates datas/inventory.json with fresh data.
-        """
-        async with aiohttp.ClientSession() as session:
-            async with session.get(INVENTORY_SHEET_URL) as resp:
-                if resp.status != 200:
-                    return []
-                content = await resp.text()
-                
-        reader = csv.reader(io.StringIO(content))
-        rows = list(reader)
-        if not rows:
-            return []
-
-        # Headers provided by user: Envanter, Quality, Tip, Adet, Birim Fiyatı, Tutarı, Ederi
-        # We assume strict column order (0-6)
-        
-        parsed = []
-        for row in rows[1:]: # Skip header
-            if len(row) < 7:
-                 continue
-            
-            # Map columns to keys
-            item = {
-                "Envanter": row[0].strip(),
-                "Quality": row[1].strip(),
-                "Tip": row[2].strip(),
-                "Adet": row[3].strip(),
-                "Birim Fiyatı": row[4].strip(),
-                "Tutarı": row[5].strip(),
-                "Ederi": row[6].strip()
-            }
-            
-            # Skip empty entries if Envanter name is missing
-            if not item["Envanter"]:
-                continue
-                
-            parsed.append(item)
-            
-        # Save to inventory.json
-        path = DATA_DIR / "inventory.json"
-        try:
-             with open(path, "w", encoding="utf-8") as f:
-                 json.dump(parsed, f, indent=4, ensure_ascii=False)
-        except IOError as e:
-             print(f"Failed to save inventory.json: {e}")
-             
-        return parsed
-
-    @commands.command(name="envanter", aliases=["inv", "inventory"])
-    async def inventory_check(self, ctx: commands.Context, *, query: str = None):
-        """
-        Envanter sorgular. Veriler her sorguda anlık olarak Google Sheets'ten güncellenir.
-        Kullanım: !envanter [eşya adı]
-        """
-        msg = await ctx.send("🔄 Envanter verileri güncelleniyor...")
-        data = await self.fetch_inventory_data()
-        
-        if not data:
-            await msg.edit(content="⚠️ Veri çekilemedi veya sayfa boş.")
-            return
-
-        if not query:
-            await msg.edit(content=f"✅ Veriler güncellendi. Toplam **{len(data)}** kayıt mevcut.\nArama yapmak için: `!envanter <isim>`")
-            return
-            
-        # Filter (Case-insensitive search in Name and Type)
-        results = [
-            i for i in data 
-            if query.lower() in i["Envanter"].lower() or query.lower() in i["Tip"].lower()
-        ]
-        
-        await msg.delete()
-        
-        if not results:
-            await ctx.send(f"❌ **{query}** ile eşleşen kayıt bulunamadı.")
-            return
-            
-        embed = discord.Embed(
-            title=f"📦 Envanter Sonuçları: {query}",
-            color=discord.Color.blue()
-        )
-        
-        # Display up to 10 results
-        for item in results[:10]:
-            info = (
-                f"**Kalite:** {item.get('Quality', '-')}\n"
-                f"**Tip:** {item.get('Tip', '-')}\n"
-                f"**Adet:** {item.get('Adet', '-')}\n"
-                f"**Birim Fiyat:** {item.get('Birim Fiyatı', '-')}\n"
-                f"**Toplam:** {item.get('Tutarı', '-')}\n"
-                f"**Değer:** {item.get('Ederi', '-')}"
-            )
-            embed.add_field(name=f"🔹 {item.get('Envanter', '???')}", value=info, inline=True)
-            
-        if len(results) > 10:
-            embed.set_footer(text=f"ve {len(results)-10} kayıt daha...", icon_url=self.bot.user.avatar.url)
-        else:
-            embed.set_footer(text="Mineria RPG • Envanter Sistemi", icon_url=self.bot.user.avatar.url)
-            
-        await ctx.send(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(OneTimeCommands(bot))

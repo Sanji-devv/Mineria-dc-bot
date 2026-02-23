@@ -14,13 +14,16 @@ class BotControl(commands.Cog):
         """
         Ensures the bot remains online and displays specific activity text.
         """
-        await self.bot.wait_until_ready()
         try:
             # "Game" activity type shows as "Playing !m ve !roll"
             activity = discord.Game(name="!m ve !roll")
             await self.bot.change_presence(status=discord.Status.online, activity=activity)
         except Exception as e:
             print(f"Failed to update presence: {e}")
+
+    @presence_task.before_loop
+    async def before_presence_task(self):
+        await self.bot.wait_until_ready()
 
     @commands.command(name="sync", hidden=True)
     @commands.is_owner()

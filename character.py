@@ -13,11 +13,7 @@ from pathlib import Path
 
 DATA_DIR = Path(__file__).parent / "datas"
 
-# Standard Feat Slots fallback
-DEFAULT_FEAT_SLOTS = [
-    "1. Level", "1. Level Class Bonus Feat", "1. Level Racial Bonus Feat",
-    "3. Level", "5. Level", "7. Level", "9. Level", "11. Level"
-]
+
 
 # =================================================================================================
 # HELPER FUNCTIONS
@@ -40,10 +36,6 @@ def save_json(filename: str, data: Any) -> None:
     path.write_text(json.dumps(data, indent=4), encoding="utf-8")
 
 from dice import roll_dice
-
-# ... (rest of imports)
-
-# ...
 
 def roll_stat_detailed(num_dice: int) -> Tuple[List[int], List[int]]:
     """Rolls N d6 and returns (all_rolls, top_3)."""
@@ -437,7 +429,7 @@ class CharacterCog(commands.Cog, name="Character"):
         """Adds a bonus value to a stat during creation."""
         if not stat or value is None:
             embed = discord.Embed(title="➕ Add Stat Bonus", color=discord.Color.blue())
-            embed.description = "Manually adds a value to a stat (e.g. from a feat or item) during creation."
+            embed.description = "Manually adds a value to a stat during creation."
             embed.add_field(name="Usage", value="`!char add <STAT> <VALUE>`")
             embed.add_field(name="Example", value="`!char add STR 2`")
             return await ctx.send(embed=embed)
@@ -670,8 +662,9 @@ class CharacterCog(commands.Cog, name="Character"):
         if "stat_history" in char_data:
              embed.add_field(name="📊 Stats History", value=char_data["stat_history"], inline=False)
 
-        # 2. Stats Visualizer (Physical/Mental columns)
+        # 2. Stats (Physical / Mental columns)
         stats = char_data.get("stats", {})
+
         def fmt_stat(label, key, emoji):
             val = stats.get(key, 10)
             mod = (val - 10) // 2
@@ -682,7 +675,8 @@ class CharacterCog(commands.Cog, name="Character"):
         col2 = [fmt_stat("INT", "INT", "🧠"), fmt_stat("WIS", "WIS", "🦉"), fmt_stat("CHA", "CHA", "🎭")]
 
         embed.add_field(name="🛡️ Physical", value="\n".join(col1), inline=True)
-        embed.add_field(name="🔮 Mental", value="\n".join(col2), inline=True)
+        embed.add_field(name="🔮 Mental",   value="\n".join(col2), inline=True)
+
         
         # Feat Display
         feats = char_data.get("feats", {})
@@ -695,8 +689,6 @@ class CharacterCog(commands.Cog, name="Character"):
             feats_text = "\n".join(feat_lines)
             if len(feats_text) > 1000: feats_text = feats_text[:990] + "..."
             embed.add_field(name="⚔️ Known Feats", value=feats_text, inline=False)
-        else:
-            embed.add_field(name="⚔️ Known Feats", value=" ", inline=False)
 
         created_at = char_data.get("created_at", "").split(" ")[0]
         footer_text = f"Mineria RPG • Created: {created_at}"

@@ -44,7 +44,7 @@ class LogHandler(commands.Cog, name="LogHandler"):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-        """Log and handle command errors."""
+        """Log command errors (user-facing messages handled by error_handler.py)."""
         user_info = f"User: {ctx.author} ({ctx.author.id})"
         cmd_name = ctx.command.name if ctx.command else "Unknown"
 
@@ -52,16 +52,12 @@ class LogHandler(commands.Cog, name="LogHandler"):
             logger.warning(f"🚫 UNKNOWN COMMAND | {user_info} | Message: {ctx.message.content}")
         elif isinstance(error, commands.MissingRequiredArgument):
             logger.warning(f"⚠️ MISSING ARGUMENT | {user_info} | Command: {cmd_name} | Error: {error}")
-            await ctx.send(f"❌ Missing required argument: `{error.param.name}`")
         elif isinstance(error, commands.BadArgument):
             logger.warning(f"⚠️ BAD ARGUMENT | {user_info} | Command: {cmd_name} | Error: {error}")
-            await ctx.send(f"❌ Invalid argument provided! Check help for usage.")
         elif isinstance(error, commands.CommandOnCooldown):
             logger.warning(f"⏳ COOLDOWN | {user_info} | Command: {cmd_name} | Retry: {error.retry_after:.2f}s")
-            await ctx.send(f"⏳ Please wait {error.retry_after:.1f}s before using `{cmd_name}` again.")
         else:
             logger.error(f"❌ COMMAND ERROR | {user_info} | Command: {cmd_name} | Error: {error}", exc_info=True)
-            await ctx.send(f"❌ An error occurred executing `{cmd_name}`: {str(error)}")
 
 async def setup(bot):
     await bot.add_cog(LogHandler(bot))

@@ -1,60 +1,105 @@
 # 🎲 Mineria Discord Bot
 
-A specialized Discord bot for **Pathfinder Roleplaying Game (1e)** character management. 
+A specialized Discord bot for **Pathfinder Roleplaying Game (1st Edition)** — character management, dice rolling, loot generation, item market, and server registry tools.
 
-## ⚡ Quick Commands
+## ⚡ Prefixes
 
-Prefixes: `!`, `!mineria`, `!m`
+| Prefix | Example |
+|--------|---------|
+| `!` | `!roll 2d20+5` |
+| `!m ` | `!m roll 2d20+5` |
+| `!mineria ` | `!mineria roll 2d20+5` |
 
-| Command | Usage | Description |
-|---------|-------|-------------|
-| `!help` | `!m`, `!h` | Display the interactive command manual. |
-| `!roll` | `!roll 4d6k3+2` | Roll dice. Supports modifiers and 'keep high' (`k`). |
-| `!wiki` | `!wiki` | Show commonly used Wiki links. |
+---
 
-## 🛠️ Registry & Tools (Google Sheets)
+## 🎲 Dice & Quick Commands
 
-| Command | Usage | Description |
-|---------|-------|-------------|
-| `!d` | `!d` | **Duplicate Check**: Scans the XP Sheet to find players violating the "1 Ranked + 1 Clerk" limit. |
-| `!feat check` | `!feat check <name>` | **Feat Registry**: Checks if a specific Feat/Trait is available in the Global Registry. |
-| `!loot generate` | `!loot gen 5 3` | Generates random loot based on CR (Challenge Rating). |
-| `!item listdown` | `!item listdown 1000` | Lists top expensive items under a specific gold price. |
-| `!envanter` | `!inv <name>` | Checks the Inventory Sheet for item stock and prices. |
-| `!doc` | `!doc [name]` | List or download PDF/Word documents from the `files/` directory. |
+| Command | Example | Description |
+|---------|---------|-------------|
+| `!roll <expr>` | `!roll 4d6k3` | Roll dice. Supports modifiers (`+5`), keep-highest (`k3`), multi-roll (`d20, d6`). |
+| `!wiki` | `!wiki` | Show official Mineria & Pathfinder Wiki links. |
+| `!help` / `!m` / `!h` | `!help` | Interactive command manual with dropdown navigation. |
+
+---
+
+## 🛠️ Registry & Tools
+
+| Command | Example | Description |
+|---------|---------|-------------|
+| `!d` / `!dup` | `!d` | **Duplicate Check**: Scans the XP Sheet for players violating the "1 Ranked + 1 Clerk" rule. |
+| `!loot generate <CR> [count]` | `!loot generate 5 3` | Generate random loot based on Challenge Rating. |
+| `!item listdown <query>` | `!item listdown 500` | Search items ≤ price, by AC, or by name — expensive first. |
+| `!item listup <query>` | `!item listup sword` | Same search — cheap first. |
+| `!item info <name>` | `!item info Longsword` | Detailed item stats with wiki link. |
+| `!item filter <rarity\|stat>` | `!item filter wis` | Filter by rarity (common/rare/…) **or** stat (STR/DEX/WIS/…) — cheap → expensive. |
+| `!spell <name>` | `!spell fireball` | Search spell on the Pathfinder d20pfsrd wiki. |
+| `!doc [name]` | `!doc rules.pdf` | List or download files from the `files/` directory (fuzzy filename match). |
+
+---
 
 ## 👤 Character Management
 
-| Command | Usage | Description |
-|---------|-------|-------------|
-| `!char create` | `!char create Human` | Start a new character creation process. |
-| `!char dr` | `!char dr STR 10 ...` | Distribute dice points and roll stats. |
-| `!char add` | `!char add STR 2` | Add a bonus to a stat (e.g. for Racial flexible traits). |
-| `!char save` | `!char save Aragon` | Save the created character to your profile. |
-| `!char info` | `!char info [name]` | View your character sheet. |
-| `!char list` | `!char list` | List all your saved characters. |
-| `!char edit class` | `!char edit class <name> <class>` | Update character class. |
-| `!char edit stat` | `!char edit stat <name> val>` | Manually edit a stat. |
-| `!char rename` | `!char rename <old> <new>` | Rename a character. |
-| `!char delete` | `!char delete <name>` | Delete a character. |
-| `!rec` | `!rec open/close` | Toggle AI class recommendations. |
+### Creation Flow
+`!char create <race>` → `!char dr <stats>` → *(optional)* `!char add/remove` → `!char save <name>`
 
-## Features
+| Command | Example | Description |
+|---------|---------|-------------|
+| `!char create <race>` | `!char create Human` | Start character creation for a given race. |
+| `!char dr <stat> <val> …` | `!char dr STR 14 DEX 12 …` | Distribute dice points across all 6 stats. |
+| `!char add <stat> <val>` | `!char add STR 2` | Add a temporary stat bonus (e.g. racial flex). |
+| `!char remove <stat> <val>` | `!char remove DEX 2` | Remove a temporary stat bonus. |
+| `!char save <name>` | `!char save Aragon` | Finalize and save the character. |
+| `!rec [open\|close]` | `!rec open` | Toggle automatic class recommendations. |
 
-- **Duplicate Player Detection**: Automatically identifies players holding more characters than allowed (Max 1 Ranked + 1 Clerk).
-- **Google Sheet Sync**: Fetches live data for Feat availability, Inventory, and Player XP tracking.
-- **Automated Backups**: Daily and weekly backups of the `datas/` directory.
-- **Robust Logging**: Detailed logs in `logs/mineria.log`.
+### Management
 
-## Installation
+| Command | Example | Description |
+|---------|---------|-------------|
+| `!char info [name]` | `!char info Aragon` | View full character sheet. |
+| `!char list` | `!char list` | List all saved characters. |
+| `!char edit class <name> <class>` | `!char edit class Aragon Fighter` | Update character class. |
+| `!char edit stat <name> <stat> <val>` | `!char edit stat Aragon STR 16` | Manually edit a stat value. |
+| `!char rename <old> <new>` | `!char rename Aragon Arthas` | Rename a character. |
+| `!char delete <name>` | `!char delete Aragon` | Permanently delete a character. |
 
-1. Clone the repository.
-2. Install dependencies: `pip install -r requirements.txt`.
-3. Create a `.env` file with `DISCORD_TOKEN`.
-4. Run: `python main.py`.
+---
 
-## Data Structure
+## ⚙️ Features
 
-- **datas/characters.json**: User profiles.
-- **datas/items.json**: Item database for Loot/Market.
-- **datas/races.json` & `classes.json**: Game rules data.
+- **Duplicate Player Detection** — Enforces 1 Ranked + 1 Clerk rule via live Google Sheet data.
+- **Item Market** — Full search suite with price, AC, name, rarity, and stat filters.
+- **Character Creation** — Race/class-aware stat rolling with 4d6 drop-lowest.
+- **Google Sheet Sync** — Live XP tracking and inventory lookups.
+- **Automated Backups** — Daily/weekly backups of the `datas/` folder.
+- **Robust Logging** — Detailed logs in `logs/mineria.log`. Errors reported once (no duplicates).
+
+---
+
+## 🚀 Installation
+
+```bash
+# 1. Clone the repository
+git clone <repo-url>
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Create .env file
+echo DISCORD_TOKEN_TEST=your_token_here > .env
+
+# 4. Run
+python main.py
+```
+
+---
+
+## 📁 Data Structure
+
+| File/Dir | Description |
+|----------|-------------|
+| `datas/characters.json` | Saved user characters |
+| `datas/items.json` | Item database (loot & market) |
+| `datas/races.json` | Race definitions & modifiers |
+| `datas/classes.json` | Class definitions & primary stats |
+| `files/` | Documents served by `!doc` |
+| `logs/mineria.log` | Application log (rotating) |

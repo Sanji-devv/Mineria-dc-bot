@@ -56,7 +56,7 @@ class Documents(commands.Cog):
         # Check total size limit for Discord (8MB for non-nitro, safer to warn if huge)
         # We'll just try to send it.
         try:
-            await ctx.send(f"sw Downloading **{target_file.name}**...", file=discord.File(target_file))
+            await ctx.send(f"📥 Downloading **{target_file.name}**...", file=discord.File(target_file))
         except discord.HTTPException:
             await ctx.send("❌ File is too large to upload directly to Discord (Limit: 8MB/50MB).")
         except Exception as e:
