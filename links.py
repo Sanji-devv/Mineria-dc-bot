@@ -27,8 +27,8 @@ class Links(commands.Cog):
         )
 
         embed.add_field(
-            name="🛠️ Karakter Yaratma",
-            value="[Rehber: Karakter Yaratmak](https://mineria.fandom.com/tr/wiki/Karakter_yaratmak)",
+            name="🛠️ Character Creation",
+            value="[Guide: Character Creation](https://mineria.fandom.com/tr/wiki/Karakter_yaratmak)",
             inline=False
         )
         

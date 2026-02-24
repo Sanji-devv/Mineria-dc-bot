@@ -35,14 +35,10 @@ def save_json(filename: str, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=4), encoding="utf-8")
 
-from dice import roll_dice
-
 def roll_stat_detailed(num_dice: int) -> Tuple[List[int], List[int]]:
     """Rolls N d6 and returns (all_rolls, top_3)."""
-    # Use centralized dice logic (Default 4d6k3)
-    # roll_dice returns (all_rolls, kept_rolls, total)
-    # We ignore total here as we calc manually for detailed display + race mods
-    all_rolls, kept_rolls, _ = roll_dice(num=num_dice, sides=6, keep=3, mod=0)
+    all_rolls = [random.randint(1, 6) for _ in range(num_dice)]
+    kept_rolls = sorted(all_rolls, reverse=True)[:3]
     return all_rolls, kept_rolls
 
 def get_recommendations(stats: Dict[str, int]) -> List[dict]:

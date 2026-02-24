@@ -9,11 +9,11 @@ from log_handler import logger
 load_dotenv(Path(__file__).parent / ".env")
 
 # Token and Prefix Logic
-TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = os.getenv("DISCORD_TOKEN_TEST")
 PREFIXES = ["!mineria ", "!m ", "!"]
 
 if TOKEN:
-    logger.info("🚀 Using Production Token")
+    logger.info("Using Production Token")
 else:
     logger.warning("⚠️ No DISCORD_TOKEN found in environment variables")
 
@@ -29,16 +29,21 @@ class MineriaBot(commands.Bot):
         )
 
     async def setup_hook(self):
-        extensions = ["character", "dice", "help", "maintenance", "log_handler", "links", "documents", "utility", "error_handler", "bot_control"]
+        extensions = ["dice", "help", "maintenance", "log_handler", "links", "documents", "utility", "error_handler", "bot_control", "spell", "item", "character"]
+        loaded = []
+
         for ext in extensions:
             try:
                 await self.load_extension(ext)
-                logger.info(f"✅ Loaded extension: {ext}")
+                loaded.append(ext)
             except Exception as e:
                 logger.critical(f"❌ Failed to load extension {ext}: {e}")
+                
+        if loaded:
+            logger.info(f"Loaded {len(loaded)} extensions: {', '.join(loaded)}")
 
     async def on_ready(self):
-        logger.info(f"✨ {self.user.name} is online! servers: {len(self.guilds)}")
+        logger.info(f"{self.user.name} is online! servers: {len(self.guilds)}")
 
 if __name__ == "__main__":
     if not TOKEN:

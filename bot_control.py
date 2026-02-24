@@ -15,8 +15,8 @@ class BotControl(commands.Cog):
         Ensures the bot remains online and displays specific activity text.
         """
         try:
-            # "Game" activity type shows as "Playing !m ve !roll"
-            activity = discord.Game(name="!m ve !roll")
+            # "Game" activity type shows as "Playing !m and !roll"
+            activity = discord.Game(name="!m and !roll")
             await self.bot.change_presence(status=discord.Status.online, activity=activity)
         except Exception as e:
             print(f"Failed to update presence: {e}")
