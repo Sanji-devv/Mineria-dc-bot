@@ -2,13 +2,15 @@ import discord
 from discord.ext import commands
 import json
 import random
+from pathlib import Path
 
 class Links(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.drawbacks = []
         try:
-            with open("datas/drawbacks.json", "r", encoding="utf-8") as f:
+            file_path = Path(__file__).parent / "datas" / "drawbacks.json"
+            with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 self.drawbacks = data.get("drawbacks", [])
         except Exception as e:
@@ -76,7 +78,8 @@ class Links(commands.Cog):
         
         traits = []
         try:
-            with open("datas/traits.json", "r", encoding="utf-8") as f:
+            file_path = Path(__file__).parent / "datas" / "traits.json"
+            with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 traits = data.get("traits", [])
         except Exception:
