@@ -193,16 +193,7 @@ class OneTimeCommands(commands.Cog):
 
         embed.set_footer(text="Mineria RPG • Rule Enforcement", icon_url=self.bot.user.avatar.url)
         await ctx.send(embed=embed)
-    @commands.command(name="drawback", aliases=["drawbacks"])
-    async def drawback_command(self, ctx: commands.Context):
-        """Sends the Pathfinder drawbacks link."""
-        embed = discord.Embed(
-            title="Pathfinder Drawbacks",
-            description="You can find the list of Pathfinder Drawbacks here:\n\n[Click here for Drawbacks](https://www.d20pfsrd.com/traits/drawbacks/)",
-            color=discord.Color.dark_red()
-        )
-        embed.set_footer(text="Mineria RPG • Drawbacks", icon_url=self.bot.user.avatar.url)
-        await ctx.send(embed=embed)
+
 
 
 async def setup(bot: commands.Bot):

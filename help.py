@@ -60,11 +60,13 @@ class HelpCog(commands.Cog, name="Help"):
         )
 
         embed1.add_field(
-            name="✨  Spells & Links",
+            name="✨  Spells, Lore & Links",
             value=(
                 f"`!spell <name>` — Pathfinder spell search\n"
                 f"`!wiki` — Pathfinder reference links\n"
-                f"`!drawback` — Pathfinder drawbacks link\n"
+                f"`!hero <name>` — Mineria Wiki character lookup\n"
+                f"`!drawback` — Random character drawback suggestion\n"
+                f"`!trait <race> <class>` — Random traits suggestion\n"
             ),
             inline=False,
         )

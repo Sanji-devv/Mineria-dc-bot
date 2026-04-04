@@ -12,3 +12,64 @@
 2026-02-27 22:41:40 - INFO - ✅ COMMAND SUCCESS | User: sanji1903 (388683129658933259) | Command: hero
 2026-02-27 22:41:55 - INFO - 📥 COMMAND REQUEST | User: sanji1903 (388683129658933259) | Command: !hero balbal skyroot | Guild: Unknown Lands
 2026-02-27 22:41:57 - INFO - ✅ COMMAND SUCCESS | User: sanji1903 (388683129658933259) | Command: hero
+2026-04-04 09:31:46 - INFO - Using Production Token
+2026-04-04 09:31:47 - CRITICAL - ❌ Failed to load extension utility: Extension 'utility' raised an error: CommandRegistrationError: The command drawback is already an existing command or alias.
+2026-04-04 09:31:48 - INFO - Loaded 12 extensions: dice, help, maintenance, log_handler, links, documents, error_handler, bot_control, spell, item, character, hero
+2026-04-04 09:31:51 - INFO - test bots is online! servers: 1
+2026-04-04 09:32:09 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !drawback | Guild: Unknown Lands
+2026-04-04 09:32:09 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: drawback
+2026-04-04 09:32:12 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !db | Guild: Unknown Lands
+2026-04-04 09:32:12 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: drawback
+2026-04-04 09:37:33 - INFO - Using Production Token
+2026-04-04 09:37:34 - INFO - Loaded 13 extensions: dice, help, maintenance, log_handler, links, documents, utility, error_handler, bot_control, spell, item, character, hero
+2026-04-04 09:37:37 - INFO - test bots is online! servers: 1
+2026-04-04 09:37:43 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !db | Guild: Unknown Lands
+2026-04-04 09:37:43 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: drawback
+2026-04-04 09:37:51 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait human swashbuckler | Guild: Unknown Lands
+2026-04-04 09:37:51 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:38:04 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait human swashbuckler | Guild: Unknown Lands
+2026-04-04 09:38:05 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:38:07 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait human swashbuckler | Guild: Unknown Lands
+2026-04-04 09:38:07 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:38:35 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait dwarf cleric | Guild: Unknown Lands
+2026-04-04 09:38:35 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:38:41 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait dwarf cleric | Guild: Unknown Lands
+2026-04-04 09:38:41 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:38:44 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait dwarf cleric | Guild: Unknown Lands
+2026-04-04 09:38:44 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:38:45 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait dwarf cleric | Guild: Unknown Lands
+2026-04-04 09:38:46 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:42:19 - INFO - Using Production Token
+2026-04-04 09:42:20 - INFO - Loaded 13 extensions: dice, help, maintenance, log_handler, links, documents, utility, error_handler, bot_control, spell, item, character, hero
+2026-04-04 09:42:23 - INFO - test bots is online! servers: 1
+2026-04-04 09:42:28 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait dwarf cleric | Guild: Unknown Lands
+2026-04-04 09:42:28 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:42:32 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait dwarf cleric | Guild: Unknown Lands
+2026-04-04 09:42:32 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:42:34 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait dwarf cleric | Guild: Unknown Lands
+2026-04-04 09:42:34 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:42:36 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait dwarf cleric | Guild: Unknown Lands
+2026-04-04 09:42:36 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:42:38 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait dwarf cleric | Guild: Unknown Lands
+2026-04-04 09:42:39 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:42:49 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait human swashbuckler | Guild: Unknown Lands
+2026-04-04 09:42:50 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:42:55 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait human swashbuckler | Guild: Unknown Lands
+2026-04-04 09:42:56 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:42:57 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait human swashbuckler | Guild: Unknown Lands
+2026-04-04 09:42:57 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:42:58 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait human swashbuckler | Guild: Unknown Lands
+2026-04-04 09:42:59 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:43:08 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait elf ranger | Guild: Unknown Lands
+2026-04-04 09:43:08 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:43:12 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait elf ranger | Guild: Unknown Lands
+2026-04-04 09:43:12 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:43:13 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait elf ranger | Guild: Unknown Lands
+2026-04-04 09:43:13 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait
+2026-04-04 09:48:50 - INFO - Using Production Token
+2026-04-04 09:48:51 - INFO - Loaded 13 extensions: dice, help, maintenance, log_handler, links, documents, utility, error_handler, bot_control, spell, item, character, hero
+2026-04-04 09:48:54 - INFO - Mineria is online! servers: 2
+2026-04-04 09:48:56 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !drawback | Guild: Mineria keşif ekibi
+2026-04-04 09:48:56 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: drawback
+2026-04-04 09:49:06 - INFO - 📥 COMMAND REQUEST | User: judai1903 (388683129658933259) | Command: !trait dwarf cleric | Guild: Mineria keşif ekibi
+2026-04-04 09:49:07 - INFO - ✅ COMMAND SUCCESS | User: judai1903 (388683129658933259) | Command: trait

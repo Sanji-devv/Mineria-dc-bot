@@ -1,0 +1,28 @@
+{
+  "traits": [
+    {"name": "Reactionary", "url": "https://www.d20pfsrd.com/traits/combat-traits/reactionary/", "category": "Combat", "req_race": "Any", "req_class": "Any"},
+    {"name": "Deft Dodger", "url": "https://www.d20pfsrd.com/traits/combat-traits/deft-dodger/", "category": "Combat", "req_race": "Any", "req_class": "Any"},
+    {"name": "Armor Expert", "url": "https://www.d20pfsrd.com/traits/combat-traits/armor-expert/", "category": "Combat", "req_race": "Any", "req_class": "Any"},
+    {"name": "Magical Knack", "url": "https://www.d20pfsrd.com/traits/magic-traits/magical-knack/", "category": "Magic", "req_race": "Any", "req_class": "Any"},
+    {"name": "Hedge Magician", "url": "https://www.d20pfsrd.com/traits/magic-traits/hedge-magician/", "category": "Magic", "req_race": "Any", "req_class": "Any"},
+    {"name": "Pragmatic Activator", "url": "https://www.d20pfsrd.com/traits/magic-traits/pragmatic-activator/", "category": "Magic", "req_race": "Any", "req_class": "Any"},
+    {"name": "Fate's Favored", "url": "https://www.d20pfsrd.com/traits/faith-traits/fates-favored/", "category": "Faith", "req_race": "Any", "req_class": "Any"},
+    {"name": "Birthmark", "url": "https://www.d20pfsrd.com/traits/faith-traits/birthmark/", "category": "Faith", "req_race": "Any", "req_class": "Any"},
+    {"name": "Omen", "url": "https://www.d20pfsrd.com/traits/faith-traits/omen/", "category": "Faith", "req_race": "Any", "req_class": "Any"},
+    {"name": "Charming", "url": "https://www.d20pfsrd.com/traits/social-traits/charming/", "category": "Social", "req_race": "Any", "req_class": "Any"},
+    {"name": "Rich Parents", "url": "https://www.d20pfsrd.com/traits/social-traits/rich-parents/", "category": "Social", "req_race": "Any", "req_class": "Any"},
+    {"name": "Student of Philosophy", "url": "https://www.d20pfsrd.com/traits/social-traits/student-of-philosophy/", "category": "Social", "req_race": "Any", "req_class": "Any"},
+    {"name": "Adopted", "url": "https://www.d20pfsrd.com/traits/social-traits/adopted/", "category": "Social", "req_race": "Any", "req_class": "Any"},
+    {"name": "Carefully Hidden", "url": "https://www.d20pfsrd.com/traits/race-traits/carefully-hidden-human/", "category": "Race", "req_race": "Human", "req_class": "Any"},
+    {"name": "World Traveler", "url": "https://www.d20pfsrd.com/traits/race-traits/world-traveler-human/", "category": "Race", "req_race": "Human", "req_class": "Any"},
+    {"name": "Forlorn", "url": "https://www.d20pfsrd.com/traits/race-traits/forlorn-elf/", "category": "Race", "req_race": "Elf", "req_class": "Any"},
+    {"name": "Warrior of Old", "url": "https://www.d20pfsrd.com/traits/race-traits/warrior-of-old-elf/", "category": "Race", "req_race": "Elf", "req_class": "Any"},
+    {"name": "Glory of Old", "url": "https://www.d20pfsrd.com/traits/race-traits/glory-of-old-dwarf/", "category": "Race", "req_race": "Dwarf", "req_class": "Any"},
+    {"name": "Grounded", "url": "https://www.d20pfsrd.com/traits/race-traits/grounded-dwarf/", "category": "Race", "req_race": "Dwarf", "req_class": "Any"},
+    {"name": "Helpful", "url": "https://www.d20pfsrd.com/traits/race-traits/helpful-halfling/", "category": "Race", "req_race": "Halfling", "req_class": "Any"},
+    {"name": "Well-Informed", "url": "https://www.d20pfsrd.com/traits/race-traits/well-informed-halfling/", "category": "Race", "req_race": "Halfling", "req_class": "Any"},
+    {"name": "Tusked", "url": "https://www.d20pfsrd.com/traits/race-traits/tusked-half-orc/", "category": "Race", "req_race": "Half-Orc", "req_class": "Any"},
+    {"name": "Elven Reflexes", "url": "https://www.d20pfsrd.com/traits/race-traits/elven-reflexes-half-elf/", "category": "Race", "req_race": "Half-Elf", "req_class": "Any"},
+    {"name": "Animal Friend", "url": "https://www.d20pfsrd.com/traits/race-traits/animal-friend-gnome/", "category": "Race", "req_race": "Gnome", "req_class": "Any"}
+  ]
+}

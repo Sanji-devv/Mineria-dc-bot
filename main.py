@@ -9,7 +9,7 @@ from log_handler import logger
 load_dotenv(Path(__file__).parent / ".env")
 
 # Token and Prefix Logic
-TOKEN = os.getenv("DISCORD_TOKEN_TEST")
+TOKEN = os.getenv("DISCORD_TOKEN")
 PREFIXES = ["!mineria ", "!m ", "!"]
 
 if TOKEN:

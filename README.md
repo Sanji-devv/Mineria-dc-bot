@@ -19,6 +19,9 @@ A specialized Discord bot for **Pathfinder Roleplaying Game (1st Edition)** — 
 | `!roll <expr>` | `!roll 4d6k3` | Roll dice. Supports modifiers (`+5`), keep-highest (`k3`), multi-roll (`d20, d6`). |
 | `!wiki` | `!wiki` | Show official Mineria & Pathfinder Wiki links. |
 | `!help` / `!m` / `!h` | `!help` | Interactive command manual with dropdown navigation. |
+| `!hero <name>` | `!hero Varka` | Fetch and display a character's page from Mineria Wiki. |
+| `!drawback` | `!drawback` | Display a random character drawback. |
+| `!trait <Race> <Class>`| `!trait Elf Wizard` | Suggest 2 random traits for a specific Race and Class. |
 
 ---
 
@@ -101,5 +104,7 @@ python main.py
 | `datas/items.json` | Item database (loot & market) |
 | `datas/races.json` | Race definitions & modifiers |
 | `datas/classes.json` | Class definitions & primary stats |
+| `datas/drawbacks.json` | Database of character drawbacks |
+| `datas/traits.json` | Database of character traits |
 | `files/` | Documents served by `!doc` |
 | `logs/mineria.log` | Application log (rotating) |
