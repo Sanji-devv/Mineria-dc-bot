@@ -1043,7 +1043,7 @@
     },
     "Lizardfolk": {
         "Category": "Standard",
-        "Ability Score Plus": "+2 Constitution, +2 Wisdom",
+        "Ability Score Plus": "+2 Strength, +2 Constitution",
         "Ability Score Minus": "-2 Intelligence",
         "Size": "Medium",
         "Type (subtype)": "Humanoid (reptilian)",
@@ -1057,9 +1057,9 @@
         "Spell-Like (Sp) or Supernatural (Su) Abilities": "None",
         "Race Points": 8,
         "modifiers": {
+            "STR": 2,
             "CON": 2,
-            "INT": -2,
-            "WIS": 2
+            "INT": -2
         },
         "flexible_stat": 0
     },

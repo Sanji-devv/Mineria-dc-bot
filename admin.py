@@ -8,13 +8,49 @@ from pathlib import Path
 
 logger = logging.getLogger("MineriaBot")
 
-class Maintenance(commands.Cog):
+class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.presence_task.start()
         self.backup_schedule.start()
 
     def cog_unload(self):
+        self.presence_task.cancel()
         self.backup_schedule.cancel()
+
+    # --- PRESENCE TASK ---
+
+    @tasks.loop(minutes=5)
+    async def presence_task(self):
+        """
+        Ensures the bot remains online and displays specific activity text.
+        """
+        try:
+            # "Game" activity type shows as "Playing !m and !roll"
+            activity = discord.Game(name="!m and !roll")
+            await self.bot.change_presence(status=discord.Status.online, activity=activity)
+        except Exception as e:
+            print(f"Failed to update presence: {e}")
+
+    @presence_task.before_loop
+    async def before_presence_task(self):
+        await self.bot.wait_until_ready()
+
+    @commands.command(name="sync", hidden=True)
+    @commands.is_owner()
+    async def sync_tree(self, ctx):
+        """
+        Syncs the slash command tree to Discord. 
+        Useful if commands don't show up in the profile.
+        """
+        msg = await ctx.send("🔄 Syncing commands...")
+        try:
+            synced = await self.bot.tree.sync()
+            await msg.edit(content=f"✅ Synced **{len(synced)}** commands globally.")
+        except Exception as e:
+            await msg.edit(content=f"❌ Sync failed: {e}")
+
+    # --- BACKUP MAINTENANCE ---
 
     @tasks.loop(minutes=1)
     async def backup_schedule(self):
@@ -115,4 +151,4 @@ class Maintenance(commands.Cog):
              return None
 
 async def setup(bot):
-    await bot.add_cog(Maintenance(bot))
+    await bot.add_cog(Admin(bot))

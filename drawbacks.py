@@ -1,0 +1,38 @@
+import discord
+from discord.ext import commands
+import json
+import random
+from pathlib import Path
+
+class Drawbacks(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.drawbacks = []
+        try:
+            file_path = Path(__file__).parent / "datas" / "drawbacks.json"
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                self.drawbacks = data.get("drawbacks", [])
+        except Exception as e:
+            print(f"Error loading drawbacks: {e}")
+
+    @commands.command(name="drawback", aliases=["db"])
+    async def drawback(self, ctx):
+        """Displays a random drawback."""
+        if not self.drawbacks:
+            await ctx.send("❌ Drawback listesi şu anda yüklenemedi.")
+            return
+            
+        drawback = random.choice(self.drawbacks)
+        
+        embed = discord.Embed(
+            title="🎲 Rastgele Drawback",
+            description=f"**[{drawback['name']}]({drawback['url']})**",
+            color=discord.Color.dark_red()
+        )
+        embed.set_footer(text="Mineria RPG • Drawbacks", icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
+        
+        await ctx.send(embed=embed)
+
+async def setup(bot):
+    await bot.add_cog(Drawbacks(bot))

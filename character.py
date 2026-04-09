@@ -259,7 +259,7 @@ class CharacterCog(commands.Cog, name="Character"):
 
         # Setup Creation Context
         race_data = races[target_race]
-        dice_points = 40 - race_data.get("Race Points", 10)
+        dice_points = 41 - race_data.get("Race Points", 10)
 
         self.active_creations[ctx.author.id] = {
             "race_name": target_race,
