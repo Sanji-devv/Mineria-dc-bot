@@ -1044,7 +1044,7 @@
     "Lizardfolk": {
         "Category": "Standard",
         "Ability Score Plus": "+2 Strength, +2 Constitution",
-        "Ability Score Minus": "-2 Intelligence",
+        "Ability Score Minus": "None",
         "Size": "Medium",
         "Type (subtype)": "Humanoid (reptilian)",
         "Speed": "30 feet, swim 15 feet",
@@ -1058,8 +1058,7 @@
         "Race Points": 8,
         "modifiers": {
             "STR": 2,
-            "CON": 2,
-            "INT": -2
+            "CON": 2
         },
         "flexible_stat": 0
     },

@@ -1,69 +1,264 @@
 {
     "drawbacks": [
-        {"name": "Anxious", "url": "https://www.d20pfsrd.com/traits/drawbacks/anxious/"},
-        {"name": "Attached", "url": "https://www.d20pfsrd.com/traits/drawbacks/attached/"},
-        {"name": "Avarice", "url": "https://www.d20pfsrd.com/traits/drawbacks/avarice/"},
-        {"name": "Betrayed", "url": "https://www.d20pfsrd.com/traits/drawbacks/betrayed/"},
-        {"name": "Bitter", "url": "https://www.d20pfsrd.com/traits/drawbacks/bitter/"},
-        {"name": "Burned", "url": "https://www.d20pfsrd.com/traits/drawbacks/burned/"},
-        {"name": "Condescending", "url": "https://www.d20pfsrd.com/traits/drawbacks/condescending/"},
-        {"name": "Cowardly", "url": "https://www.d20pfsrd.com/traits/drawbacks/cowardly/"},
-        {"name": "Cruelty", "url": "https://www.d20pfsrd.com/traits/drawbacks/cruelty/"},
-        {"name": "Dependent", "url": "https://www.d20pfsrd.com/traits/drawbacks/dependent/"},
-        {"name": "Doubt", "url": "https://www.d20pfsrd.com/traits/drawbacks/doubt/"},
-        {"name": "Empty Mask", "url": "https://www.d20pfsrd.com/traits/drawbacks/empty-mask/"},
-        {"name": "Entomophobe", "url": "https://www.d20pfsrd.com/traits/drawbacks/entomophobe/"},
-        {"name": "Envy", "url": "https://www.d20pfsrd.com/traits/drawbacks/envy/"},
-        {"name": "Family Ties", "url": "https://www.d20pfsrd.com/traits/drawbacks/family-ties/"},
-        {"name": "Fey-Taken", "url": "https://www.d20pfsrd.com/traits/drawbacks/fey-taken/"},
-        {"name": "Forgetful", "url": "https://www.d20pfsrd.com/traits/drawbacks/forgetful/"},
-        {"name": "Foul Brand", "url": "https://www.d20pfsrd.com/traits/drawbacks/foul-brand/"},
-        {"name": "Guilty Fraud", "url": "https://www.d20pfsrd.com/traits/drawbacks/guilty-fraud/"},
-        {"name": "Haunted", "url": "https://www.d20pfsrd.com/traits/drawbacks/haunted/"},
-        {"name": "Haunting Regret", "url": "https://www.d20pfsrd.com/traits/drawbacks/haunting-regret/"},
-        {"name": "Headstrong", "url": "https://www.d20pfsrd.com/traits/drawbacks/headstrong/"},
-        {"name": "Hedonistic", "url": "https://www.d20pfsrd.com/traits/drawbacks/hedonistic/"},
-        {"name": "Helpless", "url": "https://www.d20pfsrd.com/traits/drawbacks/helpless/"},
-        {"name": "Impatient", "url": "https://www.d20pfsrd.com/traits/drawbacks/impatient/"},
-        {"name": "Infamous", "url": "https://www.d20pfsrd.com/traits/drawbacks/infamous/"},
-        {"name": "Information Overload", "url": "https://www.d20pfsrd.com/traits/drawbacks/information-overload/"},
-        {"name": "Insatiable", "url": "https://www.d20pfsrd.com/traits/drawbacks/insatiable/"},
-        {"name": "Lonely", "url": "https://www.d20pfsrd.com/traits/drawbacks/lonely/"},
-        {"name": "Loner", "url": "https://www.d20pfsrd.com/traits/drawbacks/loner/"},
-        {"name": "Lovesick", "url": "https://www.d20pfsrd.com/traits/drawbacks/lovesick/"},
-        {"name": "Magical Klutz", "url": "https://www.d20pfsrd.com/traits/drawbacks/magical-klutz/"},
-        {"name": "Mark of Slavery", "url": "https://www.d20pfsrd.com/traits/drawbacks/mark-of-slavery/"},
-        {"name": "Meticulous", "url": "https://www.d20pfsrd.com/traits/drawbacks/meticulous/"},
-        {"name": "Misbegotten", "url": "https://www.d20pfsrd.com/traits/drawbacks/misbegotten/"},
-        {"name": "Naive", "url": "https://www.d20pfsrd.com/traits/drawbacks/naive/"},
-        {"name": "Nervous", "url": "https://www.d20pfsrd.com/traits/drawbacks/nervous/"},
-        {"name": "Oblivious", "url": "https://www.d20pfsrd.com/traits/drawbacks/oblivious/"},
-        {"name": "Occult Bargain", "url": "https://www.d20pfsrd.com/traits/drawbacks/occult-bargain/"},
-        {"name": "Oppressive Expectations", "url": "https://www.d20pfsrd.com/traits/drawbacks/oppressive-expectations/"},
-        {"name": "Overprotective", "url": "https://www.d20pfsrd.com/traits/drawbacks/overprotective/"},
-        {"name": "Paranoid", "url": "https://www.d20pfsrd.com/traits/drawbacks/paranoid/"},
-        {"name": "Power-Hungry", "url": "https://www.d20pfsrd.com/traits/drawbacks/power-hungry/"},
-        {"name": "Pride", "url": "https://www.d20pfsrd.com/traits/drawbacks/pride/"},
-        {"name": "Provincial", "url": "https://www.d20pfsrd.com/traits/drawbacks/provincial/"},
-        {"name": "Righteous Indignation", "url": "https://www.d20pfsrd.com/traits/drawbacks/righteous-indignation/"},
-        {"name": "Scarred", "url": "https://www.d20pfsrd.com/traits/drawbacks/scarred/"},
-        {"name": "Secret Shame", "url": "https://www.d20pfsrd.com/traits/drawbacks/secret-shame/"},
-        {"name": "Self-Doubting", "url": "https://www.d20pfsrd.com/traits/drawbacks/self-doubting/"},
-        {"name": "Sentimental", "url": "https://www.d20pfsrd.com/traits/drawbacks/sentimental/"},
-        {"name": "Shadow-Scarred", "url": "https://www.d20pfsrd.com/traits/drawbacks/shadow-scarred/"},
-        {"name": "Sheltered", "url": "https://www.d20pfsrd.com/traits/drawbacks/sheltered/"},
-        {"name": "Sleepy", "url": "https://www.d20pfsrd.com/traits/drawbacks/sleepy/"},
-        {"name": "Spooked", "url": "https://www.d20pfsrd.com/traits/drawbacks/spooked/"},
-        {"name": "Stigmatized", "url": "https://www.d20pfsrd.com/traits/drawbacks/stigmatized/"},
-        {"name": "Superstitious", "url": "https://www.d20pfsrd.com/traits/drawbacks/superstitious/"},
-        {"name": "Tainted Spirit", "url": "https://www.d20pfsrd.com/traits/drawbacks/tainted-spirit/"},
-        {"name": "Too Many Secrets", "url": "https://www.d20pfsrd.com/traits/drawbacks/too-many-secrets/"},
-        {"name": "Umbral Unmasking", "url": "https://www.d20pfsrd.com/traits/drawbacks/umbral-unmasking/"},
-        {"name": "Unlearned", "url": "https://www.d20pfsrd.com/traits/drawbacks/unlearned/"},
-        {"name": "Vain", "url": "https://www.d20pfsrd.com/traits/drawbacks/vain/"},
-        {"name": "Vainglory", "url": "https://www.d20pfsrd.com/traits/drawbacks/vainglory/"},
-        {"name": "Warded Against Nature", "url": "https://www.d20pfsrd.com/traits/drawbacks/warded-against-nature/"},
-        {"name": "Xenophobic", "url": "https://www.d20pfsrd.com/traits/drawbacks/xenophobic/"},
-        {"name": "Zealous", "url": "https://www.d20pfsrd.com/traits/drawbacks/zealous/"}
+        {
+            "name": "Anxious",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/anxious/"
+        },
+        {
+            "name": "Attached",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/attached/"
+        },
+        {
+            "name": "Avarice",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/avarice/"
+        },
+        {
+            "name": "Betrayed",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/betrayed/"
+        },
+        {
+            "name": "Bitter",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/bitter/"
+        },
+        {
+            "name": "Burned",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/burned/"
+        },
+        {
+            "name": "Condescending",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/condescending/"
+        },
+        {
+            "name": "Cowardly",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/cowardly/"
+        },
+        {
+            "name": "Cruelty",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/cruelty/"
+        },
+        {
+            "name": "Dependent",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/dependent/"
+        },
+        {
+            "name": "Doubt",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/doubt/"
+        },
+        {
+            "name": "Empty Mask",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/empty-mask/"
+        },
+        {
+            "name": "Entomophobe",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/entomophobe/"
+        },
+        {
+            "name": "Envy",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/envy/"
+        },
+        {
+            "name": "Family Ties",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/family-ties/"
+        },
+        {
+            "name": "Fey-Taken",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/fey-taken/"
+        },
+        {
+            "name": "Forgetful",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/forgetful/"
+        },
+        {
+            "name": "Foul Brand",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/foul-brand/"
+        },
+        {
+            "name": "Guilty Fraud",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/guilty-fraud/"
+        },
+        {
+            "name": "Haunted",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/haunted/"
+        },
+        {
+            "name": "Haunting Regret",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/haunting-regret/"
+        },
+        {
+            "name": "Headstrong",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/headstrong/"
+        },
+        {
+            "name": "Hedonistic",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/hedonistic/"
+        },
+        {
+            "name": "Helpless",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/helpless/"
+        },
+        {
+            "name": "Impatient",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/impatient/"
+        },
+        {
+            "name": "Infamous",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/infamous/"
+        },
+        {
+            "name": "Information Overload",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/information-overload/"
+        },
+        {
+            "name": "Insatiable",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/insatiable/"
+        },
+        {
+            "name": "Lonely",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/lonely/"
+        },
+        {
+            "name": "Loner",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/loner/"
+        },
+        {
+            "name": "Lovesick",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/lovesick/"
+        },
+        {
+            "name": "Magical Klutz",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/magical-klutz/"
+        },
+        {
+            "name": "Mark of Slavery",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/mark-of-slavery/"
+        },
+        {
+            "name": "Meticulous",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/meticulous/"
+        },
+        {
+            "name": "Misbegotten",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/misbegotten/"
+        },
+        {
+            "name": "Naive",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/naive/"
+        },
+        {
+            "name": "Nervous",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/nervous/"
+        },
+        {
+            "name": "Oblivious",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/oblivious/"
+        },
+        {
+            "name": "Occult Bargain",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/occult-bargain/"
+        },
+        {
+            "name": "Oppressive Expectations",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/oppressive-expectations/"
+        },
+        {
+            "name": "Overprotective",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/overprotective/"
+        },
+        {
+            "name": "Paranoid",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/paranoid/"
+        },
+        {
+            "name": "Power-Hungry",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/power-hungry/"
+        },
+        {
+            "name": "Pride",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/pride/"
+        },
+        {
+            "name": "Provincial",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/provincial/"
+        },
+        {
+            "name": "Righteous Indignation",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/righteous-indignation/"
+        },
+        {
+            "name": "Scarred",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/scarred/"
+        },
+        {
+            "name": "Secret Shame",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/secret-shame/"
+        },
+        {
+            "name": "Self-Doubting",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/self-doubting/"
+        },
+        {
+            "name": "Sentimental",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/sentimental/"
+        },
+        {
+            "name": "Shadow-Scarred",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/shadow-scarred/"
+        },
+        {
+            "name": "Sheltered",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/sheltered/"
+        },
+        {
+            "name": "Sleepy",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/sleepy/"
+        },
+        {
+            "name": "Spooked",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/spooked/"
+        },
+        {
+            "name": "Stigmatized",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/stigmatized/"
+        },
+        {
+            "name": "Superstitious",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/superstitious/"
+        },
+        {
+            "name": "Tainted Spirit",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/tainted-spirit/"
+        },
+        {
+            "name": "Too Many Secrets",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/too-many-secrets/"
+        },
+        {
+            "name": "Umbral Unmasking",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/umbral-unmasking/"
+        },
+        {
+            "name": "Unlearned",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/unlearned/"
+        },
+        {
+            "name": "Vain",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/vain/"
+        },
+        {
+            "name": "Vainglory",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/vainglory/"
+        },
+        {
+            "name": "Warded Against Nature",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/warded-against-nature/"
+        },
+        {
+            "name": "Xenophobic",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/xenophobic/"
+        },
+        {
+            "name": "Zealous",
+            "url": "https://www.d20pfsrd.com/traits/drawbacks/zealous/"
+        }
     ]
 }
