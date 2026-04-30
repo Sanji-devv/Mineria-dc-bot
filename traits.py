@@ -7,28 +7,29 @@ from pathlib import Path
 class Traits(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.command(name="trait", aliases=["t"])
-    async def trait(self, ctx, *categories: str):
-        """Displays a random trait for each specified category."""
-        traits = []
+        self.traits = []
         try:
             file_path = Path(__file__).parent / "datas" / "traits.json"
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                traits = data.get("traits", [])
-        except Exception:
-            pass
+                self.traits = data.get("traits", [])
+        except Exception as e:
+            print(f"Error loading traits: {e}")
+
+    @commands.command(name="trait", aliases=["t"])
+    async def trait(self, ctx, *categories: str):
+        """Displays a random trait for each specified category."""
+        traits = self.traits.copy()
 
         if not traits:
-            await ctx.send("❌ Trait listesi bulunamadı.")
+            await ctx.send("❌ Trait list not found.")
             return
 
         all_cats = list(set([t.get("category", "") for t in traits if t.get("category")]))
         
         if not categories:
             cat_list = ", ".join(all_cats)
-            await ctx.send(f"❌ Kategori(ler) belirtmelisiniz.\n**Örnek:** `!trait combat social magic`\n**Mevcut Kategoriler:** `{cat_list}`")
+            await ctx.send(f"❌ You must specify category(s).\n**Example:** `!trait combat social magic`\n**Available Categories:** `{cat_list}`")
             return
 
         final_categories = []
@@ -67,27 +68,27 @@ class Traits(commands.Cog):
 
         if not results:
             cat_list = ", ".join(all_cats)
-            await ctx.send(f"❌ Belirtilen kategori(ler) ({', '.join(errors)}) bulunamadı.\n**Mevcut Kategoriler:** `{cat_list}`")
+            await ctx.send(f"❌ Specified category(s) ({', '.join(errors)}) not found.\n**Available Categories:** `{cat_list}`")
             return
 
         embed = discord.Embed(
-            title="🎲 Rastgele Traitler",
-            description="Seçtiğiniz kategorilerden gelen traitler:",
+            title="🎲 Random Traits",
+            description="Traits from your selected categories:",
             color=discord.Color.dark_blue()
         )
 
-        level_labels = ["2. Seviye", "6. Seviye", "11. Seviye"]
+        level_labels = ["Level 2", "Level 6", "Level 11"]
         for i, selected in enumerate(results):
             prefix = level_labels[i] if i < len(level_labels) else f"{i + 1}."
             embed.add_field(
-                name=f"{prefix} {selected.get('category', 'Bilinmeyen')} Trait: {selected.get('name', 'Bilinmeyen')}",
-                value=f"**[Wiki Sayfası]({selected.get('url', '')})**",
+                name=f"{prefix} {selected.get('category', 'Unknown')} Trait: {selected.get('name', 'Unknown')}",
+                value=f"**[Wiki Page]({selected.get('url', '')})**",
                 inline=False
             )
 
         footer_text = "Mineria RPG • Traits"
         if errors:
-            footer_text += f" | Bulunamayanlar: {', '.join(errors)}"
+            footer_text += f" | Not found: {', '.join(errors)}"
         
         embed.set_footer(text=footer_text, icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
         

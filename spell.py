@@ -64,6 +64,11 @@ class Spell(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.spells_data: List[Dict[str, Any]] = []
+        try:
+            self._ensure_spells()
+        except RuntimeError as e:
+            from log_handler import logger
+            logger.error(f"Error preloading spells.json: {e}")
 
     def _ensure_spells(self) -> List[Dict[str, Any]]:
         """Return cached spells from JSON. Does not auto-fetch from Google Sheets."""

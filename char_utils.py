@@ -1,0 +1,119 @@
+import discord
+from typing import Dict, Any, List, Optional, Tuple, Union
+import json
+import aiofiles
+import random
+import statistics
+from pathlib import Path
+
+# =================================================================================================
+# CONSTANTS & PATHS
+# =================================================================================================
+
+DATA_DIR = Path(__file__).parent / "datas"
+
+# =================================================================================================
+# HELPER FUNCTIONS
+# =================================================================================================
+
+async def load_json(filename: str) -> Union[Dict, List, Any]:
+    """Loads JSON data from the data directory safely."""
+    path = DATA_DIR / filename
+    if path.exists():
+        try:
+            async with aiofiles.open(path, "r", encoding="utf-8") as f:
+                content = await f.read()
+            return json.loads(content)
+        except (json.JSONDecodeError, IOError):
+            return {}
+    return {}
+
+async def save_json(filename: str, data: Any) -> None:
+    """Saves data to a JSON file in the data directory."""
+    path = DATA_DIR / filename
+    path.parent.mkdir(parents=True, exist_ok=True)
+    async with aiofiles.open(path, "w", encoding="utf-8") as f:
+        await f.write(json.dumps(data, indent=4))
+
+def roll_stat_detailed(num_dice: int) -> Tuple[List[int], List[int]]:
+    """Rolls N d6 and returns (all_rolls, top_3)."""
+    all_rolls = [random.randint(1, 6) for _ in range(num_dice)]
+    kept_rolls = sorted(all_rolls, reverse=True)[:3]
+    return all_rolls, kept_rolls
+
+def get_recommendations(stats: Dict[str, int], classes: List[dict]) -> List[dict]:
+    """
+    Generates class recommendations based on stats.
+    Returns: List of dicts with 'name' and 'score'.
+    """
+
+    recs = []
+    for cls in classes:
+        primaries = cls.get("primary_stats", [])
+        secondaries = cls.get("secondary_stats", [])
+        
+        # Helper to get values for a list of stats
+        get_vals = lambda slist: [stats.get(s, 10) for s in slist]
+
+        # Score Calculation
+        p_score = statistics.mean(get_vals(primaries)) * 1.0 if primaries else 0
+        s_score = statistics.mean(get_vals(secondaries)) * 0.5 if secondaries else 0
+        
+        total_score = p_score + s_score
+        
+        # Add slight randomization to break ties
+        variance = random.uniform(0.95, 1.05)
+        
+        recs.append({
+            "name": cls.get("name", "Unknown"),
+            "score": total_score * variance
+        })
+        
+    return sorted(recs, key=lambda x: x["score"], reverse=True)[:5]
+
+# =================================================================================================
+# VIEWS
+# =================================================================================================
+
+class BonusSelectView(discord.ui.View):
+    def __init__(self, cog, ctx, creation, roll_history, bonus_val):
+        super().__init__(timeout=300)
+        self.cog = cog
+        self.ctx = ctx
+        self.creation = creation
+        self.roll_history = roll_history
+        self.bonus_val = bonus_val
+        
+        stats = ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
+        for stat in stats:
+            btn = discord.ui.Button(label=f"+{bonus_val} {stat}", style=discord.ButtonStyle.secondary, custom_id=stat)
+            btn.callback = self.make_callback(stat)
+            self.add_item(btn)
+
+    def make_callback(self, stat):
+        async def callback(interaction: discord.Interaction):
+            if interaction.user.id != self.ctx.author.id:
+                return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+            
+            # Apply
+            if stat not in self.creation["stats"]:
+                 self.creation["stats"][stat] = 0
+            self.creation["stats"][stat] += self.bonus_val
+            
+            # Disable UIs
+            for child in self.children:
+                child.disabled = True
+                if child.custom_id == stat:
+                    child.style = discord.ButtonStyle.success
+            
+            # Update Embed
+            new_history = self.roll_history + f"\n✨ **Flexible Bonus**: Applied **+{self.bonus_val} {stat}**"
+            self.creation["stat_history"] = new_history
+            
+            racial_mods = self.cog.parse_racial_modifiers(self.creation["race_data"])
+            embed = self.cog.generate_stat_embed(self.ctx, self.creation, new_history, racial_mods)
+            
+            await interaction.response.edit_message(embed=embed, view=self)
+            self.stop()
+        return callback
+

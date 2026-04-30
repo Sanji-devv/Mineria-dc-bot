@@ -4,25 +4,18 @@ import csv
 import io
 import aiohttp
 from typing import Tuple, List, Dict, Any
+from pathlib import Path
+import os
+from dotenv import load_dotenv
 
-# =================================================================================================
-# CONSTANTS
-# =================================================================================================
-
-# XP & Player Tracking Sheet
-XP_SHEET_URL = "https://docs.google.com/spreadsheets/d/1qKwtaT_9FOnwiCk5BtCKFJSslYUFdspL0R03AMM34vI/export?format=csv&gid=1293793215"
-
-# =================================================================================================
-# UTILITY COG  (XP & duplicate-player check)
-# =================================================================================================
+load_dotenv(Path(__file__).parent / ".env")
+XP_SHEET_URL = os.getenv("XP_SHEET_URL")
 
 class OneTimeCommands(commands.Cog):
     """XP table queries and duplicate player detection."""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
-    # ── XP sheet fetcher ─────────────────────────────────────────────────────
 
     async def fetch_xp_data(self) -> Tuple[List[Dict[str, Any]], int]:
         """
@@ -51,7 +44,7 @@ class OneTimeCommands(commands.Cog):
         skipped_count = 0
         parsed = []
 
-        for row in rows[1:]:  # Skip header
+        for row in rows[1:]:
             if len(row) < 5:
                 skipped_count += 1
                 continue
@@ -74,8 +67,6 @@ class OneTimeCommands(commands.Cog):
 
         return parsed, skipped_count
 
-    # ── Duplicate check command ───────────────────────────────────────────────
-
     @commands.command(name="d", aliases=["dup", "checkdup"])
     async def duplicate_check_command(self, ctx: commands.Context):
         """
@@ -90,7 +81,6 @@ class OneTimeCommands(commands.Cog):
         msg = await ctx.send("🔄 Fetching XP table data...")
         data, skipped = await self.fetch_xp_data()
 
-        # Step 1: Filter Active vs Inactive
         active_chars = []
         inactive_count = 0
         inactive_keywords = ["inactive", "dead", "left", "leave"]
@@ -102,7 +92,6 @@ class OneTimeCommands(commands.Cog):
             else:
                 active_chars.append(entry)
 
-        # Step 2: Group by Player
         players: Dict[str, list] = {}
         for entry in active_chars:
             p = entry["player_name"]
@@ -110,7 +99,6 @@ class OneTimeCommands(commands.Cog):
                 players[p] = []
             players[p].append(entry)
 
-        # Step 3: Analyze Violations
         violations: Dict[str, list] = {}
 
         for player, chars in players.items():
@@ -133,7 +121,6 @@ class OneTimeCommands(commands.Cog):
 
         await msg.delete()
 
-        # Step 4: Build Rich Embed
         has_violations = bool(violations)
         embed = discord.Embed(
             title="🔍 Duplicate Player Check",
@@ -193,8 +180,6 @@ class OneTimeCommands(commands.Cog):
 
         embed.set_footer(text="Mineria RPG • Rule Enforcement", icon_url=self.bot.user.avatar.url)
         await ctx.send(embed=embed)
-
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(OneTimeCommands(bot))

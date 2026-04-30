@@ -2,14 +2,7 @@ import discord
 from discord.ext import commands
 from datetime import datetime, timezone
 
-
-# ══════════════════════════════════════════════════════════════
-#  HELP COG  —  Split into multiple embeds for size limits
-# ══════════════════════════════════════════════════════════════
-
-ACCENT = discord.Color.from_rgb(88, 101, 242)   # Discord blurple
-DIV = "┄" * 28
-
+ACCENT = discord.Color.from_rgb(255, 170, 0)
 
 class HelpCog(commands.Cog, name="Help"):
     def __init__(self, bot):
@@ -17,99 +10,69 @@ class HelpCog(commands.Cog, name="Help"):
 
     @commands.command(name="help", aliases=["m", "mineria", "h"])
     async def help_command(self, ctx: commands.Context):
-        """Shows the full command manual in two parts."""
-
+        """Displays the modern and clean help menu."""
         bot_avatar = ctx.bot.user.avatar.url if ctx.bot.user.avatar else None
 
-        # ── PART 1: Core Mechanics ────────────────────────────────────
-        embed1 = discord.Embed(
+        embed = discord.Embed(
+            title="✨ Mineria System Terminal",
             description=(
-                "### 🏰  Mineria Campaign Bot (Part 1)\n"
-                "> *Pathfinder 1e tabletop assistant*\n"
-                f"> Prefix **`!`**  •  shortcuts `!m` `!h` `!mineria`"
-            ),
-            color=ACCENT,
-        )
-        embed1.set_author(name="📖  Command Manual", icon_url=bot_avatar)
-        if ctx.author.avatar:
-            embed1.set_thumbnail(url=ctx.author.avatar.url)
-
-        embed1.add_field(
-            name="🎲  Dice & Loot",
-            value=(
-                f"`!roll <expr>` — dice roller (`1d8+3d6`, `4d6k3`)\n"
-                f"`!loot generate <CR> [n]` — loot drop generator\n"
-                f"{DIV}"
-            ),
-            inline=False,
-        )
-
-        embed1.add_field(
-            name="🛒  Item Market",
-            value=(
-                f"`!item info <name>` — full item stats & variants\n"
-                f"`!item search <txt>` — search name & description\n"
-                f"`!item listdown <gold|AC|name>` — sort high → low\n"
-                f"`!item listup <gold|AC|name>` — sort low → high\n"
-                f"`!item filter <rarity> [stat]` — rarity/stat filter\n"
-                f"`!item slot <slot>` — items by equipment slot\n"
-                f"`!item stat <stat>` — items boosting a stat\n"
-                f"{DIV}"
-            ),
-            inline=False,
-        )
-
-        embed1.add_field(
-            name="✨  Spells, Lore & Links",
-            value=(
-                f"`!spell <name>` — Pathfinder spell search\n"
-                f"`!wiki` — Pathfinder reference links\n"
-                f"`!hero <name>` — Mineria Wiki character lookup\n"
-                f"`!drawback` — Random character drawback suggestion\n"
-                f"`!trait <race> <class>` — Random traits suggestion\n"
-            ),
-            inline=False,
-        )
-
-        # ── PART 2: Character, Tools, Admin ───────────────────────────
-        embed2 = discord.Embed(
-            description=(
-                "### ⚙️  Mineria Campaign Bot (Part 2)\n"
-                "> *Continued command manual*"
+                "Welcome to the **Mineria Campaign Assistant**.\n"
+                "Below are all available commands divided into 3 main categories.\n\n"
+                "**Prefix:** `!`  •  **Shortcuts:** `!m`, `!h`, `!mineria`\n"
             ),
             color=ACCENT,
             timestamp=datetime.now(timezone.utc),
         )
 
-        embed2.add_field(
-            name="👤  Character & Inventory",
+        if ctx.author.avatar:
+            embed.set_thumbnail(url=ctx.author.avatar.url)
+
+        # --- Part 1: Core Commands ---
+        embed.add_field(
+            name="🔰 **CORE COMMANDS**",
             value=(
-                f"`!char help` — full character command list\n"
-                f"`!rec [open|close]` — class recommendations\n"
-                f"{DIV}"
+                "> **`!roll <expr>`** ➔ Advanced dice rolling engine. *(e.g., 1d20+7)*\n"
+                "> **`!trait <category>`** ➔ Draws a random trait from the specified category.\n"
+                "> **`!drawback`** ➔ Suggests a random drawback for your character.\n"
+                "> **`!spell <name>`** ➔ Searches for a spell in the D20PFSRD database."
             ),
             inline=False,
         )
 
-        embed2.add_field(
-            name="🛠️  Registry & Tools",
+        # --- Part 2: Character System ---
+        embed.add_field(
+            name="👤 **CHARACTER SYSTEM**",
             value=(
-                f"`!d` — duplicate player scan (1 Ranked + 1 Clerk)\n"
-                f"`!doc [name]` — session files & registry\n"
-                f"{DIV}"
+                "> **`!char create <race>`** ➔ Starts a new character creation wizard.\n"
+                "> **`!char dr <stats>`** ➔ Distributes your rolled stats to your character.\n"
+                "> **`!char save <name>`** ➔ Finalizes and saves your character to the system.\n"
+                "> **`!char list`** ➔ Lists all your registered characters.\n"
+                "> **`!char info [name]`** ➔ Displays the detailed character sheet.\n"
+                "> **`!char edit` / `rename` / `delete`** ➔ Character management operations.\n"
+                "> **`!xp <name>`** ➔ Checks current XP and level of your character.\n"
+                "> **`!kia`** & **`!mia`** ➔ Calculates current XP in case of death or missing-in-action."
             ),
             inline=False,
         )
 
-
-
-        embed2.set_footer(
-            text=f"Requested by {ctx.author.display_name}  •  Mineria RPG",
+        # --- Part 3: Utility Commands ---
+        embed.add_field(
+            name="🛠️ **UTILITY COMMANDS**",
+            value=(
+                "> **`!wiki`** ➔ Official Mineria universe Wiki and reference pages.\n"
+                "> **`!doc`** ➔ Access to server forms and necessary documents.\n"
+                "> **`!d`** ➔ Server rank rule check (1 Ranked + 1 Clerk).\n"
+                "> **`!rec`** ➔ Toggles the class recommendation system on or off."
+            ),
+            inline=False,
+        )
+        
+        embed.set_footer(
+            text=f"Requested by: {ctx.author.display_name} • Mineria OS",
             icon_url=ctx.author.avatar.url if ctx.author.avatar else bot_avatar,
         )
 
-        await ctx.send(embed=embed1)
-        await ctx.send(embed=embed2)
+        await ctx.send(embed=embed)
 
 
 async def setup(bot):

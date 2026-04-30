@@ -17,7 +17,7 @@ if TOKEN:
 else:
     logger.warning("⚠️ No DISCORD_TOKEN found in environment variables")
 
-class MineriaBot(commands.Bot):
+class MineriaBot(commands.AutoShardedBot):
     def __init__(self, command_prefix):
         intents = discord.Intents.default()
         intents.message_content = intents.members = True
@@ -29,7 +29,7 @@ class MineriaBot(commands.Bot):
         )
 
     async def setup_hook(self):
-        extensions = ["dice", "help", "log_handler", "links", "traits", "drawbacks", "documents", "utility", "error_handler", "admin", "spell", "item", "character", "hero"]
+        extensions = ["dice", "help", "log_handler", "links", "traits", "drawbacks", "documents", "utility", "error_handler", "admin", "spell", "character", "new_character"]
         loaded = []
 
         for ext in extensions:

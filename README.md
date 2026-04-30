@@ -1,6 +1,6 @@
 # 🎲 Mineria Discord Bot
 
-A specialized Discord bot for **Pathfinder Roleplaying Game (1st Edition)** — character management, dice rolling, loot generation, item market, and server registry tools.
+A specialized Discord bot for **Pathfinder Roleplaying Game (1st Edition)** — character management, dice rolling, spell lookups, and server registry tools.
 
 ## ⚡ Prefixes
 
@@ -12,69 +12,60 @@ A specialized Discord bot for **Pathfinder Roleplaying Game (1st Edition)** — 
 
 ---
 
-## 🎲 Dice & Quick Commands
+## 🎲 Core Commands
 
 | Command | Example | Description |
 |---------|---------|-------------|
 | `!roll <expr>` | `!roll 4d6k3` | Roll dice. Supports modifiers (`+5`), keep-highest (`k3`), multi-roll (`d20, d6`). |
-| `!wiki` | `!wiki` | Show official Mineria & Pathfinder Wiki links. |
-| `!help` / `!m` / `!h` | `!help` | Interactive command manual with dropdown navigation. |
-| `!hero <name>` | `!hero Varka` | Fetch and display a character's page from Mineria Wiki. |
+| `!trait <cat>`| `!trait combat` | Suggest a random trait for a specific category. |
 | `!drawback` | `!drawback` | Display a random character drawback. |
-| `!trait <Race> <Class>`| `!trait Elf Wizard` | Suggest 2 random traits for a specific Race and Class. |
-
----
-
-## 🛠️ Registry & Tools
-
-| Command | Example | Description |
-|---------|---------|-------------|
-| `!d` / `!dup` | `!d` | **Duplicate Check**: Scans the XP Sheet for players violating the "1 Ranked + 1 Clerk" rule. |
-| `!loot generate <CR> [count]` | `!loot generate 5 3` | Generate random loot based on Challenge Rating. |
-| `!item listdown <query>` | `!item listdown 500` | Search items ≤ price, by AC, or by name — expensive first. |
-| `!item listup <query>` | `!item listup sword` | Same search — cheap first. |
-| `!item info <name>` | `!item info Longsword` | Detailed item stats with wiki link. |
-| `!item filter <rarity\|stat>` | `!item filter wis` | Filter by rarity (common/rare/…) **or** stat (STR/DEX/WIS/…) — cheap → expensive. |
-| `!spell <name>` | `!spell fireball` | Search spell on the Pathfinder d20pfsrd wiki. |
-| `!doc [name]` | `!doc rules.pdf` | List or download files from the `files/` directory (fuzzy filename match). |
+| `!spell <name>` | `!spell fireball` | Search spell on the Pathfinder d20pfsrd database. |
 
 ---
 
 ## 👤 Character Management
 
-### Creation Flow
-`!char create <race>` → `!char dr <stats>` → *(optional)* `!char add/remove` → `!char save <name>`
-
 | Command | Example | Description |
 |---------|---------|-------------|
-| `!char create <race>` | `!char create Human` | Start character creation for a given race. |
-| `!char dr <stat> <val> …` | `!char dr STR 14 DEX 12 …` | Distribute dice points across all 6 stats. |
-| `!char add <stat> <val>` | `!char add STR 2` | Add a temporary stat bonus (e.g. racial flex). |
-| `!char remove <stat> <val>` | `!char remove DEX 2` | Remove a temporary stat bonus. |
-| `!char save <name>` | `!char save Aragon` | Finalize and save the character. |
-| `!rec [open\|close]` | `!rec open` | Toggle automatic class recommendations. |
-
-### Management
-
-| Command | Example | Description |
-|---------|---------|-------------|
-| `!char info [name]` | `!char info Aragon` | View full character sheet. |
-| `!char list` | `!char list` | List all saved characters. |
-| `!char edit class <name> <class>` | `!char edit class Aragon Fighter` | Update character class. |
-| `!char edit stat <name> <stat> <val>` | `!char edit stat Aragon STR 16` | Manually edit a stat value. |
-| `!char rename <old> <new>` | `!char rename Aragon Arthas` | Rename a character. |
-| `!char delete <name>` | `!char delete Aragon` | Permanently delete a character. |
+| `!char create <race>` | `!char create Elf`| Start the character creation wizard. |
+| `!char dr <stats>` | `!char dr 18 16 14` | Distribute rolled stats to your character. |
+| `!char save <name>` | `!char save Varka` | Finalize and save the character. |
+| `!char list` | `!char list` | List all registered characters you own. |
+| `!char info [name]` | `!char info Varka` | Display the detailed character sheet. |
+| `!char edit` | `!char edit`| Character management operations (also `rename`, `delete`). |
+| `!xp <name>` | `!xp Varka` | Check current XP and level. |
+| `!kia <name>` | `!kia Varka` | Calculate starting XP for a new character (Death penalty). |
+| `!mia <name>` | `!mia Varka` | Calculate starting XP for a new character (Missing penalty). |
+| `!rec` | `!rec` | Toggle automatic class recommendations on/off. |
 
 ---
 
+## 🛠️ Utility & Documents
+
+| Command | Example | Description |
+|---------|---------|-------------|
+| `!d` / `!dup` | `!d` | **Duplicate Check**: Scans the XP Sheet for players violating the "1 Ranked + 1 Clerk" rule. |
+| `!doc [name]` | `!doc rules.pdf` | List or download files from the `mineria_files/docs/` directory. |
+| `!map [name]` | `!map city` | List or view map images from the `mineria_files/maps/` directory. |
+| `!wiki` | `!wiki` | Show official Mineria & Pathfinder Wiki links. |
+| `!help` / `!m` | `!help` | Displays the modern help menu. |
+
+---
+
+## ⚙️ Admin Commands (Owner Only)
+
+| Command | Example | Description |
+|---------|---------|-------------|
+| `!backup` | `!backup` | Triggers an immediate manual zip backup of user data. |
+| `!sync` | `!sync` | Syncs the Discord slash command tree. |
 ## ⚙️ Features
 
 - **Duplicate Player Detection** — Enforces 1 Ranked + 1 Clerk rule via live Google Sheet data.
-- **Item Market** — Full search suite with price, AC, name, rarity, and stat filters.
-- **Character Creation** — Race/class-aware stat rolling with 4d6 drop-lowest.
-- **Google Sheet Sync** — Live XP tracking and inventory lookups.
+- **Spell Database** — Pathfinder 1st Edition spell lookup directly from Google Sheets.
+- **Character Creation** — Full suite to roll, allocate, and save characters.
+- **Document & Map Serving** — Instantly download PDFs or view maps from the bot.
 - **Automated Backups** — Daily/weekly backups of the `datas/` folder.
-- **Robust Logging** — Detailed logs in `logs/mineria.log`. Errors reported once (no duplicates).
+- **Robust Logging** — Detailed logs in `logs/mineria.log` with minimal chat spam.
 
 ---
 
@@ -101,10 +92,11 @@ python main.py
 | File/Dir | Description |
 |----------|-------------|
 | `datas/characters.json` | Saved user characters |
-| `datas/items.json` | Item database (loot & market) |
 | `datas/races.json` | Race definitions & modifiers |
 | `datas/classes.json` | Class definitions & primary stats |
 | `datas/drawbacks.json` | Database of character drawbacks |
 | `datas/traits.json` | Database of character traits |
-| `files/` | Documents served by `!doc` |
-| `logs/mineria.log` | Application log (rotating) |
+| `mineria_files/docs/` | Documents served by `!doc` |
+| `mineria_files/maps/` | Images served by `!map` |
+| `logs/mineria.log` | Application log |
+| `backups/` | Automated daily/weekly ZIP backups |

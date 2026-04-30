@@ -20,13 +20,13 @@ class Drawbacks(commands.Cog):
     async def drawback(self, ctx):
         """Displays a random drawback."""
         if not self.drawbacks:
-            await ctx.send("❌ Drawback listesi şu anda yüklenemedi.")
+            await ctx.send("❌ Drawback list could not be loaded.")
             return
             
         drawback = random.choice(self.drawbacks)
         
         embed = discord.Embed(
-            title="🎲 Rastgele Drawback",
+            title="🎲 Random Drawback",
             description=f"**[{drawback['name']}]({drawback['url']})**",
             color=discord.Color.dark_red()
         )

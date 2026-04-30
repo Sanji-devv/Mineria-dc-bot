@@ -3,7 +3,6 @@ import discord
 from discord.ext import commands
 from pathlib import Path
 
-# Setup global logger
 def setup_logging():
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)
@@ -11,21 +10,17 @@ def setup_logging():
     logger = logging.getLogger("MineriaBot")
     logger.setLevel(logging.INFO)
     
-    # Prevent adding multiple handlers if function is called multiple times
     if not logger.handlers:
-        # File Handler
         file_handler = logging.FileHandler(log_dir / "mineria.log", encoding="utf-8")
         file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S'))
         logger.addHandler(file_handler)
 
-        # Console Handler
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
         logger.addHandler(console_handler)
     
     return logger
 
-# Initialize logger immediately so it can be imported
 logger = setup_logging()
 
 class LogHandler(commands.Cog, name="LogHandler"):
@@ -33,14 +28,9 @@ class LogHandler(commands.Cog, name="LogHandler"):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_command(self, ctx):
-        """Log when a command is received."""
-        logger.info(f"📥 COMMAND REQUEST | User: {ctx.author} ({ctx.author.id}) | Command: {ctx.message.content} | Guild: {ctx.guild}")
-
-    @commands.Cog.listener()
     async def on_command_completion(self, ctx):
         """Log when a command completes successfully."""
-        logger.info(f"✅ COMMAND SUCCESS | User: {ctx.author} ({ctx.author.id}) | Command: {ctx.command.name}")
+        logger.info(f"✅ EXEC | User: {ctx.author} ({ctx.author.id}) | Cmd: {ctx.message.content} | Guild: {ctx.guild}")
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
