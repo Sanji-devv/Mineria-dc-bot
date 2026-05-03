@@ -138,7 +138,7 @@ class CharacterCog(commands.Cog, name="Character"):
 
     @char.command(name="dr")
     async def distribute(self, ctx: commands.Context, *args):
-        await handle_distribute(self, ctx, args)
+        await handle_distribute(self, ctx, *args)
 
     @char.command(name="add")
     async def add_stat(self, ctx: commands.Context, stat: str = None, value: int = None):

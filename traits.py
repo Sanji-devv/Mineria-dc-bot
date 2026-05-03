@@ -18,67 +18,116 @@ class Traits(commands.Cog):
 
     @commands.command(name="trait", aliases=["t"])
     async def trait(self, ctx, *args: str):
-        """Displays a random trait for each specified category. Requires race specification."""
+        """Displays a random trait for each specified category.
+        Race specification is only needed if 'Race' category is requested.
+        Usage: !trait combat social  OR  !trait race(human) combat social
+        """
         traits = self.traits.copy()
 
         if not traits:
             await ctx.send("❌ Trait list not found.")
             return
 
+        # --- Parse arguments ---
         race = None
         categories = []
+
         for arg in args:
-            if arg.lower().startswith("race(") and arg.endswith(")"):
-                race = arg[5:-1].strip().lower()
+            arg_lower = arg.lower().strip()
+            if arg_lower.startswith("race(") and arg_lower.endswith(")"):
+                race = arg_lower[5:-1].strip()
             else:
-                categories.append(arg)
+                categories.append(arg_lower)
 
         all_cats = sorted(list(set([t.get("category", "") for t in traits if t.get("category")])))
+        # Show Race as Race(human) in category hint
         display_cats = [cat if cat != "Race" else "Race(human)" for cat in all_cats]
         cat_list = ", ".join(display_cats)
 
-        if not race or not categories:
-            error_prefix = "❌ You must specify both a race and category(s)." if not race and not categories else \
-                          "❌ You must specify a race." if not race else \
-                          "❌ You must specify category(s)."
-            
-            example_race = race if race else "human"
+        # Determine if user requested a Race category
+        wants_race_trait = "race" in [c.lower() for c in categories]
+
+        if not categories:
             hint_message = (
-                f"{error_prefix}\n"
-                f"**Example:** `!trait race({example_race}) combat social`\n"
-                f"**Available Categories:** `{cat_list}`"
+                f"❌ You must specify at least one category.\n"
+                f"**Usage:** `!trait combat social`  or  `!trait race(human) combat social`\n"
+                f"**Available Categories:** `{cat_list}`\n"
+                f"_A Race trait for your race is automatically added as Level 11 when a race is provided._"
             )
             await ctx.send(hint_message)
             return
 
-        # Filter traits by race
-        filtered_traits = [t for t in traits if t.get("req_race", "Any").lower() in ["any", race]]
+        if wants_race_trait and not race:
+            hint_message = (
+                f"❌ You must specify a race when requesting a Race trait.\n"
+                f"**Usage:** `!trait race(human) combat social`\n"
+                f"**Available Categories:** `{cat_list}`\n"
+                f"_A Race trait for your race is automatically added as Level 11._"
+            )
+            await ctx.send(hint_message)
+            return
 
+        # --- Build final category list (handles "random" keyword) ---
         final_categories = []
         i = 0
         while i < len(categories):
-            cat = categories[i].lower()
+            cat = categories[i]
             if cat == "random":
                 count = 1
-                if i + 1 < len(categories) and categories[i+1].isdigit():
-                    count = int(categories[i+1])
+                if i + 1 < len(categories) and categories[i + 1].isdigit():
+                    count = int(categories[i + 1])
                     i += 1
-                
-                available = [c.lower() for c in all_cats if c.lower() not in final_categories]
+                available = [c.lower() for c in all_cats if c.lower() != "race" and c.lower() not in final_categories]
                 count = min(count, len(available))
                 if count > 0:
                     picked = random.sample(available, count)
                     final_categories.extend(picked)
             else:
-                final_categories.append(cat)
+                # Skip if user manually typed "race" — it's handled automatically
+                if cat != "race":
+                    final_categories.append(cat)
             i += 1
 
-        req_cats = final_categories
-        results = []
-        errors = []
-        available_traits = filtered_traits.copy()
+        # --- Select one random trait per category (excluding Race) ---
+        # Filter non-Race traits: if a race is given, restrict by req_race; otherwise allow all
+        if race:
+            non_race_pool = [
+                t for t in traits
+                if t.get("category", "").lower() != "race"
+                and t.get("req_race", "Any").lower() in ("any", race)
+            ]
+        else:
+            non_race_pool = [
+                t for t in traits
+                if t.get("category", "").lower() != "race"
+            ]
 
-        for req_cat in req_cats:
+        errors = []
+        available_traits = non_race_pool.copy()
+        results = []
+
+        # --- Automatically pick a Race trait FIRST — only if race was provided ---
+        if race:
+            # Priority 1: Race traits with race name in parentheses e.g. "Vandal (Human)"
+            race_specific_pool = [
+                t for t in traits
+                if t.get("category", "").lower() == "race"
+                and f"({race})" in t.get("name", "").lower()
+            ]
+            # Priority 2: fallback to any Race trait
+            race_fallback_pool = [
+                t for t in traits
+                if t.get("category", "").lower() == "race"
+                and f"({race})" not in t.get("name", "").lower()
+            ]
+            race_pool = race_specific_pool if race_specific_pool else race_fallback_pool
+            if race_pool:
+                results = [random.choice(race_pool)]
+            else:
+                errors.append(f"race({race})")
+
+        # --- Then select one trait per requested category (Level 6, Level 11, ...) ---
+        for req_cat in final_categories:
             pool = [t for t in available_traits if t.get("category", "").lower() == req_cat]
             if pool:
                 selected = random.choice(pool)
@@ -88,19 +137,23 @@ class Traits(commands.Cog):
                 errors.append(req_cat)
 
         if not results:
-            cat_list = ", ".join(all_cats)
-            await ctx.send(f"❌ Specified category(s) ({', '.join(errors)}) not found for race `{race}`.\n**Available Categories:** `{cat_list}`")
+            await ctx.send(
+                f"❌ No traits found for category(s) `{', '.join(errors)}` with race `{race}`.\n"
+                f"**Available Categories:** `{cat_list}`"
+            )
             return
 
+        # --- Build embed ---
+        race_desc = f" for race **{race.capitalize()}**" if race else ""
         embed = discord.Embed(
             title="🎲 Random Traits",
-            description=f"Traits for race **{race.capitalize()}** from your selected categories:",
+            description=f"Traits{race_desc} from your selected categories:",
             color=discord.Color.dark_blue()
         )
 
         level_labels = ["Level 2", "Level 6", "Level 11"]
-        for i, selected in enumerate(results):
-            prefix = level_labels[i] if i < len(level_labels) else f"{i + 1}."
+        for idx, selected in enumerate(results):
+            prefix = level_labels[idx] if idx < len(level_labels) else f"Level {idx + 1}"
             embed.add_field(
                 name=f"{prefix} {selected.get('category', 'Unknown')} Trait: {selected.get('name', 'Unknown')}",
                 value=f"**[Wiki Page]({selected.get('url', '')})**",
@@ -110,9 +163,10 @@ class Traits(commands.Cog):
         footer_text = "Mineria RPG • Traits"
         if errors:
             footer_text += f" | Not found: {', '.join(errors)}"
-        
-        embed.set_footer(text=footer_text, icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
-        
+
+        avatar_url = self.bot.user.avatar.url if (self.bot.user and self.bot.user.avatar) else None
+        embed.set_footer(text=footer_text, icon_url=avatar_url)
+
         await ctx.send(embed=embed)
 
 async def setup(bot):

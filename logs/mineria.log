@@ -1,0 +1,10 @@
+2026-04-30 18:26:06 - INFO - Using Production Token
+2026-04-30 18:26:07 - INFO - Loaded 13 extensions: dice, help, log_handler, links, traits, drawbacks, documents, utility, error_handler, admin, spell, character, new_character
+2026-04-30 18:26:10 - INFO - test bots is online! servers: 1
+2026-04-30 18:26:22 - INFO - ✅ EXEC | User: judai1903 (388683129658933259) | Cmd: !char create catfolk | Guild: Unknown Lands
+2026-04-30 18:26:30 - INFO - ✅ EXEC | User: judai1903 (388683129658933259) | Cmd: !char dr STR 7 DEX 6 CON 6 INT 3 WIS 7 CHA 3 | Guild: Unknown Lands
+2026-04-30 18:48:34 - INFO - Using Production Token
+2026-04-30 18:48:35 - INFO - Loaded 13 extensions: dice, help, log_handler, links, traits, drawbacks, documents, utility, error_handler, admin, spell, character, new_character
+2026-04-30 18:48:38 - INFO - test bots is online! servers: 1
+2026-04-30 18:48:38 - INFO - ✅ EXEC | User: judai1903 (388683129658933259) | Cmd: !trait Combat Social Regional | Guild: Unknown Lands
+2026-04-30 18:48:49 - INFO - ✅ EXEC | User: judai1903 (388683129658933259) | Cmd: !trait race(human) Social Regional | Guild: Unknown Lands
