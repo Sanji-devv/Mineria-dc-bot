@@ -47,12 +47,11 @@ class Traits(commands.Cog):
         # Determine if user requested a Race category
         wants_race_trait = "race" in [c.lower() for c in categories]
 
-        if not categories:
+        if not args:
             hint_message = (
-                f"❌ You must specify at least one category.\n"
-                f"**Usage:** `!trait combat social`  or  `!trait race(human) combat social`\n"
-                f"**Available Categories:** `{cat_list}`\n"
-                f"_A Race trait for your race is automatically added as Level 11 when a race is provided._"
+                f"❌ You must specify at least 3 different categories.\n"
+                f"**Usage:** `!trait combat social magic`  or  `!trait race(human) combat social`\n"
+                f"**Available Categories:** `{cat_list}`"
             )
             await ctx.send(hint_message)
             return
@@ -61,8 +60,7 @@ class Traits(commands.Cog):
             hint_message = (
                 f"❌ You must specify a race when requesting a Race trait.\n"
                 f"**Usage:** `!trait race(human) combat social`\n"
-                f"**Available Categories:** `{cat_list}`\n"
-                f"_A Race trait for your race is automatically added as Level 11._"
+                f"**Available Categories:** `{cat_list}`"
             )
             await ctx.send(hint_message)
             return
@@ -87,6 +85,17 @@ class Traits(commands.Cog):
                 if cat != "race":
                     final_categories.append(cat)
             i += 1
+
+        # --- Enforce at least 3 different categories ---
+        total_traits = len(set(final_categories)) + (1 if race else 0)
+        if total_traits < 3:
+            hint_message = (
+                f"❌ You must specify at least 3 different categories.\n"
+                f"**Usage:** `!trait combat social magic`  or  `!trait race(human) combat social`\n"
+                f"**Available Categories:** `{cat_list}`"
+            )
+            await ctx.send(hint_message)
+            return
 
         # --- Select one random trait per category (excluding Race) ---
         # Filter non-Race traits: if a race is given, restrict by req_race; otherwise allow all
