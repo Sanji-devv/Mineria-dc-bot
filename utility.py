@@ -7,6 +7,7 @@ from typing import Tuple, List, Dict, Any
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from log_handler import logger
 
 load_dotenv(Path(__file__).parent / ".env")
 XP_SHEET_URL = os.getenv("XP_SHEET_URL")
@@ -30,11 +31,20 @@ class OneTimeCommands(commands.Cog):
           D (3) = XP
           E (4) = Rank
         """
-        async with aiohttp.ClientSession() as session:
-            async with session.get(XP_SHEET_URL) as resp:
-                if resp.status != 200:
-                    return [], 0
-                content = await resp.text()
+        if not XP_SHEET_URL:
+            logger.error("XP_SHEET_URL environment variable is not set.")
+            return [], 0
+            
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(XP_SHEET_URL) as resp:
+                    if resp.status != 200:
+                        logger.error(f"Failed to fetch XP sheet: HTTP Status {resp.status}")
+                        return [], 0
+                    content = await resp.text()
+        except Exception as e:
+            logger.error(f"Exception while fetching XP data: {e}")
+            return [], 0
 
         reader = csv.reader(io.StringIO(content))
         rows = list(reader)
@@ -80,6 +90,9 @@ class OneTimeCommands(commands.Cog):
         """
         msg = await ctx.send("🔄 Fetching XP table data...")
         data, skipped = await self.fetch_xp_data()
+        if not data and skipped == 0:
+            await msg.edit(content="❌ Error: Failed to fetch XP table data or sheet is empty. Please check logs.")
+            return
 
         active_chars = []
         inactive_count = 0
@@ -178,7 +191,7 @@ class OneTimeCommands(commands.Cog):
                 inline=False
             )
 
-        embed.set_footer(text="Mineria RPG • Rule Enforcement", icon_url=self.bot.user.avatar.url)
+        embed.set_footer(text="Mineria RPG • Rule Enforcement", icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
         await ctx.send(embed=embed)
 
 async def setup(bot: commands.Bot):

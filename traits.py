@@ -8,13 +8,22 @@ class Traits(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.traits = []
+
+    async def cog_load(self):
+        """Loads traits database asynchronously via executor."""
+        import asyncio
+        loop = asyncio.get_running_loop()
         try:
-            file_path = Path(__file__).parent / "datas" / "traits.json"
+            await loop.run_in_executor(None, self._load_traits_sync)
+        except Exception as e:
+            print(f"Error preloading traits: {e}")
+
+    def _load_traits_sync(self):
+        file_path = Path(__file__).parent / "datas" / "traits.json"
+        if file_path.exists():
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 self.traits = data.get("traits", [])
-        except Exception as e:
-            print(f"Error loading traits: {e}")
 
     @commands.command(name="trait", aliases=["t"])
     async def trait(self, ctx, *args: str):
@@ -28,16 +37,38 @@ class Traits(commands.Cog):
             await ctx.send("❌ Trait list not found.")
             return
 
-        # --- Parse arguments ---
+        # --- Parse arguments and build selection order ---
+        selection_order = []  # List of tuples: ('category', cat_name) or ('race', race_name)
+        
+        # Pre-pass to get the race (needed for filtering pools)
         race = None
-        categories = []
-
         for arg in args:
             arg_lower = arg.lower().strip()
             if arg_lower.startswith("race(") and arg_lower.endswith(")"):
                 race = arg_lower[5:-1].strip()
+                break
+
+        # Second pass: build the selection order
+        i = 0
+        while i < len(args):
+            arg = args[i]
+            arg_lower = arg.lower().strip()
+            if arg_lower.startswith("race(") and arg_lower.endswith(")"):
+                r_name = arg_lower[5:-1].strip()
+                selection_order.append(('race', r_name))
+            elif arg_lower == "random":
+                count = 1
+                if i + 1 < len(args) and args[i + 1].isdigit():
+                    count = int(args[i + 1])
+                    i += 1
+                for _ in range(count):
+                    selection_order.append(('random', None))
             else:
-                categories.append(arg_lower)
+                if arg_lower == "race":
+                    selection_order.append(('race', race))
+                else:
+                    selection_order.append(('category', arg_lower))
+            i += 1
 
         all_cats = sorted(list(set([t.get("category", "") for t in traits if t.get("category")])))
         # Show Race as Race(human) in category hint
@@ -45,7 +76,7 @@ class Traits(commands.Cog):
         cat_list = ", ".join(display_cats)
 
         # Determine if user requested a Race category
-        wants_race_trait = "race" in [c.lower() for c in categories]
+        wants_race_trait = any(t == 'race' for t, _ in selection_order) or (race is not None)
 
         if not args:
             hint_message = (
@@ -65,30 +96,17 @@ class Traits(commands.Cog):
             await ctx.send(hint_message)
             return
 
-        # --- Build final category list (handles "random" keyword) ---
-        final_categories = []
-        i = 0
-        while i < len(categories):
-            cat = categories[i]
-            if cat == "random":
-                count = 1
-                if i + 1 < len(categories) and categories[i + 1].isdigit():
-                    count = int(categories[i + 1])
-                    i += 1
-                available = [c.lower() for c in all_cats if c.lower() != "race" and c.lower() not in final_categories]
-                count = min(count, len(available))
-                if count > 0:
-                    picked = random.sample(available, count)
-                    final_categories.extend(picked)
-            else:
-                # Skip if user manually typed "race" — it's handled automatically
-                if cat != "race":
-                    final_categories.append(cat)
-            i += 1
-
         # --- Enforce at least 3 different categories ---
-        total_traits = len(set(final_categories)) + (1 if race else 0)
-        if total_traits < 3:
+        unique_selections = set()
+        for t, val in selection_order:
+            if t == 'category':
+                unique_selections.add(val)
+            elif t == 'race':
+                unique_selections.add('race')
+            elif t == 'random':
+                unique_selections.add(f"random_{len(unique_selections)}")
+                
+        if len(unique_selections) < 3:
             hint_message = (
                 f"❌ You must specify at least 3 different categories.\n"
                 f"**Usage:** `!trait combat social magic`  or  `!trait race(human) combat social`\n"
@@ -115,35 +133,56 @@ class Traits(commands.Cog):
         available_traits = non_race_pool.copy()
         results = []
 
-        # --- Automatically pick a Race trait FIRST — only if race was provided ---
-        if race:
-            # Priority 1: Race traits with race name in parentheses e.g. "Vandal (Human)"
-            race_specific_pool = [
-                t for t in traits
-                if t.get("category", "").lower() == "race"
-                and f"({race})" in t.get("name", "").lower()
-            ]
-            # Priority 2: fallback to any Race trait
-            race_fallback_pool = [
-                t for t in traits
-                if t.get("category", "").lower() == "race"
-                and f"({race})" not in t.get("name", "").lower()
-            ]
-            race_pool = race_specific_pool if race_specific_pool else race_fallback_pool
-            if race_pool:
-                results = [random.choice(race_pool)]
-            else:
-                errors.append(f"race({race})")
+        # Resolve 'random' to concrete categories
+        resolved_order = []
+        used_categories = []
+        for t, val in selection_order:
+            if t == 'category':
+                resolved_order.append((t, val))
+                used_categories.append(val)
+            elif t == 'race':
+                resolved_order.append((t, val))
+            elif t == 'random':
+                available = [c.lower() for c in all_cats if c.lower() != "race" and c.lower() not in used_categories]
+                if available:
+                    picked = random.choice(available)
+                    resolved_order.append(('category', picked))
+                    used_categories.append(picked)
+                else:
+                    errors.append("random")
 
-        # --- Then select one trait per requested category (Level 6, Level 11, ...) ---
-        for req_cat in final_categories:
-            pool = [t for t in available_traits if t.get("category", "").lower() == req_cat]
-            if pool:
-                selected = random.choice(pool)
-                results.append(selected)
-                available_traits.remove(selected)
-            else:
-                errors.append(req_cat)
+        # Select traits in the exact resolved order
+        for t, val in resolved_order:
+            if t == 'category':
+                pool = [tr for tr in available_traits if tr.get("category", "").lower() == val]
+                if pool:
+                    selected = random.choice(pool)
+                    results.append(selected)
+                    available_traits.remove(selected)
+                else:
+                    errors.append(val)
+            elif t == 'race':
+                if race:
+                    # Priority 1: Race traits with race name in parentheses e.g. "Vandal (Human)"
+                    race_specific_pool = [
+                        tr for tr in traits
+                        if tr.get("category", "").lower() == "race"
+                        and f"({race})" in tr.get("name", "").lower()
+                    ]
+                    # Priority 2: fallback to any Race trait
+                    race_fallback_pool = [
+                        tr for tr in traits
+                        if tr.get("category", "").lower() == "race"
+                        and f"({race})" not in tr.get("name", "").lower()
+                    ]
+                    race_pool = race_specific_pool if race_specific_pool else race_fallback_pool
+                    if race_pool:
+                        selected = random.choice(race_pool)
+                        results.append(selected)
+                    else:
+                        errors.append(f"race({race})")
+                else:
+                    errors.append("race")
 
         if not results:
             await ctx.send(
@@ -162,10 +201,20 @@ class Traits(commands.Cog):
 
         level_labels = ["Level 2", "Level 6", "Level 11"]
         for idx, selected in enumerate(results):
+            cat = selected.get('category', 'Unknown')
+            name = selected.get('name', 'Unknown')
+            url = selected.get('url', '')
+            
             prefix = level_labels[idx] if idx < len(level_labels) else f"Level {idx + 1}"
+            
+            if cat.lower() == 'race':
+                field_name = f"{prefix} Race Trait: {name}"
+            else:
+                field_name = f"{prefix} {cat} Trait: {name}"
+                
             embed.add_field(
-                name=f"{prefix} {selected.get('category', 'Unknown')} Trait: {selected.get('name', 'Unknown')}",
-                value=f"**[Wiki Page]({selected.get('url', '')})**",
+                name=field_name,
+                value=f"**[Wiki Page]({url})**",
                 inline=False
             )
 

@@ -80,7 +80,7 @@ class KiaCog(commands.Cog, name="KIA"):
                 ijk_xp = 0.0
 
                 for row in reader:
-                    if len(row) < 13: # Column M is index 12
+                    if len(row) < 12: # Column L is index 11
                         continue
                         
                     # Column B (index 1) is Name
@@ -150,7 +150,7 @@ class KiaCog(commands.Cog, name="KIA"):
                     else:
                         embed.add_field(name="📈 Next Level", value="Maximum Level Reached", inline=True)
 
-                embed.set_footer(text="Mineria RPG • System", icon_url=self.bot.user.avatar.url if self.bot.user else None)
+                embed.set_footer(text="Mineria RPG • System", icon_url=self.bot.user.avatar.url if (self.bot.user and self.bot.user.avatar) else None)
 
                 await ctx.send(embed=embed)
 

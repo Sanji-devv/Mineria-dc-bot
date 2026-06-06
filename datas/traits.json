@@ -36,13 +36,6 @@
             "req_class": "Any"
         },
         {
-            "name": "Armed Grit",
-            "url": "https://www.d20pfsrd.com/traits/combat-traits/armed-grit-combat/",
-            "category": "Combat",
-            "req_race": "Any",
-            "req_class": "Any"
-        },
-        {
             "name": "Armor Expert",
             "url": "https://www.d20pfsrd.com/traits/combat-traits/armor-expert/",
             "category": "Combat",
@@ -6030,13 +6023,6 @@
         {
             "name": "Great Market Merchant",
             "url": "https://www.d20pfsrd.com/traits/regional-traits/merchant-of-katheer-qadira-regional-trait/",
-            "category": "Regional",
-            "req_race": "Any",
-            "req_class": "Any"
-        },
-        {
-            "name": "Grit Goggles (Usually Under Deserts)",
-            "url": "https://www.d20pfsrd.com/traits/regional-traits/grit-goggles-usually-under-deserts/",
             "category": "Regional",
             "req_race": "Any",
             "req_class": "Any"

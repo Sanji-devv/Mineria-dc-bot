@@ -47,6 +47,8 @@ class Dice(commands.Cog):
                 k_val = int(k_only_str)
                 if k_val == 0:
                     return "K_ZERO"
+                if k_val > terms[-1]["num"]:
+                    k_val = terms[-1]["num"]
                 terms[-1]["keep"] = k_val
             else:
                 num = int(num_str) if num_str else 1

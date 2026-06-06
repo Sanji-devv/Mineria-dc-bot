@@ -46,7 +46,7 @@ async def handle_create(cog, ctx, race_name: str = None):
 
         embed.add_field(name="👉 Next Step", value=f"Distribute using `!char dr`.\nEx: `!char dr {example_cmd}`", inline=False)
         embed.set_thumbnail(url=ctx.author.avatar.url if ctx.author.avatar else None)
-        embed.set_footer(text="Mineria RPG • Creation Mode", icon_url=cog.bot.user.avatar.url)
+        embed.set_footer(text="Mineria RPG • Creation Mode", icon_url=cog.bot.user.avatar.url if cog.bot.user.avatar else None)
         
         await ctx.send(embed=embed)
 
@@ -211,7 +211,7 @@ async def handle_remove_stat(cog, ctx, stat: str = None, value: int = None):
         """Removes a value from a stat during creation."""
         if not stat or value is None:
             embed = discord.Embed(title="➖ Remove Stat Bonus", color=discord.Color.blue())
-            embed.description = "Manually removes a vlaue from a stat during creation."
+            embed.description = "Manually removes a value from a stat during creation."
             embed.add_field(name="Usage", value="`!char remove <STAT> <VALUE>`")
             embed.add_field(name="Example", value="`!char remove DEX 2`")
             return await ctx.send(embed=embed)
@@ -273,7 +273,7 @@ async def handle_save_char(cog, ctx, *, name: str = None):
             description=f"**{name}** ({creation['race_name']}) has been created!",
             color=discord.Color.green()
         )
-        embed.set_footer(text="Mineria RPG • Saved", icon_url=cog.bot.user.avatar.url)
+        embed.set_footer(text="Mineria RPG • Saved", icon_url=cog.bot.user.avatar.url if cog.bot.user.avatar else None)
         await ctx.send(embed=embed)
 
     # ==========================

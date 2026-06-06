@@ -99,7 +99,7 @@ class CharacterCog(commands.Cog, name="Character"):
              adj_text += f"\n\n✨ **Flexible Bonus Available!**\nClick a button below to apply +{racial_mods['ANY']}!"
              
         embed.add_field(name="🧬 Traits", value=adj_text, inline=False)
-        embed.set_footer(text="Use !char save <name> to finalize.", icon_url=self.bot.user.avatar.url)
+        embed.set_footer(text="Use !char save <name> to finalize.", icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
         return embed
 
     # ==========================
@@ -125,7 +125,7 @@ class CharacterCog(commands.Cog, name="Character"):
             "`!char edit class <name> <class>`\n"
             "`!char edit stat <name> <stat> <val>`"
         )
-        embed.set_footer(text="Mineria RPG • Character System", icon_url=self.bot.user.avatar.url)
+        embed.set_footer(text="Mineria RPG • Character System", icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
         await ctx.send(embed=embed)
 
     # ==========================

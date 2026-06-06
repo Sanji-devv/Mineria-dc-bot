@@ -4,7 +4,10 @@ import json
 import aiofiles
 import random
 import statistics
+import logging
 from pathlib import Path
+
+logger = logging.getLogger("MineriaBot")
 
 # =================================================================================================
 # CONSTANTS & PATHS
@@ -19,14 +22,15 @@ DATA_DIR = Path(__file__).parent / "datas"
 async def load_json(filename: str) -> Union[Dict, List, Any]:
     """Loads JSON data from the data directory safely."""
     path = DATA_DIR / filename
-    if path.exists():
-        try:
-            async with aiofiles.open(path, "r", encoding="utf-8") as f:
-                content = await f.read()
-            return json.loads(content)
-        except (json.JSONDecodeError, IOError):
-            return {}
-    return {}
+    if not path.exists():
+        return {}
+    try:
+        async with aiofiles.open(path, "r", encoding="utf-8") as f:
+            content = await f.read()
+        return json.loads(content)
+    except (json.JSONDecodeError, IOError) as e:
+        logger.error(f"❌ Failed to load JSON file '{filename}': {e}")
+        raise
 
 async def save_json(filename: str, data: Any) -> None:
     """Saves data to a JSON file in the data directory."""
@@ -94,6 +98,9 @@ class BonusSelectView(discord.ui.View):
         async def callback(interaction: discord.Interaction):
             if interaction.user.id != self.ctx.author.id:
                 return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+            
+            if self.cog.active_creations.get(interaction.user.id) is not self.creation:
+                return await interaction.response.send_message("❌ This creation session is no longer active!", ephemeral=True)
             
             # Apply
             if stat not in self.creation["stats"]:

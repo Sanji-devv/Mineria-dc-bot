@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands, tasks
 import shutil
 import os
+import asyncio
 from datetime import datetime, time, timedelta
 import logging
 from pathlib import Path
@@ -138,13 +139,13 @@ class Admin(commands.Cog):
         backup_path = target_dir / filename
         
         try:
-            # shutil.make_archive automatically adds .zip extension
-            shutil.make_archive(str(backup_path), 'zip', str(data_dir))
+            # Run make_archive and pruning in a thread pool to avoid blocking the event loop
+            await asyncio.to_thread(shutil.make_archive, str(backup_path), 'zip', str(data_dir))
             
             final_filename = f"{filename}.zip"
             logger.info(f"✅ {backup_type.capitalize()} backup created: {final_filename}")
             
-            self.prune_backups(target_dir, retention)
+            await asyncio.to_thread(self.prune_backups, target_dir, retention)
             return final_filename
         except Exception as e:
              logger.error(f"❌ {backup_type.capitalize()} backup failed: {e}")

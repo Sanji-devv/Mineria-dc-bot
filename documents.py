@@ -80,24 +80,12 @@ class Documents(commands.Cog):
     #  !map  –  list maps or send one by name
     # ─────────────────────────────────────────────
     @commands.group(name="map", invoke_without_command=True)
-    async def map_group(self, ctx):
+    async def map_group(self, ctx, *, name: str = None):
         """Lists all maps, or use `!map <name>` to display one."""
-        # Bare `!map` with no extra text → show list
-        rest = ctx.message.content.strip()
-        # strip prefix + "map"
-        for prefix in sorted(self.bot.command_prefix, key=len, reverse=True):
-            if rest.lower().startswith(prefix.lower()):
-                rest = rest[len(prefix):]
-                break
-        rest = rest.strip()
-        if rest.lower().startswith("map"):
-            rest = rest[3:].strip()
-
-        if not rest:
-            # No name given → list
+        if not name or name.lower().strip() == "list":
             await self._list_maps(ctx)
         else:
-            await self._send_map(ctx, rest)
+            await self._send_map(ctx, name)
 
     @map_group.command(name="list")
     async def map_list(self, ctx):

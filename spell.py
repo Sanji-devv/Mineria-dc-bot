@@ -26,10 +26,11 @@ SCHOOL_COLORS = {
 }
 
 class SpellVariantSelect(discord.ui.Select):
-    def __init__(self, variants: List[Dict[str, Any]], cog_ref: Any, name_key: str):
+    def __init__(self, variants: List[Dict[str, Any]], cog_ref: Any, name_key: str, author_id: int):
         self.variants = variants
         self.cog_ref = cog_ref
         self.name_key = name_key
+        self.author_id = author_id
         
         options = []
         for i, m in enumerate(variants[:25]): # Discord max 25 options
@@ -50,22 +51,31 @@ class SpellVariantSelect(discord.ui.Select):
         super().__init__(placeholder="Select a spell...", min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: discord.Interaction):
+        if interaction.user.id != self.author_id:
+            await interaction.response.send_message("❌ This search menu belongs to someone else!", ephemeral=True)
+            return
         idx = int(self.values[0])
         match = self.variants[idx]
         embed = self.cog_ref.build_spell_embed(match, self.name_key)
         await interaction.response.edit_message(embed=embed, view=self.view)
 
 class SpellVariantView(discord.ui.View):
-    def __init__(self, variants: List[Dict[str, Any]], cog_ref: Any, name_key: str):
+    def __init__(self, variants: List[Dict[str, Any]], cog_ref: Any, name_key: str, author_id: int):
         super().__init__(timeout=180)
-        self.add_item(SpellVariantSelect(variants, cog_ref, name_key))
+        self.author_id = author_id
+        self.add_item(SpellVariantSelect(variants, cog_ref, name_key, author_id))
 
 class Spell(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.spells_data: List[Dict[str, Any]] = []
+
+    async def cog_load(self):
+        """Preloads spells database in the background via executor."""
+        import asyncio
+        loop = asyncio.get_running_loop()
         try:
-            self._ensure_spells()
+            await loop.run_in_executor(None, self._ensure_spells)
         except RuntimeError as e:
             from log_handler import logger
             logger.error(f"Error preloading spells.json: {e}")
@@ -134,7 +144,7 @@ class Spell(commands.Cog):
                 if len(substring_matches) <= 25:
                     return await ctx.send(
                         f"Found **{len(substring_matches)}** possible matches for **{query}**. Please select one from the menu below:",
-                        view=SpellVariantView(substring_matches, self, name_key)
+                        view=SpellVariantView(substring_matches, self, name_key, ctx.author.id)
                     )
                 else:
                     return await ctx.send(f"⚠️ Found **{len(substring_matches)}** results, exceeding Discord's drop-down limit (25). Please narrow down your search.")
@@ -153,7 +163,7 @@ class Spell(commands.Cog):
                     close_matches = [spell_map[c] for c in close]
                     return await ctx.send(
                         f"Did you mean one of these? Please select:",
-                        view=SpellVariantView(close_matches, self, name_key)
+                        view=SpellVariantView(close_matches, self, name_key, ctx.author.id)
                     )
 
         if match_row:
@@ -242,9 +252,9 @@ class Spell(commands.Cog):
             )
 
         if source and source not in ("—", ""):
-            embed.set_footer(text=f"Mineria RPG • Source: {source}", icon_url=self.bot.user.avatar.url)
+            embed.set_footer(text=f"Mineria RPG • Source: {source}", icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
         else:
-            embed.set_footer(text="Mineria RPG • Spell List", icon_url=self.bot.user.avatar.url)
+            embed.set_footer(text="Mineria RPG • Spell List", icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
 
         return embed
 

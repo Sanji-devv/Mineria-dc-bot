@@ -25,9 +25,13 @@ class Drawbacks(commands.Cog):
             
         drawback = random.choice(self.drawbacks)
         
+        url = drawback.get('url')
+        name = drawback.get('name', 'Unknown')
+        desc = f"**[{name}]({url})**" if url else f"**{name}**"
+        
         embed = discord.Embed(
             title="🎲 Random Drawback",
-            description=f"**[{drawback['name']}]({drawback['url']})**",
+            description=desc,
             color=discord.Color.dark_red()
         )
         embed.set_footer(text="Mineria RPG • Drawbacks", icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)

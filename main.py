@@ -20,6 +20,7 @@ else:
 class MineriaBot(commands.AutoShardedBot):
     def __init__(self, command_prefix):
         intents = discord.Intents.default()
+        # NOTE: intents.members = True requires enabling Server Members Intent in the Discord Developer Portal
         intents.message_content = intents.members = True
         super().__init__(
             command_prefix=command_prefix,
@@ -49,5 +50,31 @@ if __name__ == "__main__":
     if not TOKEN:
         logger.critical("❌ ERROR: DISCORD_TOKEN not found in .env file.")
     else:
-        bot = MineriaBot(PREFIXES)
-        bot.run(TOKEN)
+        import time
+        retry_delay = 60
+        max_retry_delay = 300
+        
+        while True:
+            try:
+                bot = MineriaBot(PREFIXES)
+                bot.run(TOKEN)
+                logger.info("Bot execution finished cleanly.")
+                break
+            except discord.errors.HTTPException as e:
+                if e.status == 429:
+                    logger.warning(
+                        f"⚠️ Rate limited by Discord/Cloudflare (429 Too Many Requests). "
+                        f"Retrying in {retry_delay} seconds..."
+                    )
+                    time.sleep(retry_delay)
+                    retry_delay = min(retry_delay * 2, max_retry_delay)
+                else:
+                    logger.critical(f"❌ HTTP Exception during startup: {e}")
+                    time.sleep(30)
+            except discord.errors.LoginFailure as e:
+                logger.critical(f"❌ Login failed (invalid token?): {e}")
+                logger.info("Sleeping for 120 seconds before retrying...")
+                time.sleep(120)
+            except Exception as e:
+                logger.critical(f"❌ Unexpected error during startup: {e}", exc_info=True)
+                time.sleep(30)

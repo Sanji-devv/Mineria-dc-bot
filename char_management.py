@@ -154,9 +154,9 @@ async def handle_list_chars(cog, ctx):
             title="👥 Your Characters", 
             color=discord.Color.gold()
         )
-        names = "\n".join([f"• **{c['name']}** ({c['race']} {c['class']})" for c in user_chars])
+        names = "\n".join([f"• **{c['name']}** ({c['race']} {c.get('class', 'None')})" for c in user_chars])
         embed.description = names
-        embed.set_footer(text="Mineria RPG • Roster", icon_url=cog.bot.user.avatar.url)
+        embed.set_footer(text="Mineria RPG • Roster", icon_url=cog.bot.user.avatar.url if cog.bot.user.avatar else None)
         if ctx.author.avatar: embed.set_thumbnail(url=ctx.author.avatar.url)
         await ctx.send(embed=embed)
 
