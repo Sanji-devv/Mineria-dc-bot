@@ -1,3 +1,10 @@
 __pycache__/
+*.py[cod]
+*$py.class
 .env
 MEMORY_BANK.md
+backups/
+logs/
+.venv/
+venv/
+ENV/

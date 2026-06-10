@@ -19,23 +19,35 @@ DATA_DIR = Path(__file__).parent / "datas"
 # HELPER FUNCTIONS
 # =================================================================================================
 
+# In-memory cache for JSON files to minimize disk I/O and parsing memory overhead
+_json_cache: Dict[str, Any] = {}
+
 async def load_json(filename: str) -> Union[Dict, List, Any]:
-    """Loads JSON data from the data directory safely."""
+    """Loads JSON data from the data directory safely. Caches the result to improve performance."""
+    if filename in _json_cache:
+        return _json_cache[filename]
+        
     path = DATA_DIR / filename
     if not path.exists():
         return {}
     try:
         async with aiofiles.open(path, "r", encoding="utf-8") as f:
             content = await f.read()
-        return json.loads(content)
+        data = json.loads(content)
+        _json_cache[filename] = data
+        return data
     except (json.JSONDecodeError, IOError) as e:
         logger.error(f"❌ Failed to load JSON file '{filename}': {e}")
         raise
 
 async def save_json(filename: str, data: Any) -> None:
-    """Saves data to a JSON file in the data directory."""
+    """Saves data to a JSON file in the data directory and updates the cache."""
     path = DATA_DIR / filename
     path.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Update memory cache
+    _json_cache[filename] = data
+    
     async with aiofiles.open(path, "w", encoding="utf-8") as f:
         await f.write(json.dumps(data, indent=4))
 
