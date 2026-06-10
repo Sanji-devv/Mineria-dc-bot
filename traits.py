@@ -199,7 +199,7 @@ class Traits(commands.Cog):
             color=discord.Color.dark_blue()
         )
 
-        level_labels = ["Level 2", "Level 6", "Level 11"]
+        level_labels = ["Üye", "Kıdemli", "Uzman"]
         for idx, selected in enumerate(results):
             cat = selected.get('category', 'Unknown')
             name = selected.get('name', 'Unknown')

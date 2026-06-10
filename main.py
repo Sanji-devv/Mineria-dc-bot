@@ -9,7 +9,7 @@ from log_handler import logger
 load_dotenv(Path(__file__).parent / ".env")
 
 # Token and Prefix Logic
-TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = os.getenv("DISCORD_TOKEN_TEST")
 PREFIXES = ["!mineria ", "!m ", "!"]
 
 if TOKEN:
@@ -30,7 +30,7 @@ class MineriaBot(commands.AutoShardedBot):
         )
 
     async def setup_hook(self):
-        extensions = ["dice", "help", "log_handler", "links", "traits", "drawbacks", "documents", "utility", "error_handler", "admin", "spell", "character", "new_character"]
+        extensions = ["dice", "help", "log_handler", "links", "traits", "drawbacks", "documents", "utility", "error_handler", "admin", "character", "new_character"]
         loaded = []
 
         for ext in extensions:

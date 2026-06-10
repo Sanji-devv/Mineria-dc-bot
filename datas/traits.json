@@ -64,27 +64,6 @@
             "req_class": "Any"
         },
         {
-            "name": "Black Powder Bravado",
-            "url": "https://www.d20pfsrd.com/traits/combat-traits/black-powder-bravado/",
-            "category": "Combat",
-            "req_race": "Any",
-            "req_class": "Any"
-        },
-        {
-            "name": "Black Powder Fortune",
-            "url": "https://www.d20pfsrd.com/traits/combat-traits/black-powder-fortune/",
-            "category": "Combat",
-            "req_race": "Any",
-            "req_class": "Any"
-        },
-        {
-            "name": "Black Powder Interjection",
-            "url": "https://www.d20pfsrd.com/traits/combat-traits/black-powder-interjection/",
-            "category": "Combat",
-            "req_race": "Any",
-            "req_class": "Any"
-        },
-        {
             "name": "Blade of the Society (Rogue, Society)",
             "url": "https://www.d20pfsrd.com/traits/combat-traits/blade-of-the-society-rogue-pathfinder-society/",
             "category": "Combat",
@@ -435,13 +414,6 @@
             "req_class": "Any"
         },
         {
-            "name": "Larger Than Life",
-            "url": "https://www.d20pfsrd.com/traits/combat-traits/larger-than-life/",
-            "category": "Combat",
-            "req_race": "Any",
-            "req_class": "Any"
-        },
-        {
             "name": "Magic Weapon Warrior",
             "url": "https://www.d20pfsrd.com/traits/combat-traits/magic-weapon-warrior-combat/",
             "category": "Combat",
@@ -549,13 +521,6 @@
         {
             "name": "Reckless",
             "url": "https://www.d20pfsrd.com/traits/combat-traits/reckless/",
-            "category": "Combat",
-            "req_race": "Any",
-            "req_class": "Any"
-        },
-        {
-            "name": "Reckless Contempt",
-            "url": "https://www.d20pfsrd.com/traits/combat-traits/reckless-contempt/",
             "category": "Combat",
             "req_race": "Any",
             "req_class": "Any"
@@ -8621,6 +8586,657 @@
             "name": "Wronged",
             "url": "https://www.d20pfsrd.com/traits/religion-traits/wronged/",
             "category": "Religion",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Black Sheep",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/rise-of-the-runelords/black-sheep/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Favored Son/Daughter",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/rise-of-the-runelords/favored-son-daughter/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Outlander",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/rise-of-the-runelords/outlander/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Drug Addict",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/curse-of-the-crimson-throne/drug-addict/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Framed",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/curse-of-the-crimson-throne/framed/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Love Lost",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/curse-of-the-crimson-throne/love-lost/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Missing Child",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/curse-of-the-crimson-throne/missing-child/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Unhappy Childhood",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/curse-of-the-crimson-throne/unhappy-childhood/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Fools for Friends",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/second-darkness/fools-for-friends/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Into Enemy Territory",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/second-darkness/into-enemy-territory/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Looking for Work",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/second-darkness/looking-for-work/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Optimistic Gambler",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/second-darkness/optimistic-gambler/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Researching the Blot",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/second-darkness/researching-the-blot/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Scouting for Fiends",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/second-darkness/scouting-for-fiends/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Earning Your Freedom",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/legacy-of-fire/earning-your-freedom/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Finding Your Kin (3.5E)",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/legacy-of-fire/finding-haleen/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Gnoll Killer",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/legacy-of-fire/gnoll-killer/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Missionary",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/legacy-of-fire/missionary/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Reclaiming your Roots",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/legacy-of-fire/reclaiming-your-roots/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Seeking Adventure",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/legacy-of-fire/seeking-adventure/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Child of Infamy",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/council-of-thieves/child-of-infamy/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Conspiracy Hunter",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/council-of-thieves/conspiracy-hunter/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Diabolist Raised",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/council-of-thieves/diabolist-raised/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Westcrown Firebrand",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/council-of-thieves/westcrown-firebrand/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Infernal Bastard",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/council-of-thieves/infernal-bastard/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Shadow Child",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/council-of-thieves/shadow-child/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "The Pathfinder's Exile",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/council-of-thieves/the-pathfinder-s-exile/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Bastard",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/kingmaker/bastard/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Brigand",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/kingmaker/brigand/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Noble Born",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/kingmaker/noble-born/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Pioneer",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/kingmaker/pioneer/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Rostlander (River Lander)",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/kingmaker/rostlander/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Sword Scion",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/kingmaker/sword-scion/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Issian (Tough Minded)",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/kingmaker/issian/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Boarded (A)",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/serpent-s-skull/boarded-a/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Boarded (B)",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/serpent-s-skull/boarded-b/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Boarded (C)",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/serpent-s-skull/boarded-c/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Boarded (D)",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/serpent-s-skull/boarded-in-varisia/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Boarded (E)",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/serpent-s-skull/boarded-in-mediogalti/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Colonial",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/serpent-s-skull/colonial/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Get the Cargo Through",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/serpent-s-skull/get-the-cargo-through/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Jungle Scholar",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/serpent-s-skull/jungle-scholar/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Ship's Crew",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/serpent-s-skull/jenivere-crew/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Stowaway",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/serpent-s-skull/stowaway/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Chance Savior",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/carrion-crown/chance-savior/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Inspired by Greatness",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/carrion-crown/inspired-by-greatness/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Making Good on Promises",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/carrion-crown/making-good-on-promises/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "On the Payroll",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/carrion-crown/on-the-payroll/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Subject of Study",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/carrion-crown/subject-of-study/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Teacher's Pet",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/carrion-crown/teacher-s-pet/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Best Friend",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/jade-regent-traits/best-friend/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Caravan Guard",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/jade-regent-traits/caravan-guard/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Childhood Crush",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/jade-regent-traits/childhood-crush/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Foster Child",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/jade-regent-traits/foster-child/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Friend of the Family",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/jade-regent-traits/friend-of-the-family/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Hero Worship",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/jade-regent-traits/hero-worship/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Rescued",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/jade-regent-traits/rescued/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Student Survivalist",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/jade-regent-traits/student-survivalist/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Younger Sibling",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/jade-regent-traits/younger-sibling/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Ancient Explorer",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/skull-shackles/ancient-explorer/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Barroom Talespinner",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/skull-shackles/barroom-talespinner/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Buccaneer's Blood",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/skull-shackles/buccaneer-s-blood/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Dockside Brawler",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/skull-shackles/dockside-brawler/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Eye for Plunder",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/skull-shackles/eye-for-plunder/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Native",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/skull-shackles/native/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Natural Born Sailor",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/skull-shackles/natural-born-sailor/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Peg Leg",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/skull-shackles/peg-leg/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Ship's Surgeon",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/skull-shackles/ship-s-surgeon/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Touched by the Sea",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/skull-shackles/touched-by-the-sea/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Against the League",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/against-the-league/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Alabaster Outcast",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/alabaster-outcast/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Exchange Agent",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/exchange-agent/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Former Assassin",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/former-assassin/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Local Ties",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/local-ties/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Monument Scholar",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/monument-scholar/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Nontraditional Native",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/nontraditional-native/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Robot Slayer",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/robot-slayer/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Ruin Raider",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/ruin-raider/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Serpent Runner",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/serpent-runner/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Skymetal Smith",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/skymetal-smith/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Stargazer",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/stargazer/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Technical Archaeologist",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/shattered-star/technical-archaeologist/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Adaptive Magic",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/reign-of-winter/adaptive-magic/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Blood of Pharaohs",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/blood-of-pharaohs/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Devotee of the Old Gods",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/devotee-of-the-old-gods/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Foreign Opportunist",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/foreign-opportunist/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Inquisitive Archaeologist",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/inquisitive-archaeologist/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Mummy-Cursed",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/mummy-cursed/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Necropolis Native",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/necropolis-native/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Resurrected",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/resurrected/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Sphinx Riddler",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/sphinx-riddler/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Trap Finder",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/trap-finder/",
+            "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Undead Crusader",
+            "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/undead-crusader/",
+            "category": "Campaign",
             "req_race": "Any",
             "req_class": "Any"
         }

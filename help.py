@@ -33,8 +33,7 @@ class HelpCog(commands.Cog, name="Help"):
             value=(
                 "> **`!roll <expr>`** ➔ Advanced dice rolling engine. *(e.g., 1d20+7)*\n"
                 "> **`!trait <category>`** ➔ Draws a random trait from the specified category.\n"
-                "> **`!drawback`** ➔ Suggests a random drawback for your character.\n"
-                "> **`!spell <name>`** ➔ Searches for a spell in the D20PFSRD database."
+                "> **`!drawback`** ➔ Suggests a random drawback for your character."
             ),
             inline=False,
         )

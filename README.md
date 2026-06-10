@@ -1,6 +1,6 @@
 # 🎲 Mineria Discord Bot
 
-A specialized Discord bot for **Pathfinder Roleplaying Game (1st Edition)** — character management, dice rolling, spell lookups, and server registry tools.
+A specialized Discord bot for **Pathfinder Roleplaying Game (1st Edition)** — character management, dice rolling, and server registry tools.
 
 ## ⚡ Prefixes
 
@@ -19,7 +19,6 @@ A specialized Discord bot for **Pathfinder Roleplaying Game (1st Edition)** — 
 | `!roll <expr>` | `!roll 4d6k3` | Roll dice. Supports modifiers (`+5`), keep-highest (`k3`), multi-roll (`d20, d6`). |
 | `!trait <cat>`| `!trait combat` | Suggest a random trait for a specific category. |
 | `!drawback` | `!drawback` | Display a random character drawback. |
-| `!spell <name>` | `!spell fireball` | Search spell on the Pathfinder d20pfsrd database. |
 
 ---
 
@@ -61,7 +60,6 @@ A specialized Discord bot for **Pathfinder Roleplaying Game (1st Edition)** — 
 ## ⚙️ Features
 
 - **Duplicate Player Detection** — Enforces 1 Ranked + 1 Clerk rule via live Google Sheet data.
-- **Spell Database** — Pathfinder 1st Edition spell lookup directly from Google Sheets.
 - **Character Creation** — Full suite to roll, allocate, and save characters.
 - **Document & Map Serving** — Instantly download PDFs or view maps from the bot.
 - **Automated Backups** — Daily/weekly backups of the `datas/` folder.
