@@ -1,9 +1,8 @@
 import discord
 from discord.ext import commands
-from discord import app_commands
 from pathlib import Path
 import difflib
-from typing import Optional, List
+
 
 class Documents(commands.Cog):
     def __init__(self, bot):
@@ -13,35 +12,11 @@ class Documents(commands.Cog):
         self.docs_dir.mkdir(parents=True, exist_ok=True)
         self.maps_dir.mkdir(parents=True, exist_ok=True)
 
-    async def doc_autocomplete(self, interaction: discord.Interaction, current: str) -> List[app_commands.Choice[str]]:
-        if not self.docs_dir.exists():
-            return []
-        files = [f.name for f in self.docs_dir.iterdir() if f.is_file()]
-        current_lower = current.lower()
-        matches = [f for f in files if current_lower in f.lower()]
-        return [
-            app_commands.Choice(name=f, value=f)
-            for f in sorted(matches, key=lambda x: x.lower())
-        ][:25]
-
-    async def map_autocomplete(self, interaction: discord.Interaction, current: str) -> List[app_commands.Choice[str]]:
-        if not self.maps_dir.exists():
-            return []
-        files = [f.stem for f in self.maps_dir.iterdir() if f.is_file()]
-        current_lower = current.lower()
-        matches = [f for f in files if current_lower in f.lower()]
-        return [
-            app_commands.Choice(name=f, value=f)
-            for f in sorted(matches, key=lambda x: x.lower())
-        ][:25]
-
     # ─────────────────────────────────────────────
     #  !doc  –  list or download a document
     # ─────────────────────────────────────────────
-    @commands.hybrid_command(name="doc", description="Lists all downloadable files, or downloads one by name.")
-    @app_commands.describe(query="The document name to download (autocomplete list). Leave empty to list all.")
-    @app_commands.autocomplete(query=doc_autocomplete)
-    async def doc_command(self, ctx: commands.Context, *, query: Optional[str] = None):
+    @commands.group(name="doc", invoke_without_command=True)
+    async def doc_command(self, ctx, *, query: str = None):
         """Lists all downloadable files, or downloads one by name."""
         # Bare `!doc` or `!doc list` → show list
         if not query or query.lower().strip() == "list":
@@ -50,6 +25,11 @@ class Documents(commands.Cog):
 
         # Otherwise treat query as a filename to download
         await self._send_doc(ctx, query)
+
+    @doc_command.command(name="list")
+    async def doc_list(self, ctx):
+        """Lists all available documents."""
+        await self._list_docs(ctx)
 
     async def _list_docs(self, ctx):
         files = [f for f in self.docs_dir.iterdir() if f.is_file()]
@@ -67,9 +47,7 @@ class Documents(commands.Cog):
             size_mb = f.stat().st_size / (1024 * 1024)
             file_list.append(f"📄 **{f.name}** ({size_mb:.2f} MB)")
         embed.add_field(name=f"Files ({len(files)})", value="\n".join(file_list) or "No files.", inline=False)
-        
-        avatar_url = self.bot.user.avatar.url if (self.bot.user and self.bot.user.avatar) else None
-        embed.set_footer(text="Mineria RPG • Documents", icon_url=avatar_url)
+        embed.set_footer(text="Mineria RPG • Documents", icon_url=self.bot.user.avatar.url)
         await ctx.send(embed=embed)
 
     async def _send_doc(self, ctx, query: str):
@@ -87,13 +65,9 @@ class Documents(commands.Cog):
             else:
                 await ctx.send(
                     f"❌ File **{query}** not found.\n"
-                    "Use `!doc` or `/doc` to see all available files."
+                    "Use `!doc list` to see all available files."
                 )
                 return
-
-        # Defer interaction if we are handling slash command to prevent timeout
-        if ctx.interaction:
-            await ctx.interaction.response.defer()
 
         try:
             await ctx.send(f"📥 Downloading **{target_file.name}**...", file=discord.File(target_file))
@@ -105,15 +79,18 @@ class Documents(commands.Cog):
     # ─────────────────────────────────────────────
     #  !map  –  list maps or send one by name
     # ─────────────────────────────────────────────
-    @commands.hybrid_command(name="map", description="Lists all maps, or displays one by name.")
-    @app_commands.describe(name="The map name to display (autocomplete list). Leave empty to list all.")
-    @app_commands.autocomplete(name=map_autocomplete)
-    async def map_command(self, ctx: commands.Context, *, name: Optional[str] = None):
-        """Lists all maps, or displays one by name."""
+    @commands.group(name="map", invoke_without_command=True)
+    async def map_group(self, ctx, *, name: str = None):
+        """Lists all maps, or use `!map <name>` to display one."""
         if not name or name.lower().strip() == "list":
             await self._list_maps(ctx)
         else:
             await self._send_map(ctx, name)
+
+    @map_group.command(name="list")
+    async def map_list(self, ctx):
+        """Lists all available maps."""
+        await self._list_maps(ctx)
 
     async def _list_maps(self, ctx):
         maps = [f for f in self.maps_dir.iterdir() if f.is_file()]
@@ -128,9 +105,7 @@ class Documents(commands.Cog):
         )
         map_list = [f"🖼️ **{f.stem}**" for f in sorted(maps, key=lambda x: x.stem.lower())]
         embed.add_field(name=f"Maps ({len(maps)})", value="\n".join(map_list), inline=False)
-        
-        avatar_url = self.bot.user.avatar.url if (self.bot.user and self.bot.user.avatar) else None
-        embed.set_footer(text="Mineria RPG • Maps", icon_url=avatar_url)
+        embed.set_footer(text="Mineria RPG • Maps", icon_url=self.bot.user.avatar.url)
         await ctx.send(embed=embed)
 
     async def _send_map(self, ctx, name: str):
@@ -150,13 +125,9 @@ class Documents(commands.Cog):
             else:
                 await ctx.send(
                     f"❌ Map **{name}** not found. "
-                    "Use `!map` or `/map` to see all available maps."
+                    "Use `!map list` to see all available maps."
                 )
                 return
-
-        # Defer interaction if we are handling slash command to prevent timeout
-        if ctx.interaction:
-            await ctx.interaction.response.defer()
 
         try:
             await ctx.send(f"🗺️ **{match.stem}**", file=discord.File(match))
@@ -164,6 +135,7 @@ class Documents(commands.Cog):
             await ctx.send("❌ Map file is too large to upload directly to Discord.")
         except Exception as e:
             await ctx.send(f"❌ Error uploading map: {e}")
+
 
 async def setup(bot):
     await bot.add_cog(Documents(bot))

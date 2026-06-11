@@ -1,0 +1,13 @@
+2026-06-11 08:32:46 - INFO - Using Production Token
+2026-06-11 08:32:47 - CRITICAL - ❌ Failed to load extension character: Extension 'character' raised an error: ModuleNotFoundError: No module named 'aiofiles'
+2026-06-11 08:32:47 - INFO - Loaded 11 extensions: dice, help, log_handler, links, traits, drawbacks, documents, utility, error_handler, admin, new_character
+2026-06-11 08:32:50 - INFO - Mineria is online! servers: 2
+2026-06-11 08:32:57 - WARNING - ⚠️ MISSING ARGUMENT | User: judai1903 (388683129658933259) | Command: trait | Error: category3 is a required argument that is missing.
+2026-06-11 08:33:40 - INFO - Using Production Token
+2026-06-11 08:33:42 - INFO - Loaded 12 extensions: dice, help, log_handler, links, traits, drawbacks, documents, utility, error_handler, admin, character, new_character
+2026-06-11 08:33:45 - INFO - Mineria is online! servers: 2
+2026-06-11 08:33:52 - WARNING - ⚠️ MISSING ARGUMENT | User: judai1903 (388683129658933259) | Command: trait | Error: category3 is a required argument that is missing.
+2026-06-11 08:35:02 - INFO - Using Production Token
+2026-06-11 08:35:03 - INFO - Loaded 12 extensions: dice, help, log_handler, links, traits, drawbacks, documents, utility, error_handler, admin, character, new_character
+2026-06-11 08:35:06 - INFO - Mineria is online! servers: 2
+2026-06-11 08:35:09 - INFO - ✅ EXEC | User: judai1903 (388683129658933259) | Cmd: !trait random 3 | Guild: Mineria keşif ekibi
