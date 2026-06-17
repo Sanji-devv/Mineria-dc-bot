@@ -175,7 +175,7 @@ class Dice(commands.Cog):
             title=f"🎲 {ctx.author.display_name} rolled the dice:",
             description="\n".join(results),
             color=discord.Color.gold()
-        ).set_footer(text="Mineria RPG • Dice System", icon_url=self.bot.user.avatar.url))
+        ).set_footer(text="Mineria RPG • Dice System", icon_url=self.bot.user.display_avatar.url))
 
 async def setup(bot):
     await bot.add_cog(Dice(bot))

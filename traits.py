@@ -2,12 +2,14 @@ import discord
 from discord.ext import commands
 import json
 import random
+import time
 from pathlib import Path
 
 class Traits(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.traits = []
+        self.last_rolls = {}  # user_id -> dict
 
     async def cog_load(self):
         """Loads traits database asynchronously via executor."""
@@ -25,7 +27,82 @@ class Traits(commands.Cog):
                 data = json.load(f)
                 self.traits = data.get("traits", [])
 
-    @commands.command(name="trait", aliases=["t"])
+    def _select_trait(self, t_type, val, race, exclude_names):
+        """Helper to select a single random trait based on category or race."""
+        if t_type == 'category':
+            if race:
+                pool = [
+                    t for t in self.traits
+                    if t.get("category", "").lower() == val.lower()
+                    and t.get("req_race", "Any").lower() in ("any", race.lower())
+                    and t.get("name") not in exclude_names
+                ]
+            else:
+                pool = [
+                    t for t in self.traits
+                    if t.get("category", "").lower() == val.lower()
+                    and t.get("name") not in exclude_names
+                ]
+            if pool:
+                return random.choice(pool)
+        elif t_type == 'race':
+            val_lower = val.lower() if val else ""
+            # Priority 1: Race traits with race name in parentheses e.g. "Vandal (Human)"
+            race_specific_pool = [
+                tr for tr in self.traits
+                if tr.get("category", "").lower() == "race"
+                and f"({val_lower})" in tr.get("name", "").lower()
+                and tr.get("name") not in exclude_names
+            ]
+            # Priority 2: fallback to any Race trait
+            race_fallback_pool = [
+                tr for tr in self.traits
+                if tr.get("category", "").lower() == "race"
+                and f"({val_lower})" not in tr.get("name", "").lower()
+                and tr.get("name") not in exclude_names
+            ]
+            pool = race_specific_pool if race_specific_pool else race_fallback_pool
+            if pool:
+                return random.choice(pool)
+        return None
+
+    def _build_trait_embed(self, results, race, errors=None):
+        """Helper to build the traits embed."""
+        race_desc = f" for race **{race.capitalize()}**" if race else ""
+        embed = discord.Embed(
+            title="🎲 Random Traits",
+            description=f"Traits{race_desc} from your selected categories:",
+            color=discord.Color.dark_blue()
+        )
+
+        level_labels = ["Üye", "Kıdemli", "Uzman"]
+        for idx, selected in enumerate(results):
+            cat = selected.get('category', 'Unknown')
+            name = selected.get('name', 'Unknown')
+            url = selected.get('url', '')
+            
+            prefix = level_labels[idx] if idx < len(level_labels) else f"Level {idx + 1}"
+            
+            if cat.lower() == 'race':
+                field_name = f"{prefix} Race Trait: {name}"
+            else:
+                field_name = f"{prefix} {cat} Trait: {name}"
+                
+            embed.add_field(
+                name=field_name,
+                value=f"**[Wiki Page]({url})**",
+                inline=False
+            )
+
+        footer_text = "Mineria RPG • Traits"
+        if errors:
+            footer_text += f" | Not found: {', '.join(errors)}"
+
+        avatar_url = self.bot.user.display_avatar.url
+        embed.set_footer(text=footer_text, icon_url=avatar_url)
+        return embed
+
+    @commands.group(name="trait", aliases=["t"], invoke_without_command=True)
     async def trait(self, ctx, *args: str):
         """Displays a random trait for each specified category.
         Race specification is only needed if 'Race' category is requested.
@@ -115,22 +192,7 @@ class Traits(commands.Cog):
             await ctx.send(hint_message)
             return
 
-        # --- Select one random trait per category (excluding Race) ---
-        # Filter non-Race traits: if a race is given, restrict by req_race; otherwise allow all
-        if race:
-            non_race_pool = [
-                t for t in traits
-                if t.get("category", "").lower() != "race"
-                and t.get("req_race", "Any").lower() in ("any", race)
-            ]
-        else:
-            non_race_pool = [
-                t for t in traits
-                if t.get("category", "").lower() != "race"
-            ]
-
         errors = []
-        available_traits = non_race_pool.copy()
         results = []
 
         # Resolve 'random' to concrete categories
@@ -153,38 +215,18 @@ class Traits(commands.Cog):
 
         # Select traits in the exact resolved order
         for t, val in resolved_order:
-            if t == 'category':
-                pool = [tr for tr in available_traits if tr.get("category", "").lower() == val]
-                if pool:
-                    selected = random.choice(pool)
-                    results.append(selected)
-                    available_traits.remove(selected)
-                else:
+            exclude_names = {tr.get("name") for tr in results if tr and tr.get("name")}
+            selected = self._select_trait(t, val, race, exclude_names)
+            if selected:
+                results.append(selected)
+            else:
+                results.append(None)
+                if t == 'category':
                     errors.append(val)
-            elif t == 'race':
-                if race:
-                    # Priority 1: Race traits with race name in parentheses e.g. "Vandal (Human)"
-                    race_specific_pool = [
-                        tr for tr in traits
-                        if tr.get("category", "").lower() == "race"
-                        and f"({race})" in tr.get("name", "").lower()
-                    ]
-                    # Priority 2: fallback to any Race trait
-                    race_fallback_pool = [
-                        tr for tr in traits
-                        if tr.get("category", "").lower() == "race"
-                        and f"({race})" not in tr.get("name", "").lower()
-                    ]
-                    race_pool = race_specific_pool if race_specific_pool else race_fallback_pool
-                    if race_pool:
-                        selected = random.choice(race_pool)
-                        results.append(selected)
-                    else:
-                        errors.append(f"race({race})")
-                else:
-                    errors.append("race")
+                elif t == 'race':
+                    errors.append(f"race({race})" if race else "race")
 
-        if not results:
+        if not any(results):
             await ctx.send(
                 f"❌ No traits found for category(s) `{', '.join(errors)}` with race `{race}`.\n"
                 f"**Available Categories:** `{cat_list}`"
@@ -192,40 +234,164 @@ class Traits(commands.Cog):
             return
 
         # --- Build embed ---
-        race_desc = f" for race **{race.capitalize()}**" if race else ""
-        embed = discord.Embed(
-            title="🎲 Random Traits",
-            description=f"Traits{race_desc} from your selected categories:",
-            color=discord.Color.dark_blue()
-        )
+        embed = self._build_trait_embed(results, race, errors)
 
-        level_labels = ["Üye", "Kıdemli", "Uzman"]
-        for idx, selected in enumerate(results):
-            cat = selected.get('category', 'Unknown')
-            name = selected.get('name', 'Unknown')
-            url = selected.get('url', '')
-            
-            prefix = level_labels[idx] if idx < len(level_labels) else f"Level {idx + 1}"
-            
-            if cat.lower() == 'race':
-                field_name = f"{prefix} Race Trait: {name}"
-            else:
-                field_name = f"{prefix} {cat} Trait: {name}"
-                
-            embed.add_field(
-                name=field_name,
-                value=f"**[Wiki Page]({url})**",
-                inline=False
+        sent_message = await ctx.send(embed=embed)
+        
+        # Cache this roll for possible reroll
+        self.last_rolls[ctx.author.id] = {
+            "message": sent_message,
+            "race": race,
+            "resolved_order": resolved_order,
+            "results": results,
+            "errors": errors,
+            "time": time.time()
+        }
+
+    @trait.command(name="reroll", aliases=["rr"])
+    async def reroll(self, ctx, *args: str):
+        """Rerolls one or more of your recently rolled traits.
+        Usage: !trait reroll 1 2  OR  !trait reroll combat social  OR  !trait reroll all
+        """
+        user_id = ctx.author.id
+        
+        # Clean up any expired entries (older than 15 minutes / 900 seconds)
+        now = time.time()
+        expired_keys = [k for k, v in self.last_rolls.items() if now - v.get("time", 0) > 900]
+        for k in expired_keys:
+            del self.last_rolls[k]
+
+        if user_id not in self.last_rolls:
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
+            await ctx.send(
+                f"❌ **{ctx.author.mention}**, aktif veya süresi geçmemiş bir trait seçiminiz bulunamadı. "
+                f"Önce `!trait <kategoriler>` komutu ile trait roll yapmalısınız (15 dakika geçerlidir).",
+                delete_after=10
             )
+            return
 
-        footer_text = "Mineria RPG • Traits"
-        if errors:
-            footer_text += f" | Not found: {', '.join(errors)}"
+        roll_data = self.last_rolls[user_id]
+        message = roll_data["message"]
+        race = roll_data["race"]
+        resolved_order = roll_data["resolved_order"]
+        results = roll_data["results"].copy()
+        errors = roll_data["errors"].copy()
 
-        avatar_url = self.bot.user.avatar.url if (self.bot.user and self.bot.user.avatar) else None
-        embed.set_footer(text=footer_text, icon_url=avatar_url)
+        if not args:
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
+            await ctx.send(
+                f"❌ **{ctx.author.mention}**, lütfen yenilemek istediğiniz sırayı (1, 2, 3), "
+                f"kategorileri veya 'all' belirtin. Örnek: `!trait reroll 1 2` ya da `!trait reroll combat social`",
+                delete_after=10
+            )
+            return
 
-        await ctx.send(embed=embed)
+        indices_to_reroll = []
+        invalid_targets = []
+
+        # Parse targets
+        if any(arg.lower().strip() == "all" for arg in args):
+            indices_to_reroll = list(range(len(resolved_order)))
+        else:
+            for arg in args:
+                arg_lower = arg.lower().strip()
+                if arg_lower.isdigit():
+                    idx = int(arg_lower) - 1
+                    if 0 <= idx < len(resolved_order):
+                        if idx not in indices_to_reroll:
+                            indices_to_reroll.append(idx)
+                    else:
+                        invalid_targets.append(arg)
+                else:
+                    found = False
+                    for idx, (t_type, val) in enumerate(resolved_order):
+                        if t_type == 'category' and val.lower() == arg_lower:
+                            if idx not in indices_to_reroll:
+                                indices_to_reroll.append(idx)
+                            found = True
+                        elif t_type == 'race' and arg_lower == 'race':
+                            if idx not in indices_to_reroll:
+                                indices_to_reroll.append(idx)
+                            found = True
+                    if not found:
+                        invalid_targets.append(arg)
+
+        if invalid_targets:
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
+            await ctx.send(
+                f"❌ **{ctx.author.mention}**, geçersiz veya bulunamayan kategoriler/numaralar: "
+                f"`{', '.join(invalid_targets)}`.",
+                delete_after=10
+            )
+            return
+
+        # Perform reroll
+        rerolled_any = False
+        for idx in indices_to_reroll:
+            t_type, val = resolved_order[idx]
+            exclude_names = {results[i].get("name") for i in range(len(results)) if i != idx and results[i] and results[i].get("name")}
+            
+            new_trait = self._select_trait(t_type, val, race, exclude_names)
+            if new_trait:
+                results[idx] = new_trait
+                rerolled_any = True
+
+        if not rerolled_any:
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
+            await ctx.send(
+                f"❌ **{ctx.author.mention}**, belirtilen kategoriler için yenilenebilecek başka uygun trait bulunamadı.",
+                delete_after=10
+            )
+            return
+
+        # Rebuild and edit embed
+        embed = self._build_trait_embed(results, race, errors)
+        
+        # Add a note in footer about reroll details
+        original_footer = embed.footer.text if embed.footer else "Mineria RPG • Traits"
+        
+        reroll_labels = []
+        if any(arg.lower().strip() == "all" for arg in args):
+            reroll_labels.append("All")
+        else:
+            for idx in sorted(indices_to_reroll):
+                t_type, val = resolved_order[idx]
+                reroll_labels.append(f"#{idx+1} ({val.capitalize() if val else 'Race'})")
+        
+        reroll_label = "Rerolled " + " & ".join(reroll_labels)
+        embed.set_footer(text=f"{original_footer} | {reroll_label}")
+
+        try:
+            await message.edit(embed=embed)
+        except discord.NotFound:
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
+            await ctx.send("❌ Orijinal trait mesajı bulunamadı. Lütfen yeni bir `!trait` komutu yazın.", delete_after=10)
+            return
+
+        # Update cache and refresh time
+        self.last_rolls[user_id]["results"] = results
+        self.last_rolls[user_id]["time"] = time.time()
+        
+        try:
+            await ctx.message.delete()
+        except discord.Forbidden:
+            pass
 
 async def setup(bot):
     await bot.add_cog(Traits(bot))
+

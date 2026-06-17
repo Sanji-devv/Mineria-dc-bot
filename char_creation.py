@@ -45,8 +45,8 @@ async def handle_create(cog, ctx, race_name: str = None):
         example_cmd = " ".join(ex_parts)
 
         embed.add_field(name="👉 Next Step", value=f"Distribute using `!char dr`.\nEx: `!char dr {example_cmd}`", inline=False)
-        embed.set_thumbnail(url=ctx.author.avatar.url if ctx.author.avatar else None)
-        embed.set_footer(text="Mineria RPG • Creation Mode", icon_url=cog.bot.user.avatar.url if cog.bot.user.avatar else None)
+        embed.set_thumbnail(url=ctx.author.display_avatar.url)
+        embed.set_footer(text="Mineria RPG • Creation Mode", icon_url=cog.bot.user.display_avatar.url)
         
         await ctx.send(embed=embed)
 
@@ -123,6 +123,9 @@ async def handle_distribute(cog, ctx, *args):
 
         if any(v < 3 for v in stats_to_set.values()):
             return await ctx.send("❌ Each stat must have at least **3** dice.")
+
+        if any(v > 18 for v in stats_to_set.values()):
+            return await ctx.send("❌ Each stat can have at most **18** dice.")
 
         # Roll Logic
         final_stats = {}
@@ -245,6 +248,10 @@ async def handle_save_char(cog, ctx, *, name: str = None):
             embed.add_field(name="Example", value="`!char save Valeros`")
             return await ctx.send(embed=embed)
 
+        name = name.strip()
+        if not name:
+            return await ctx.send("❌ Invalid name.")
+
         creation = cog.active_creations[user_id]
         characters = await load_json("characters.json")
         uid = str(user_id)
@@ -273,7 +280,7 @@ async def handle_save_char(cog, ctx, *, name: str = None):
             description=f"**{name}** ({creation['race_name']}) has been created!",
             color=discord.Color.green()
         )
-        embed.set_footer(text="Mineria RPG • Saved", icon_url=cog.bot.user.avatar.url if cog.bot.user.avatar else None)
+        embed.set_footer(text="Mineria RPG • Saved", icon_url=cog.bot.user.display_avatar.url)
         await ctx.send(embed=embed)
 
     # ==========================

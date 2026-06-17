@@ -15,6 +15,11 @@ async def handle_edit_class(cog, ctx, name: str = None, new_class: str = None):
         if not name or not new_class:
             return await ctx.send("❌ Usage: `!char edit class <Name> <NewClass>`")
 
+        name = name.strip()
+        new_class = new_class.strip()
+        if not name or not new_class:
+            return await ctx.send("❌ Invalid name or class.")
+
         characters = await load_json("characters.json")
         uid = str(ctx.author.id)
         if uid not in characters: return await ctx.send("❌ No characters.")
@@ -38,6 +43,11 @@ async def handle_edit_stat(cog, ctx, name: str = None, stat: str = None, value: 
         """Edits a character's specific stat."""
         if not name or not stat or value is None:
             return await ctx.send("❌ Usage: `!char edit stat <Name> <Stat> <Value>`")
+
+        name = name.strip()
+        stat = stat.strip()
+        if not name or not stat:
+            return await ctx.send("❌ Invalid name or stat.")
 
         characters = await load_json("characters.json")
         uid = str(ctx.author.id)
@@ -81,6 +91,12 @@ async def handle_info(cog, ctx, *, name: str = None):
                 char_data = user_chars[0]
             else:
                 char_list = "\n".join([f"• `{c['name']}`" for c in user_chars])
+                if len(char_list) > 3000:
+                    truncated = char_list[:3000]
+                    lines = truncated.splitlines()
+                    if len(lines) > 1:
+                        lines.pop()
+                    char_list = "\n".join(lines) + f"\n*... and {len(user_chars) - len(lines)} more.*"
                 embed = discord.Embed(
                     title="🔢 Multiple Characters Found",
                     description=f"Use `!char info <name>` to see details.\n\n**Your Characters:**\n{char_list}",
@@ -88,6 +104,7 @@ async def handle_info(cog, ctx, *, name: str = None):
                 )
                 return await ctx.send(embed=embed)
         else:
+            name = name.strip()
             char_data = next((c for c in user_chars if c["name"].lower() == name.lower()), None)
         
         if not char_data:
@@ -136,8 +153,8 @@ async def handle_info(cog, ctx, *, name: str = None):
 
         created_at = char_data.get("created_at", "").split(" ")[0]
         footer_text = f"Mineria RPG • Created: {created_at}"
-        embed.set_footer(text=footer_text, icon_url=ctx.bot.user.avatar.url if ctx.bot.user.avatar else None)
-        if ctx.author.avatar: embed.set_thumbnail(url=ctx.author.avatar.url)
+        embed.set_footer(text=footer_text, icon_url=ctx.bot.user.display_avatar.url)
+        embed.set_thumbnail(url=ctx.author.display_avatar.url)
             
         await ctx.send(embed=embed)
 
@@ -155,9 +172,17 @@ async def handle_list_chars(cog, ctx):
             color=discord.Color.gold()
         )
         names = "\n".join([f"• **{c['name']}** ({c['race']} {c.get('class', 'None')})" for c in user_chars])
+        if len(names) > 4000:
+            # Safely truncate
+            truncated = names[:3900]
+            lines = truncated.splitlines()
+            # If the last line is cut off, remove it
+            if len(lines) > 1 and not names[len(truncated):].startswith("\n"):
+                lines.pop()
+            names = "\n".join(lines) + f"\n\n*... and {len(user_chars) - len(lines)} more characters.*"
         embed.description = names
-        embed.set_footer(text="Mineria RPG • Roster", icon_url=cog.bot.user.avatar.url if cog.bot.user.avatar else None)
-        if ctx.author.avatar: embed.set_thumbnail(url=ctx.author.avatar.url)
+        embed.set_footer(text="Mineria RPG • Roster", icon_url=cog.bot.user.display_avatar.url)
+        embed.set_thumbnail(url=ctx.author.display_avatar.url)
         await ctx.send(embed=embed)
 
 
@@ -169,6 +194,11 @@ async def handle_rename(cog, ctx, old_name: str = None, new_name: str = None):
             embed.add_field(name="Usage", value="`!char rename <OldName> <NewName>`")
             return await ctx.send(embed=embed)
 
+        old_name = old_name.strip()
+        new_name = new_name.strip()
+        if not old_name or not new_name:
+            return await ctx.send("❌ Invalid name.")
+
         characters = await load_json("characters.json")
         uid = str(ctx.author.id)
         if uid not in characters: return await ctx.send("❌ No characters found.")
@@ -176,7 +206,7 @@ async def handle_rename(cog, ctx, old_name: str = None, new_name: str = None):
         for char_data in characters[uid]:
             if char_data["name"].lower() == old_name.lower():
                 # Check duplication
-                if any(c["name"].lower() == new_name.lower() for c in characters[uid]):
+                if any(c["name"].lower() == new_name.lower() and c is not char_data for c in characters[uid]):
                     return await ctx.send(f"❌ You already have a character named **{new_name}**.")
                 
                 char_data["name"] = new_name
@@ -200,6 +230,10 @@ async def handle_delete_char(cog, ctx, *, name: str = None):
              embed.description = "Permanently delete a character."
              embed.add_field(name="Usage", value="`!char delete <Name>`")
              return await ctx.send(embed=embed)
+
+        name = name.strip()
+        if not name:
+            return await ctx.send("❌ Invalid name.")
 
         characters = await load_json("characters.json")
         uid = str(ctx.author.id)

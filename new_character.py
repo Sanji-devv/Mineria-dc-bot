@@ -56,6 +56,7 @@ class KiaCog(commands.Cog, name="KIA"):
         return current_level, xp_needed, next_level
 
     async def fetch_and_calculate_xp(self, ctx: commands.Context, char_name: str, multiplier: float, title: str, color: discord.Color, is_xp_cmd: bool = False):
+        char_name = char_name.strip()
         sheet_url = os.getenv("XP_SHEET_URL")
         if not sheet_url:
             await ctx.send("❌ Error: `XP_SHEET_URL` not found in `.env` file.")
@@ -89,12 +90,12 @@ class KiaCog(commands.Cog, name="KIA"):
                         char_found = True
                         
                         if 11 < len(row) and row[11].strip():
-                            try: l_xp = float(row[11].strip())
+                            try: l_xp = float(row[11].strip().replace(",", ""))
                             except ValueError: pass
                             
                         for idx in [8, 9, 10]:
                             if idx < len(row) and row[idx].strip():
-                                try: ijk_xp += float(row[idx].strip())
+                                try: ijk_xp += float(row[idx].strip().replace(",", ""))
                                 except ValueError: pass
 
                         break # Character found, exit loop
@@ -150,7 +151,7 @@ class KiaCog(commands.Cog, name="KIA"):
                     else:
                         embed.add_field(name="📈 Next Level", value="Maximum Level Reached", inline=True)
 
-                embed.set_footer(text="Mineria RPG • System", icon_url=self.bot.user.avatar.url if (self.bot.user and self.bot.user.avatar) else None)
+                embed.set_footer(text="Mineria RPG • System", icon_url=self.bot.user.display_avatar.url)
 
                 await ctx.send(embed=embed)
 

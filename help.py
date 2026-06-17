@@ -11,7 +11,7 @@ class HelpCog(commands.Cog, name="Help"):
     @commands.command(name="help", aliases=["m", "mineria", "h"])
     async def help_command(self, ctx: commands.Context):
         """Displays the modern and clean help menu."""
-        bot_avatar = ctx.bot.user.avatar.url if ctx.bot.user.avatar else None
+        bot_avatar = ctx.bot.user.display_avatar.url
 
         embed = discord.Embed(
             title="✨ Mineria System Terminal",
@@ -24,15 +24,14 @@ class HelpCog(commands.Cog, name="Help"):
             timestamp=datetime.now(timezone.utc),
         )
 
-        if ctx.author.avatar:
-            embed.set_thumbnail(url=ctx.author.avatar.url)
+        embed.set_thumbnail(url=ctx.author.display_avatar.url)
 
         # --- Part 1: Core Commands ---
         embed.add_field(
             name="🔰 **CORE COMMANDS**",
             value=(
                 "> **`!roll <expr>`** ➔ Advanced dice rolling engine. *(e.g., 1d20+7)*\n"
-                "> **`!trait <category>`** ➔ Draws a random trait from the specified category.\n"
+                "> **`!trait <categories>`** ➔ Draws random traits. Use `!trait reroll <1/2/3/cat/all>` to reroll.\n"
                 "> **`!drawback`** ➔ Suggests a random drawback for your character."
             ),
             inline=False,
@@ -68,7 +67,7 @@ class HelpCog(commands.Cog, name="Help"):
         
         embed.set_footer(
             text=f"Requested by: {ctx.author.display_name} • Mineria OS",
-            icon_url=ctx.author.avatar.url if ctx.author.avatar else bot_avatar,
+            icon_url=ctx.author.display_avatar.url,
         )
 
         await ctx.send(embed=embed)

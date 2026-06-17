@@ -262,7 +262,7 @@
         {
             "name": "Excitable (Gnome)",
             "url": "https://www.d20pfsrd.com/traits/combat-traits/excitable/",
-            "category": "Combat",
+            "category": "Race",
             "req_race": "Any",
             "req_class": "Any"
         },
@@ -591,7 +591,7 @@
         {
             "name": "Sprint (Gnome)",
             "url": "https://www.d20pfsrd.com/traits/combat-traits/sprint-gnome/",
-            "category": "Combat",
+            "category": "Race",
             "req_race": "Any",
             "req_class": "Any"
         },
@@ -934,7 +934,7 @@
         {
             "name": "First Memories (Gnome)",
             "url": "https://www.d20pfsrd.com/traits/faith-traits/first-memories-gnome-faith/",
-            "category": "Faith",
+            "category": "Race",
             "req_race": "Any",
             "req_class": "Any"
         },
@@ -9237,6 +9237,104 @@
             "name": "Undead Crusader",
             "url": "https://www.d20pfsrd.com/traits/campaign-traits/mummy-s-mask/undead-crusader/",
             "category": "Campaign",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Augmented Disguise",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/augmented-disguise/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Dealmaker",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/dealmaker/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Extremely Fashionable",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/extremely-fashionable/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Heirloom Weapon",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/heirloom-weapon/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Improvisational Equipment",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/improvisational-equipment/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Iron Liver",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/iron-liver/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Power of Suggestion",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/power-of-suggestion/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Prehensile Whip",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/prehensile-whip/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Quick Learner",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/quick-learner/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Rough and Ready",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/rough-and-ready/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Stage Magic",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/stage-magic/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Stealthy Escape",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/stealthy-escape/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Thrown-Together Fashion",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/thrown-together-fashion/",
+            "category": "Equipment",
+            "req_race": "Any",
+            "req_class": "Any"
+        },
+        {
+            "name": "Well-Provisioned Adventurer",
+            "url": "https://www.d20pfsrd.com/traits/equipment-traits/well-provisioned-adventurer-equipment/",
+            "category": "Equipment",
             "req_race": "Any",
             "req_class": "Any"
         }

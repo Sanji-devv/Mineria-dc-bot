@@ -191,7 +191,7 @@ class OneTimeCommands(commands.Cog):
                 inline=False
             )
 
-        embed.set_footer(text="Mineria RPG • Rule Enforcement", icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
+        embed.set_footer(text="Mineria RPG • Rule Enforcement", icon_url=self.bot.user.display_avatar.url)
         await ctx.send(embed=embed)
 
 async def setup(bot: commands.Bot):

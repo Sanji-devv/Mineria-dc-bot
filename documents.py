@@ -46,8 +46,16 @@ class Documents(commands.Cog):
         for f in sorted(files, key=lambda x: x.name.lower()):
             size_mb = f.stat().st_size / (1024 * 1024)
             file_list.append(f"📄 **{f.name}** ({size_mb:.2f} MB)")
-        embed.add_field(name=f"Files ({len(files)})", value="\n".join(file_list) or "No files.", inline=False)
-        embed.set_footer(text="Mineria RPG • Documents", icon_url=self.bot.user.avatar.url)
+            
+        value_text = ""
+        for idx, item in enumerate(file_list):
+            if len(value_text) + len(item) + 50 > 1024:
+                value_text += f"\n*... and {len(file_list) - idx} more files.*"
+                break
+            value_text += ("\n" if value_text else "") + item
+
+        embed.add_field(name=f"Files ({len(files)})", value=value_text or "No files.", inline=False)
+        embed.set_footer(text="Mineria RPG • Documents", icon_url=self.bot.user.display_avatar.url)
         await ctx.send(embed=embed)
 
     async def _send_doc(self, ctx, query: str):
@@ -56,7 +64,17 @@ class Documents(commands.Cog):
             await ctx.send("📂 The `mineria_files/docs/` directory is currently empty.")
             return
 
-        target_file = self.docs_dir / query
+        base_dir = self.docs_dir.resolve()
+        try:
+            target_file = (self.docs_dir / query).resolve()
+        except Exception:
+            await ctx.send("❌ Invalid file path.")
+            return
+
+        if not target_file.is_relative_to(base_dir):
+            await ctx.send("❌ Access Denied: Path traversal detected.")
+            return
+
         if not target_file.exists():
             file_names = [f.name for f in files]
             matches = difflib.get_close_matches(query, file_names, n=1, cutoff=0.5)
@@ -104,8 +122,16 @@ class Documents(commands.Cog):
             color=discord.Color.blue()
         )
         map_list = [f"🖼️ **{f.stem}**" for f in sorted(maps, key=lambda x: x.stem.lower())]
-        embed.add_field(name=f"Maps ({len(maps)})", value="\n".join(map_list), inline=False)
-        embed.set_footer(text="Mineria RPG • Maps", icon_url=self.bot.user.avatar.url)
+        
+        value_text = ""
+        for idx, item in enumerate(map_list):
+            if len(value_text) + len(item) + 50 > 1024:
+                value_text += f"\n*... and {len(map_list) - idx} more maps.*"
+                break
+            value_text += ("\n" if value_text else "") + item
+
+        embed.add_field(name=f"Maps ({len(maps)})", value=value_text or "No maps.", inline=False)
+        embed.set_footer(text="Mineria RPG • Maps", icon_url=self.bot.user.display_avatar.url)
         await ctx.send(embed=embed)
 
     async def _send_map(self, ctx, name: str):

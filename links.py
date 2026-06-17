@@ -35,7 +35,7 @@ class Links(commands.Cog):
             inline=False
         )
         
-        embed.set_footer(text="Mineria RPG • Wiki", icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None)
+        embed.set_footer(text="Mineria RPG • Wiki", icon_url=self.bot.user.display_avatar.url)
         embed.set_thumbnail(url="https://static.wikia.nocookie.net/mineria/images/e/e6/Site-logo.png/revision/latest?cb=20230101000000")
         
         await ctx.send(embed=embed)
